@@ -10,8 +10,12 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
 #include "Transform.h"
 #include "Camera.h"
+#include "CommonValues.h"
+#include "PointLight.h"
+#include "DirectionalLight.h"
 
 class Shader {
 public:
@@ -68,30 +72,34 @@ public:
      * */
     static GLuint CreateShader(const std::string& text,GLenum shaderType);
 
+    /**
+     * Create needed uniforms
+     * */
+    void CreateUniforms();
+
+    /**
+     * Retrieve the list of created uniforms
+     * */
+    GLint *getUniforms();
+
+    GLuint *getShaders();
+
+    GLuint getShaderProgram();
+
+    DirectionalLightUniforms* getDirectionalLightUniforms();
+
+    void SetDirectionalLight(DirectionalLight *dLight);
+
+    PointLightUniforms* getPointLightUniformsArray();
+
+    void SetPointLights(PointLight *pLights, unsigned int lightCount);
+
 protected:
 private:
-
     /**
-     * Uniforms used
+     * Keeps track of total amount of lights the shader has.
      * */
-    enum : unsigned int{
-        VERTEX_SHADER,
-        FRAGMENT_SHADER,
-//        GEOMETRY_SHADER,
-
-        NUM_SHADERS
-    };
-
-    /**
-     * Uniforms used
-     * */
-    enum {
-        MODEL_U,
-        VIEW_U,
-        PROJECTION_U,
-
-        NUM_UNIFORMS
-    };
+    int pointLightCount = 0, directionalLightCount = 0, spotLightCount = 0;
 
     /**
      * Keeps track of where the program is, like a handle
@@ -106,7 +114,13 @@ private:
     /**
      *  The uniforms array.
      * */
-    GLuint m_uniforms[NUM_UNIFORMS];
+    GLint m_uniforms[NUM_UNIFORMS];
+
+    DirectionalLightUniforms m_directional_light;
+
+    PointLightUniforms m_point_lights[MAX_POINT_LIGHTS];
+
+    SpotLightUniforms m_spot_lights[MAX_SPOT_LIGHTS];
 
 };
 

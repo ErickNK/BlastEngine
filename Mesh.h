@@ -12,6 +12,7 @@
 
 class Vertex{
 public:
+    Vertex() = default;;
     /**
      * Constructor
      * */
@@ -24,6 +25,10 @@ public:
     inline glm::vec3* GetPos() { return &pos;}
     inline glm::vec2* GetTexCoord() { return &texCoord;}
     inline glm::vec3* GetNormal() { return &normal; }
+
+    inline void SetPos(const glm::vec3 &pos) { Vertex::pos = pos; }
+    inline void SetTexCoord(const glm::vec2 &texCoord) { Vertex::texCoord = texCoord; }
+    inline void SetNormal(const glm::vec3 &normal) { Vertex::normal = normal; }
 
 protected:
 private:

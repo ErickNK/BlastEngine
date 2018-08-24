@@ -22,10 +22,44 @@ Shader::Shader(const std::string& fileName) {
     glValidateProgram(m_program);
     CheckShaderError(m_program,GL_VALIDATE_STATUS,true,"Error: Program validation failed!:");
 
-    //Setup Uniforms
+    CreateUniforms();
+}
+
+void Shader::CreateUniforms() {
+    //Setup Main Uniforms
     m_uniforms[VIEW_U] = glGetUniformLocation(m_program, "view");
     m_uniforms[MODEL_U] = glGetUniformLocation(m_program, "model");
     m_uniforms[PROJECTION_U] = glGetUniformLocation(m_program, "projection");
+    m_uniforms[CAMERA_POSITION_U] = glGetUniformLocation(m_program, "cameraPosition");
+
+    m_uniforms[POINT_LIGHT_COUNT_U] = glGetUniformLocation(m_program, "pointLightCount");
+    m_uniforms[SPOT_LIGHT_COUNT_U] = glGetUniformLocation(m_program, "spotLightCount");
+
+    for (size_t i = 0; i < MAX_POINT_LIGHTS; i++){
+
+        char locBuff[100] = {'\0'};
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.color",i);
+        m_point_lights[i].base.color_u = glGetUniformLocation(m_program, locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.ambientIntensity",i);
+        m_point_lights[i].base.ambient_intensity_u = glGetUniformLocation(m_program, locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.diffuseIntensity",i);
+        m_point_lights[i].base.diffuse_intensity_u = glGetUniformLocation(m_program, locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].position",i);
+        m_point_lights[i].position_u = glGetUniformLocation(m_program, locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].attenuationConstant",i);
+        m_point_lights[i].attenuation_constant_u = glGetUniformLocation(m_program, locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].attenuationLinear",i);
+        m_point_lights[i].attenuation_linear_u = glGetUniformLocation(m_program, locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].attenuationQuadratic",i);
+        m_point_lights[i].attenuation_quadratic_u = glGetUniformLocation(m_program, locBuff);
+    }
 }
 
 Shader::~Shader() {
@@ -56,6 +90,9 @@ void Shader::UpdateProjection(const glm::mat4 &projection) {
 
 void Shader::UpdateView(const Camera &camera) {
     glUniformMatrix4fv(m_uniforms[VIEW_U],1,GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
+
+    //Update position
+    glUniform3f(m_uniforms[CAMERA_POSITION_U],camera.getPosition().x,camera.getPosition().y,camera.getPosition().z);
 }
 
 std::string Shader::LoadShader(const std::string& fileName)
@@ -122,6 +159,33 @@ GLuint Shader::CreateShader(const std::string &text, GLenum shaderType) {
     CheckShaderError(shader,GL_COMPILE_STATUS,false,"Error: Shader compilation failed!:");
 
     return shader;
+}
+
+GLint *Shader::getUniforms() { return m_uniforms; }
+
+GLuint *Shader::getShaders() { return m_shaders; }
+
+GLuint Shader::getShaderProgram() { return m_program; }
+
+void Shader::SetDirectionalLight(DirectionalLight *dLight) { dLight->UseLight(&m_directional_light); }
+
+void Shader::SetPointLights(PointLight *pLights, unsigned int lightCount) {
+
+    if (lightCount > MAX_POINT_LIGHTS) lightCount = MAX_POINT_LIGHTS;
+
+    glUniform1d(m_uniforms[POINT_LIGHT_COUNT_U],lightCount);
+
+    for(size_t i = 0; i < lightCount; i++){
+        pLights[i].UseLight(m_point_lights);
+    }
+}
+
+DirectionalLightUniforms *Shader::getDirectionalLightUniforms() {
+    return &m_directional_light;
+}
+
+PointLightUniforms *Shader::getPointLightUniformsArray() {
+    return m_point_lights;
 }
 
 

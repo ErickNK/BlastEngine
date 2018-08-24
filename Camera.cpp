@@ -77,3 +77,7 @@ void Camera::handleMouse(double xChange, double yChange) {
     updateAngle();
 }
 
+glm::vec3 Camera::getPosition() const {
+    return m_position;
+}
+

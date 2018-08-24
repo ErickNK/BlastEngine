@@ -13,7 +13,9 @@ set(SOURCE_FILES
         Camera.cpp Camera.h
         stb_image.h stb_image.c
         Texture.cpp Texture.h
-        Object.h) # which files should be compiled
+        Object.h
+        Light.cpp Light.h
+        Util.h Material.cpp Material.h DirectionalLight.cpp DirectionalLight.h PointLight.cpp PointLight.h CommonValues.h) # which files should be compiled
 
 add_executable(MorderOpenGLUdemyTutorial ${SOURCE_FILES}) # which files should produce executables
 
