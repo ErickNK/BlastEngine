@@ -38,8 +38,8 @@ void main(){
      * non-uniform scaling. We then convert to mat3 to disable translation. The mat3 will multiplication
      * will return a vec3 which is what we want.
      * */
-//    vNormal = (model * vec4(normal, 0.0)).xyz;
-    vNormal = mat3(transpose(inverse(model))) * -normal; //TODO: normals are getting inversed
+    vNormal = (model * vec4(-normal, 0.0)).xyz;
+//    vNormal = mat3(transpose(inverse(model))) * normal; //TODO: normals are getting inversed
 
     /**
      * We need the world position of a vertex/Fragment. This is the position after transformation

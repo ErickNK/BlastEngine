@@ -71,9 +71,9 @@ void Window::Initialize(){
     glEnable(GL_DEPTH_TEST);
 
     //Enable Cull face
-    glEnable(GL_CULL_FACE);
+//    glEnable(GL_CULL_FACE);
 
-    glCullFace(GL_BACK);
+//    glCullFace(GL_BACK);
 
     //Get buffer size information
     glfwGetFramebufferSize(mainWindow,&bufferWidth,&bufferHeight);

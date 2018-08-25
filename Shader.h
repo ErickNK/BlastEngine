@@ -94,6 +94,7 @@ public:
 
     void SetPointLights(PointLight *pLights, unsigned int lightCount);
 
+    MaterialUniforms* getMaterialUniforms();
 protected:
 private:
     /**
@@ -115,6 +116,8 @@ private:
      *  The uniforms array.
      * */
     GLint m_uniforms[NUM_UNIFORMS];
+
+    MaterialUniforms m_material;
 
     DirectionalLightUniforms m_directional_light;
 

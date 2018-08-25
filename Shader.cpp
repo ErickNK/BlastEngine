@@ -32,14 +32,14 @@ void Shader::CreateUniforms() {
     m_uniforms[PROJECTION_U] = glGetUniformLocation(m_program, "projection");
     m_uniforms[CAMERA_POSITION_U] = glGetUniformLocation(m_program, "cameraPosition");
 
-    m_uniforms[POINT_LIGHT_COUNT_U] = glGetUniformLocation(m_program, "pointLightCount");
+    m_uniforms[POINT_LIGHT_COUNT_U] = glGetUniformLocation(m_program, "pointLightsCount");
     m_uniforms[SPOT_LIGHT_COUNT_U] = glGetUniformLocation(m_program, "spotLightCount");
 
     for (size_t i = 0; i < MAX_POINT_LIGHTS; i++){
 
         char locBuff[100] = {'\0'};
 
-        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.color",i);
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.colour",i);
         m_point_lights[i].base.color_u = glGetUniformLocation(m_program, locBuff);
 
         snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.ambientIntensity",i);
@@ -186,6 +186,10 @@ DirectionalLightUniforms *Shader::getDirectionalLightUniforms() {
 
 PointLightUniforms *Shader::getPointLightUniformsArray() {
     return m_point_lights;
+}
+
+MaterialUniforms *Shader::getMaterialUniforms() {
+    return &m_material;
 }
 
 

@@ -8,12 +8,27 @@ in vec3 vFragPos;
 //output variables
 out vec4 colour;
 
+//Constants
+const int MAX_POINT_LIGHTS = 3;
+
 //Lighting
-struct DirectionalLight{
+struct Light{
     vec3 colour;
-    vec3 direction;
     float ambientIntensity;
     float diffuseIntensity;
+};
+
+struct DirectionalLight{
+    Light base;
+    vec3 direction;
+};
+
+struct PointLight{
+    Light base;
+    vec3 position;
+    float attenuationConstant;
+    float attenuationLinear;
+    float attenuationQuadratic;
 };
 
 struct Material{
@@ -22,23 +37,30 @@ struct Material{
 };
 
 //uniform variables
-uniform sampler2D texture0;
+
+//LIGHTING
 uniform DirectionalLight directionalLight;
+uniform PointLight pointLights[MAX_POINT_LIGHTS];
+uniform int pointLightsCount;
+
 uniform Material material;
 uniform vec3 cameraPosition;
 
-void main(){
+//TEXTURES
+uniform sampler2D texture0;
+
+vec4 CalcLightByDirection(Light light, vec3 direction){
     /**
-     * Calculate Ambient Light
-     * */
-    vec4 ambient = vec4(directionalLight.colour, 1.0f) * directionalLight.ambientIntensity;
+    * Calculate Ambient Light
+    * */
+    vec4 ambient = vec4(light.colour, 1.0f) * light.ambientIntensity;
 
     /**
      * Calculate Diffuse light
      * */
-    float diffuseFactor = max(dot(normalize(vNormal),normalize(directionalLight.direction)), 0.0f);
+    float diffuseFactor = max(dot(normalize(vNormal),normalize(direction)), 0.0f);
 
-    vec4 diffuse = vec4(directionalLight.colour, 1.0f) * diffuseFactor * directionalLight.diffuseIntensity;
+    vec4 diffuse = vec4(light.colour, 1.0f) * diffuseFactor * light.diffuseIntensity;
 
     /**
      * Calculate Specular lighting
@@ -48,19 +70,54 @@ void main(){
 
         vec3 fragToEyeVector = normalize(cameraPosition - vFragPos);
 
-        vec3 reflectionVector = normalize(reflect(directionalLight.direction, normalize(vNormal)));
+        vec3 reflectionVector = normalize(reflect(direction, normalize(vNormal)));
 
         float specularFactor = dot(fragToEyeVector, reflectionVector);
 
         if(specularFactor > 0.0f){
             specularFactor = pow(specularFactor, material.shininess);
 
-            specular = vec4(directionalLight.colour * material.specularIntensity * specularFactor, 1.0f);
+            specular = vec4(light.colour * material.specularIntensity * specularFactor, 1.0f);
         }
     }
 
     /**
      * MAIN fragment colouring
      * */
-    colour = /*vec4(0.804, 0.361, 0.361, 1.0)*/ texture2D(texture0, vTexCoord) * (ambient + diffuse + specular);
+    return (ambient + diffuse + specular);
+
+}
+
+vec4 CalcDirectionalLight(){
+    return CalcLightByDirection(directionalLight.base,directionalLight.direction);
+}
+
+vec4 CalcPointLights(){
+    vec4 totalColor = vec4(0, 0, 0, 0);
+    for(int i = 0; i < (pointLightsCount + 1); i++){
+        vec3 direction = vFragPos - pointLights[i].position; //Get LightToFrag vector as direction
+
+        float distance = length(direction); //We get the magnitude of LightToFrag vector
+
+        direction = normalize(direction); //For a qualified unit vector
+
+        vec4 col = CalcLightByDirection(pointLights[i].base, direction);
+
+        float attenuation = pointLights[i].attenuationQuadratic * distance * distance +
+                            pointLights[i].attenuationLinear * distance +
+                            pointLights[i].attenuationConstant;
+
+        totalColor +=  (col / attenuation);
+    }
+    return totalColor;
+}
+
+void main(){
+    vec4 finalColor = CalcDirectionalLight();
+    finalColor += CalcPointLights();
+
+    /**
+     * MAIN fragment colouring
+     * */
+    colour = texture2D(texture0, vTexCoord) * finalColor;
 }

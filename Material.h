@@ -16,9 +16,9 @@ public:
 
     virtual ~Material();
 
-    void UseMaterial(Shader * shader);
+    void UseMaterial(MaterialUniforms *materialUniforms) ;
 
-    static void SetupUniforms(Shader * shader);
+    static void SetupUniforms(MaterialUniforms *materialUniforms,GLuint shaderProgram);
 
 private:
     GLfloat specularIntensity;

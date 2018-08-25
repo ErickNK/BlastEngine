@@ -7,7 +7,7 @@
 
 #include <GL/glew.h>
 
-const int MAX_POINT_LIGHTS = 3, MAX_SPOT_LIGHTS = 100;
+const int MAX_POINT_LIGHTS = 3, MAX_SPOT_LIGHTS = 3;
 
 /**
  * Uniforms used
@@ -16,9 +16,6 @@ enum ShaderUniforms : unsigned int {
     MODEL_U,
     VIEW_U,
     PROJECTION_U,
-
-    SPECULAR_INTENSITY_U,
-    SPECULAR_SHININESS_U,
 
     POINT_LIGHT_COUNT_U,
     SPOT_LIGHT_COUNT_U,
@@ -82,6 +79,14 @@ struct SpotLightUniforms{
     GLint attenuation_constant_u;
     GLint attenuation_linear_u;
     GLint attenuation_quadratic_u;
+};
+
+/**
+ * Material uniforms
+ * */
+struct MaterialUniforms{
+    GLint specular_intensity_u;
+    GLint shininess_u;
 };
 
 #endif //MORDEROPENGLUDEMYTUTORIAL_COMMONVALUES_H

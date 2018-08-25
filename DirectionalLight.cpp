@@ -12,9 +12,7 @@ DirectionalLight::DirectionalLight(glm::vec3 color,glm::vec3 direction,GLfloat a
     Light(color,ambientIntensity,diffuseIntensity),
     direction(direction){}
 
-DirectionalLight::~DirectionalLight() {
-    direction = glm::vec3(0.0f,-1.0f,0.0f);
-}
+DirectionalLight::~DirectionalLight() = default;
 
 void DirectionalLight::UseLight(DirectionalLightUniforms *directionalLightUniforms) {
     //Set Light Direction
@@ -36,11 +34,11 @@ void DirectionalLight::SetupUniforms(DirectionalLightUniforms *directionalLightU
             glGetUniformLocation(shaderProgram, "directionalLight.direction");
 
     directionalLightUniforms->base.color_u =
-            glGetUniformLocation(shaderProgram, "directionalLight.colour");
+            glGetUniformLocation(shaderProgram, "directionalLight.base.colour");
 
     directionalLightUniforms->base.ambient_intensity_u =
-            glGetUniformLocation(shaderProgram, "directionalLight.ambientIntensity");
+            glGetUniformLocation(shaderProgram, "directionalLight.base.ambientIntensity");
 
     directionalLightUniforms->base.diffuse_intensity_u =
-            glGetUniformLocation(shaderProgram, "directionalLight.diffuseIntensity");
+            glGetUniformLocation(shaderProgram, "directionalLight.base.diffuseIntensity");
 }

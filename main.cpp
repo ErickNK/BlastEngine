@@ -10,6 +10,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "CommonValues.h"
 #include "Window.h"
 #include "Shader.h"
 #include "Transform.h"
@@ -19,6 +20,7 @@
 #include "Object.h"
 #include "Util.h"
 #include "DirectionalLight.h"
+#include "PointLight.h"
 
 const float toRadians = 3.14139265f / 180.0f;
 std::vector<Object> objectList;
@@ -31,6 +33,8 @@ glm::mat4 projection;
 Window window;
 Camera camera;
 DirectionalLight directionalLight;
+PointLight pointLights[MAX_POINT_LIGHTS];
+unsigned int pointLightCount = 0;
 
 bool direction = true;
 float triOffset = 0.0f;
@@ -45,22 +49,75 @@ float minSize = 0.8f;
 float maxSize = 0.1f;
 
 void CreateObjects(){
-    std::vector<Texture*> textures;
-    textures.push_back(new Texture("/home/erick/CLionProjects/MorderOpenGLUdemyTutorial/res/textures/bricks.jpeg"));
+    //Susanne
+    std::vector<Texture*> textures1;
+    textures1.push_back(new Texture("/home/erick/CLionProjects/MorderOpenGLUdemyTutorial/res/textures/white-wall.jpg"));
 
-    //1
+    Transform * transform1 = new Transform();
+    transform1->GetPos() = glm::vec3(0.0,0.0f,0.0f);
+
     objectList.push_back(
             Object(
                   new Mesh("../res/objects/monkey3.obj"),
-                  new Transform(),
-                  textures,
+                  transform1,
+                  textures1,
                   new Material(1.0f,32.0f)
             )
         );
+
+    //Floor
+    std::vector<Texture*> textures2;
+    textures2.push_back(new Texture("/home/erick/CLionProjects/MorderOpenGLUdemyTutorial/res/textures/pine-wood.jpg"));
+
+    Transform * transform2 = new Transform();
+    transform2->GetPos() = glm::vec3(0.0,-2.0f,0.0f);
+
+    Vertex vertices[] = {
+            Vertex(glm::vec3(-10.0,0.0,-10.0),glm::vec2(0.0,0.0),glm::vec3(0.0,1.0,0.0)),
+            Vertex(glm::vec3(10.0,0.0,-10.0),glm::vec2(10.0,0.0),glm::vec3(0.0,1.0,0.0)),
+            Vertex(glm::vec3(-10.0,0.0,10.0),glm::vec2(0.0,10.0),glm::vec3(0.0,1.0,0.0)),
+            Vertex(glm::vec3(10.0,0.0,10.0),glm::vec2(10.0,10.0),glm::vec3(0.0,1.0,0.0))
+    };
+
+    unsigned int indices[] = {
+            0,2,1,
+            1,2,3
+    };
+
+    objectList.push_back(
+            Object(
+                    new Mesh(
+                            vertices,
+                            sizeof(vertices)/sizeof(vertices[0]),
+                            indices,
+                            sizeof(indices)/sizeof(indices[0])
+                            ),
+                    transform2,
+                    textures2,
+                    new Material(0.4f,10.0f)
+            )
+    );
 }
 
 void CreateShaders(){
     shaderList.emplace_back("../shaders/BasicShader");
+}
+
+void SetupLighting(){
+    DirectionalLight::SetupUniforms(shaderList[0].getDirectionalLightUniforms(),shaderList[0].getShaderProgram());
+
+    Material::SetupUniforms(shaderList[0].getMaterialUniforms(),shaderList[0].getShaderProgram());
+
+    directionalLight = DirectionalLight(
+            glm::vec3(1.0f,1.0f,1.0f),
+            glm::vec3(0.0f,-1.0f,0.0f), /*TODO: values are getting inverted*/
+            0.3f, 0.4f);
+
+    pointLights[pointLightCount] = PointLight(
+            pointLightCount,glm::vec3(1.0f,1.0f,0.0f),glm::vec3(0.0f,0.0f,1.5f),
+            0.4f, 0.5f,
+            1.0f,0.4f,0.3f);
+    pointLightCount++;
 }
 
 void SetupPerspective(){
@@ -71,6 +128,17 @@ void SetupPerspective(){
             0.1f,
             1000.0f
         );
+}
+
+void SetupCamera(){
+    camera = Camera(
+            glm::vec3(0.0f,0.0f,5.0f),
+            glm::vec3(0.0f,1.0f,0.0f),
+            -90.0f,
+            0.0f,
+            5.0f,
+            0.5f
+    );
 }
 
 void UpdateTransformations(){
@@ -113,22 +181,11 @@ int main() {
 
     CreateShaders();
 
-    camera = Camera(
-            glm::vec3(0.0f,0.0f,-4.0f),
-            glm::vec3(0.0f,1.0f,0.0f),
-            -90.0f,
-            0.0f,
-            5.0f,
-            0.5f
-        );
-
     SetupPerspective();
 
-    DirectionalLight::SetupUniforms(shaderList[0].getDirectionalLightUniforms(),shaderList[0].getShaderProgram());
+    SetupCamera();
 
-    Material::SetupUniforms(&shaderList[0]);
-
-    directionalLight = DirectionalLight(glm::vec3(1.0f,1.0f,1.0f),glm::vec3(0.0f,0.0f,-1.0f), 0.2f, 0.3f);
+    SetupLighting();
 
 //MAIN LOOP
 
@@ -154,15 +211,14 @@ int main() {
 
                 shaderList[0].SetDirectionalLight(&directionalLight);
 
+                shaderList[0].SetPointLights(pointLights, pointLightCount);
+
                 for(int i = 0; i < objectList.size(); i++){
-                    objectList[i].getTransform()->GetPos() = glm::vec3(0.0,0.0f,-2.5f);
-                    objectList[i].getTransform()->GetRot().y = curAngle * toRadians;
-                    objectList[i].getTransform()->GetScale() = glm::vec3(0.6,0.6,0.6f);
                     shaderList[0].UpdateModel(*objectList[i].getTransform());
 
                     objectList[i].getTexture()[0]->Bind(0);
 
-                    objectList[i].getMaterial()->UseMaterial(&shaderList[0]);
+                    objectList[i].getMaterial()->UseMaterial(shaderList[0].getMaterialUniforms());
 
                     objectList[i].getMesh()->Draw();
                 }

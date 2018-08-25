@@ -14,20 +14,18 @@ Material::Material(GLfloat specularIntensity, GLfloat shininess) :
 
 Material::~Material() {}
 
-
-
-void Material::UseMaterial(Shader * shader) {
+void Material::UseMaterial(MaterialUniforms *materialUniforms) {
     //Set Specular Intensity
-    glUniform1f(shader->getUniforms()[SPECULAR_INTENSITY_U],specularIntensity);
+    glUniform1f(materialUniforms->specular_intensity_u,specularIntensity);
 
     //Set Shininess
-    glUniform1f(shader->getUniforms()[SPECULAR_SHININESS_U],shininess);
+    glUniform1f(materialUniforms->shininess_u,shininess);
 }
 
-void Material::SetupUniforms(Shader * shader) {
+void Material::SetupUniforms(MaterialUniforms *materialUniforms,GLuint shaderProgram) {
     //Create Shininess Uniform
-    shader->getUniforms()[SPECULAR_SHININESS_U] = glGetUniformLocation(shader->getShaderProgram(), "material.shininess");
+    materialUniforms->shininess_u = glGetUniformLocation(shaderProgram, "material.shininess");
 
     //Create Specular Intensity Uniform
-    shader->getUniforms()[SPECULAR_INTENSITY_U] = glGetUniformLocation(shader->getShaderProgram(), "material.specularIntensity");
+    materialUniforms->specular_intensity_u = glGetUniformLocation(shaderProgram, "material.specularIntensity");
 }
