@@ -21,6 +21,7 @@ enum ShaderUniforms : unsigned int {
     SPOT_LIGHT_COUNT_U,
 
     CAMERA_POSITION_U,
+    CAMERA_DIRECTION_U,
 
     NUM_UNIFORMS
 };
@@ -75,6 +76,8 @@ struct SpotLightUniforms{
     LightUniforms base;
 
     GLint position_u;
+    GLint direction_u;
+    GLint edge_u;
 
     GLint attenuation_constant_u;
     GLint attenuation_linear_u;

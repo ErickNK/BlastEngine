@@ -68,7 +68,7 @@ private:
     double XChange;
     double YChange;
     bool invertedX = false;
-    bool invertedY = true;
+    bool invertedY = false;
     bool mouseFirstMoved = true;
     bool mouseLastMoved = false;
 

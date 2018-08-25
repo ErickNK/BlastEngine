@@ -21,7 +21,7 @@ public:
 
     void UseLight(PointLightUniforms *pointLightUniforms);
 
-private:
+protected:
     int id;
 
     glm::vec3 position;

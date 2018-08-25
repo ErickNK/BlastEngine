@@ -28,6 +28,8 @@ public:
 
     glm::vec3 getPosition() const;
 
+    glm::vec3 getDirection() const;
+
 protected:
 private:
     /**

@@ -13,7 +13,8 @@ Camera::Camera(glm::vec3 startPosition, glm::vec3 startUp, GLfloat startYaw, GLf
     m_position(startPosition), m_worldUp(startUp), m_yaw(startYaw), m_pitch(startPitch),
     m_movementSpeed(startMovementSpeed), m_turnSpeed(startTurningSpeed){
 
-    m_forward = glm::vec3(0.0f,0.0f,-1.0f);
+    m_forward = glm::vec3(0.0f,0.0f,0.0f);
+
     updateAngle();
 }
 
@@ -22,9 +23,9 @@ Camera::~Camera() {
 }
 
 void Camera::updateAngle() {
-    m_forward.x = static_cast<float>(cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch)));
-    m_forward.y = static_cast<float>(sin(glm::radians(m_pitch)));
-    m_forward.z = static_cast<float>(sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch)));
+    m_forward.x = cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
+    m_forward.y = sin(glm::radians(m_pitch));
+    m_forward.z = sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
     m_forward = glm::normalize(m_forward); //remove magnitude
 
     m_right = glm::normalize(glm::cross(m_forward,m_worldUp));
@@ -70,7 +71,7 @@ void Camera::handleMouse(double xChange, double yChange) {
         m_pitch = 89.0f;
     }
 
-    if(m_pitch > -89.0f){
+    if(m_pitch < -89.0f){
         m_pitch = -89.0f;
     }
 
@@ -79,5 +80,9 @@ void Camera::handleMouse(double xChange, double yChange) {
 
 glm::vec3 Camera::getPosition() const {
     return m_position;
+}
+
+glm::vec3 Camera::getDirection() const {
+    return glm::normalize(m_forward);
 }
 

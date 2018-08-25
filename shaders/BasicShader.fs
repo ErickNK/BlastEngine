@@ -1,17 +1,21 @@
 #version 330
 
-//Input variables
+//Input variables ------------------------------------------
+
 in vec2 vTexCoord;
 in vec3 vNormal;
 in vec3 vFragPos;
 
-//output variables
+// ---------------------------------------------------------
+
+//output variables ------------------------------------------
+
 out vec4 colour;
 
-//Constants
-const int MAX_POINT_LIGHTS = 3;
+// ----------------------------------------------------------
 
-//Lighting
+//LIGHTING ---------------------------------------------------
+
 struct Light{
     vec3 colour;
     float ambientIntensity;
@@ -31,23 +35,41 @@ struct PointLight{
     float attenuationQuadratic;
 };
 
+struct SpotLight{
+    PointLight base;
+    vec3 direction;
+    float edge;
+};
+
 struct Material{
     float specularIntensity;
     float shininess;
 };
 
-//uniform variables
+// ---------------------------------------------------------
 
-//LIGHTING
+//Constant variables -----------------------------------------
+
+const int MAX_POINT_LIGHTS = 3;
+const int MAX_SPOT_LIGHTS = 3;
+
+// -----------------------------------------------------------
+
+//uniform variables -----------------------------------------
+
+uniform sampler2D texture0;
+
 uniform DirectionalLight directionalLight;
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
-uniform int pointLightsCount;
+uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
+uniform int pointLightCount;
+uniform int spotLightCount;
 
 uniform Material material;
 uniform vec3 cameraPosition;
+uniform vec3 cameraDirection;
 
-//TEXTURES
-uniform sampler2D texture0;
+// -----------------------------------------------------------
 
 vec4 CalcLightByDirection(Light light, vec3 direction){
     /**
@@ -88,26 +110,63 @@ vec4 CalcLightByDirection(Light light, vec3 direction){
 
 }
 
+vec4 CalcLightByPoint(PointLight pLight){
+     vec3 direction = vFragPos - pLight.position; //Get LightToFrag vector as direction
+
+    float distance = length(direction); //We get the magnitude of LightToFrag vector
+
+    direction = normalize(direction); //For a qualified unit vector
+
+    vec4 col = CalcLightByDirection(pLight.base, direction);
+
+    float attenuation = pLight.attenuationQuadratic * distance * distance +
+                        pLight.attenuationLinear * distance +
+                        pLight.attenuationConstant;
+
+    return (col / attenuation);
+}
+
+vec4 CalcLightBySpot(SpotLight sLight){
+    //The straight line between the fragment and the spot light
+    vec3 rayToFragDirection = normalize(vFragPos - sLight.base.position);
+
+    /**
+    * The Angle between the main direction the spotlight is facing and
+    * the straight line from fragment to the spotlight. This will be used
+    * to determine if the angle is within the edge of the spotlight (maximum angle
+    * between the main direction of the spotlight and the edge of the spotlight rays.
+    */
+    float FragToSpotDirectionAngle = dot(rayToFragDirection,sLight.direction);
+
+    if(FragToSpotDirectionAngle > sLight.edge){ //Its within the edge
+
+        vec4 col = CalcLightByPoint(sLight.base);
+
+        return col * (1.0f - ((1.0f - FragToSpotDirectionAngle)*(1.0f/(1.0f - sLight.edge))));
+
+    }else{ //Not within edge
+
+        return vec4(0,0,0,0);
+
+    }
+}
+
 vec4 CalcDirectionalLight(){
     return CalcLightByDirection(directionalLight.base,directionalLight.direction);
 }
 
 vec4 CalcPointLights(){
     vec4 totalColor = vec4(0, 0, 0, 0);
-    for(int i = 0; i < (pointLightsCount + 1); i++){
-        vec3 direction = vFragPos - pointLights[i].position; //Get LightToFrag vector as direction
+    for(int i = 0; i < pointLightCount; i++){
+        totalColor += CalcLightByPoint(pointLights[i]);
+    }
+    return totalColor;
+}
 
-        float distance = length(direction); //We get the magnitude of LightToFrag vector
-
-        direction = normalize(direction); //For a qualified unit vector
-
-        vec4 col = CalcLightByDirection(pointLights[i].base, direction);
-
-        float attenuation = pointLights[i].attenuationQuadratic * distance * distance +
-                            pointLights[i].attenuationLinear * distance +
-                            pointLights[i].attenuationConstant;
-
-        totalColor +=  (col / attenuation);
+vec4 CalcSpotLights(){
+    vec4 totalColor = vec4(0, 0, 0, 0);
+    for(int i = 0; i < spotLightCount; i++){
+        totalColor += CalcLightBySpot(spotLights[i]);
     }
     return totalColor;
 }
@@ -115,6 +174,7 @@ vec4 CalcPointLights(){
 void main(){
     vec4 finalColor = CalcDirectionalLight();
     finalColor += CalcPointLights();
+    finalColor += CalcSpotLights();
 
     /**
      * MAIN fragment colouring

@@ -21,6 +21,7 @@
 #include "Util.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 
 const float toRadians = 3.14139265f / 180.0f;
 std::vector<Object> objectList;
@@ -35,6 +36,8 @@ Camera camera;
 DirectionalLight directionalLight;
 PointLight pointLights[MAX_POINT_LIGHTS];
 unsigned int pointLightCount = 0;
+SpotLight spotLights[MAX_SPOT_LIGHTS];
+unsigned int spotLightCount = 0;
 
 bool direction = true;
 float triOffset = 0.0f;
@@ -73,10 +76,10 @@ void CreateObjects(){
     transform2->GetPos() = glm::vec3(0.0,-2.0f,0.0f);
 
     Vertex vertices[] = {
-            Vertex(glm::vec3(-10.0,0.0,-10.0),glm::vec2(0.0,0.0),glm::vec3(0.0,1.0,0.0)),
-            Vertex(glm::vec3(10.0,0.0,-10.0),glm::vec2(10.0,0.0),glm::vec3(0.0,1.0,0.0)),
-            Vertex(glm::vec3(-10.0,0.0,10.0),glm::vec2(0.0,10.0),glm::vec3(0.0,1.0,0.0)),
-            Vertex(glm::vec3(10.0,0.0,10.0),glm::vec2(10.0,10.0),glm::vec3(0.0,1.0,0.0))
+            Vertex(glm::vec3(-100.0,0.0,-100.0),glm::vec2(0.0,0.0),glm::vec3(0.0,1.0,0.0)),
+            Vertex(glm::vec3(100.0,0.0,-100.0),glm::vec2(10.0,0.0),glm::vec3(0.0,1.0,0.0)),
+            Vertex(glm::vec3(-100.0,0.0,100.0),glm::vec2(0.0,10.0),glm::vec3(0.0,1.0,0.0)),
+            Vertex(glm::vec3(100.0,0.0,100.0),glm::vec2(10.0,10.0),glm::vec3(0.0,1.0,0.0))
     };
 
     unsigned int indices[] = {
@@ -110,14 +113,27 @@ void SetupLighting(){
 
     directionalLight = DirectionalLight(
             glm::vec3(1.0f,1.0f,1.0f),
-            glm::vec3(0.0f,-1.0f,0.0f), /*TODO: values are getting inverted*/
-            0.3f, 0.4f);
+            glm::vec3(0.0f,-1.0f,0.0f),
+            0.1f, 0.2f);
 
     pointLights[pointLightCount] = PointLight(
-            pointLightCount,glm::vec3(1.0f,1.0f,0.0f),glm::vec3(0.0f,0.0f,1.5f),
-            0.4f, 0.5f,
+            pointLightCount,glm::vec3(1.0f,1.0f,0.0f),glm::vec3(0.0f,0.0f,2.0f),
+            0.0f, 0.1f,
             1.0f,0.4f,0.3f);
     pointLightCount++;
+
+    /* int id, glm::vec3 color, glm::vec3 position, glm::vec3 direction,
+            GLfloat ambientIntensity, GLfloat diffuseIntensity,
+            GLfloat constant, GLfloat linear, GLfloat quadratic,
+            GLfloat edge*/
+    spotLights[spotLightCount] = SpotLight(spotLightCount,
+            glm::vec3(1.0f,1.0f,1.0f),/*Color*/
+            glm::vec3(0.0f,0.0f,2.0f),/*position*/
+            glm::vec3(0.0f,0.0f,1.0f),/*direction*/
+            0.1f, 0.3f,/*Ambient/diffuse intensity*/
+            1.0f,0.4f,0.3f, /*attenuation*/
+            10.0f);/*angle*/
+    spotLightCount++;
 }
 
 void SetupPerspective(){
@@ -209,9 +225,13 @@ int main() {
 
                 shaderList[0].UpdateView(camera);
 
+                spotLights[0].SetFlashLight(camera.getPosition(),camera.getDirection());
+
                 shaderList[0].SetDirectionalLight(&directionalLight);
 
-                shaderList[0].SetPointLights(pointLights, pointLightCount);
+//                shaderList[0].SetPointLights(pointLights, pointLightCount);
+
+                shaderList[0].SetSpotLights(spotLights, spotLightCount);
 
                 for(int i = 0; i < objectList.size(); i++){
                     shaderList[0].UpdateModel(*objectList[i].getTransform());

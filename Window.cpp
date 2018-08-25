@@ -130,6 +130,8 @@ void Window::handleMouseCallback(GLFWwindow *window, double xPos, double yPos){
     auto *theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
 
     if(theWindow->mouseFirstMoved){
+        theWindow->lastX = xPos;
+        theWindow->lastY = yPos;
         theWindow->mouseFirstMoved = false;
     }
 

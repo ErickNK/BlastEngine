@@ -31,8 +31,9 @@ void Shader::CreateUniforms() {
     m_uniforms[MODEL_U] = glGetUniformLocation(m_program, "model");
     m_uniforms[PROJECTION_U] = glGetUniformLocation(m_program, "projection");
     m_uniforms[CAMERA_POSITION_U] = glGetUniformLocation(m_program, "cameraPosition");
+    m_uniforms[CAMERA_POSITION_U] = glGetUniformLocation(m_program, "cameraDirection");
 
-    m_uniforms[POINT_LIGHT_COUNT_U] = glGetUniformLocation(m_program, "pointLightsCount");
+    m_uniforms[POINT_LIGHT_COUNT_U] = glGetUniformLocation(m_program, "pointLightCount");
     m_uniforms[SPOT_LIGHT_COUNT_U] = glGetUniformLocation(m_program, "spotLightCount");
 
     for (size_t i = 0; i < MAX_POINT_LIGHTS; i++){
@@ -59,6 +60,38 @@ void Shader::CreateUniforms() {
 
         snprintf(locBuff, sizeof(locBuff), "pointLights[%d].attenuationQuadratic",i);
         m_point_lights[i].attenuation_quadratic_u = glGetUniformLocation(m_program, locBuff);
+    }
+
+    for (size_t i = 0; i < MAX_SPOT_LIGHTS; i++){
+
+        char locBuff[100] = {'\0'};
+
+        snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.colour",i);
+        m_spot_lights[i].base.color_u = glGetUniformLocation(m_program, locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.ambientIntensity",i);
+        m_spot_lights[i].base.ambient_intensity_u = glGetUniformLocation(m_program, locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.diffuseIntensity",i);
+        m_spot_lights[i].base.diffuse_intensity_u = glGetUniformLocation(m_program, locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.position",i);
+        m_spot_lights[i].position_u = glGetUniformLocation(m_program, locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "spotLights[%d].direction",i);
+        m_spot_lights[i].direction_u = glGetUniformLocation(m_program, locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "spotLights[%d].edge",i);
+        m_spot_lights[i].edge_u = glGetUniformLocation(m_program, locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.attenuationConstant",i);
+        m_spot_lights[i].attenuation_constant_u = glGetUniformLocation(m_program, locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.attenuationLinear",i);
+        m_spot_lights[i].attenuation_linear_u = glGetUniformLocation(m_program, locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.attenuationQuadratic",i);
+        m_spot_lights[i].attenuation_quadratic_u = glGetUniformLocation(m_program, locBuff);
     }
 }
 
@@ -93,10 +126,11 @@ void Shader::UpdateView(const Camera &camera) {
 
     //Update position
     glUniform3f(m_uniforms[CAMERA_POSITION_U],camera.getPosition().x,camera.getPosition().y,camera.getPosition().z);
+    glUniform3f(m_uniforms[CAMERA_DIRECTION_U],camera.getDirection().x,camera.getDirection().y,camera.getDirection().z);
 }
 
-std::string Shader::LoadShader(const std::string& fileName)
-{
+std::string Shader::LoadShader(const std::string& fileName) {
+
     std::ifstream file;
     file.open((fileName).c_str());
 
@@ -119,8 +153,8 @@ std::string Shader::LoadShader(const std::string& fileName)
     return output;
 }
 
-void Shader::CheckShaderError(GLuint shader, GLuint flag, bool isProgram, const std::string& errorMessage)
-{
+void Shader::CheckShaderError(GLuint shader, GLuint flag, bool isProgram, const std::string& errorMessage) {
+
     GLint success = 0;
     GLchar error[1024] = { 0 };
 
@@ -173,10 +207,21 @@ void Shader::SetPointLights(PointLight *pLights, unsigned int lightCount) {
 
     if (lightCount > MAX_POINT_LIGHTS) lightCount = MAX_POINT_LIGHTS;
 
-    glUniform1d(m_uniforms[POINT_LIGHT_COUNT_U],lightCount);
+    glUniform1i(m_uniforms[POINT_LIGHT_COUNT_U],lightCount);
 
     for(size_t i = 0; i < lightCount; i++){
         pLights[i].UseLight(m_point_lights);
+    }
+}
+
+void Shader::SetSpotLights(SpotLight *sLights, unsigned int lightCount) {
+
+    if (lightCount > MAX_SPOT_LIGHTS) lightCount = MAX_SPOT_LIGHTS;
+
+    glUniform1i(m_uniforms[SPOT_LIGHT_COUNT_U],lightCount);
+
+    for(size_t i = 0; i < lightCount; i++){
+        sLights[i].UseLight(m_spot_lights);
     }
 }
 
@@ -191,8 +236,6 @@ PointLightUniforms *Shader::getPointLightUniformsArray() {
 MaterialUniforms *Shader::getMaterialUniforms() {
     return &m_material;
 }
-
-
 
 
 

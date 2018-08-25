@@ -16,6 +16,7 @@
 #include "CommonValues.h"
 #include "PointLight.h"
 #include "DirectionalLight.h"
+#include "SpotLight.h"
 
 class Shader {
 public:
@@ -95,12 +96,15 @@ public:
     void SetPointLights(PointLight *pLights, unsigned int lightCount);
 
     MaterialUniforms* getMaterialUniforms();
+
+    void SetSpotLights(SpotLight *sLights, unsigned int lightCount);
+
 protected:
 private:
     /**
      * Keeps track of total amount of lights the shader has.
      * */
-    int pointLightCount = 0, directionalLightCount = 0, spotLightCount = 0;
+    int pointLightCount, spotLightCount;
 
     /**
      * Keeps track of where the program is, like a handle
@@ -117,12 +121,24 @@ private:
      * */
     GLint m_uniforms[NUM_UNIFORMS];
 
+    /**
+    *  The uniforms for a material.
+    * */
     MaterialUniforms m_material;
 
+    /**
+     *  The uniforms for a Directional Light.
+     * */
     DirectionalLightUniforms m_directional_light;
 
+    /**
+     *  The uniforms for Point Lights.
+     * */
     PointLightUniforms m_point_lights[MAX_POINT_LIGHTS];
 
+    /**
+     *  The uniforms for Spot Lights.
+     * */
     SpotLightUniforms m_spot_lights[MAX_SPOT_LIGHTS];
 
 };
