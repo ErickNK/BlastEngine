@@ -10,18 +10,18 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "CommonValues.h"
-#include "Window.h"
-#include "Shader.h"
-#include "Transform.h"
-#include "Mesh.h"
-#include "Camera.h"
-#include "Texture.h"
-#include "Object.h"
-#include "DirectionalLight.h"
-#include "PointLight.h"
-#include "SpotLight.h"
-#include "Model.h"
+#include "Core/CommonValues.h"
+#include "Rendering/Window.h"
+#include "Rendering/Shader.h"
+#include "Rendering/Transform.h"
+#include "Rendering/Mesh.h"
+#include "Rendering/Camera.h"
+#include "Rendering/Texture.h"
+#include "Rendering/Object.h"
+#include "Rendering/DirectionalLight.h"
+#include "Rendering/PointLight.h"
+#include "Rendering/SpotLight.h"
+#include "Rendering/Model.h"
 
 const float toRadians = 3.14139265f / 180.0f;
 std::vector<Object> objectList;

@@ -15,7 +15,7 @@
 
 #include "Transform.h"
 #include "Camera.h"
-#include "CommonValues.h"
+#include "../Core/CommonValues.h"
 #include "PointLight.h"
 #include "DirectionalLight.h"
 #include "SpotLight.h"

@@ -6,7 +6,7 @@
 #define MORDEROPENGLUDEMYTUTORIAL_DIRECTIONALLIGHT_H
 
 #include "Light.h"
-#include "CommonValues.h"
+#include "../Core/CommonValues.h"
 
 class DirectionalLight : public Light {
 

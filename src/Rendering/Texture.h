@@ -8,7 +8,7 @@
 
 #include <string>
 #include <GL/glew.h>
-#include "CommonValues.h"
+#include "../Core/CommonValues.h"
 
 class Texture {
 public:

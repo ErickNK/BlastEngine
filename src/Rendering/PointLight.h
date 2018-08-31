@@ -6,7 +6,7 @@
 #define MORDEROPENGLUDEMYTUTORIAL_POINTLIGHT_H
 
 #include "Light.h"
-#include "CommonValues.h"
+#include "../Core/CommonValues.h"
 
 class PointLight : public Light {
 
