@@ -110,6 +110,12 @@
     <ClCompile Include="Physics\Coliders\AxisAlignedBoundingBox.cpp" />
     <ClCompile Include="Physics\Coliders\BoundingSphere.cpp" />
     <ClCompile Include="Physics\Coliders\Plane.cpp" />
+    <ClCompile Include="Physics\Colliders\AxisAlignedBoundingBox.cpp" />
+    <ClCompile Include="Physics\Colliders\BoundingSphere.cpp" />
+    <ClCompile Include="Physics\Colliders\Collider.cpp" />
+    <ClCompile Include="Physics\Colliders\Plane.cpp" />
+    <ClCompile Include="Physics\PhysicsObject.cpp" />
+    <ClCompile Include="Physics\PhysicsEngine.cpp" />
     <ClCompile Include="Rendering\stb_image.c" />
     <ClCompile Include="Rendering\Camera.cpp" />
     <ClCompile Include="Rendering\DirectionalLight.cpp" />
@@ -127,10 +133,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\math3d.h" />
+    <ClInclude Include="Core\referenceCounter.h" />
     <ClInclude Include="Physics\Coliders\AxisAlignedBoundingBox.h" />
     <ClInclude Include="Physics\Coliders\BoundingSphere.h" />
     <ClInclude Include="Physics\Coliders\IntersectData.h" />
     <ClInclude Include="Physics\Coliders\Plane.h" />
+    <ClCompile Include="Physics\PhysicsObject.h" />
+    <ClCompile Include="Physics\PhysicsEngine.h" />
+    <ClInclude Include="Physics\Colliders\AxisAlignedBoundingBox.h" />
+    <ClInclude Include="Physics\Colliders\BoundingSphere.h" />
+    <ClInclude Include="Physics\Colliders\Collider.h" />
+    <ClInclude Include="Physics\Colliders\IntersectData.h" />
+    <ClInclude Include="Physics\Colliders\Plane.h" />
     <ClInclude Include="Rendering\stb_image.h" />
     <ClInclude Include="Rendering\Camera.h" />
     <ClInclude Include="Core\CommonValues.h" />

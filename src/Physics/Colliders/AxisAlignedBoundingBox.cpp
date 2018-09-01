@@ -13,5 +13,5 @@ IntersectData AxisAlignedBoundingBox::IntersectAABB(const AxisAlignedBoundingBox
 
 	float maxDistance = distances.Max();
 
-	return IntersectData(maxDistance < 0, maxDistance);
+	return IntersectData(maxDistance < 0, distances);
 }
