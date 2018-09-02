@@ -1,13 +1,16 @@
-#pragma once
+#ifndef PLANE_INCLUDED_H
+#define PLANE_INCLUDED_H
 
 #include "../../Core/math3d.h"
 #include "BoundingSphere.h"
 #include "IntersectData.h"
+#include "Collider.h"
 
-class Plane
+class Plane : public Collider
 {
 public:
 	Plane(const Vector3f& normal, const float distance) :
+		Collider(Collider::TYPE_PLANE),
 		m_normal(normal),
 		m_distance(distance) {};
 
@@ -21,3 +24,4 @@ private:
 	const float m_distance;
 };
 
+#endif

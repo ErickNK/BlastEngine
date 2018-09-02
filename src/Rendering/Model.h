@@ -57,7 +57,7 @@ public:
 
 	~Model();
 
-	void Draw(Shader* shader);
+	void Draw(Shader* shader, bool shadowPass);
 
 private:
 	std::vector<ModelComponent> components;

@@ -102,10 +102,19 @@ public:
 
     void SetPointLights(PointLight *pLights, unsigned int lightCount);
 
-    MaterialUniforms* getMaterialUniforms();
+	SpotLightUniforms* getSpotLightUniformsArray();
 
     void SetSpotLights(SpotLight *sLights, unsigned int lightCount);
 
+	MaterialUniforms* getMaterialUniforms();
+
+	int getAvailableGlobalTextureUnit();
+
+	int getAvailableDrawingTextureUnit();
+
+	void resetGlobalTextureUnits();
+
+	void resetDrawingTextureUnits();
 protected:
 private:
 	/**
@@ -117,7 +126,19 @@ private:
     /**
      * Keeps track of total amount of lights the shader has.
      * */
-    int pointLightCount, spotLightCount;
+	int pointLightCount, spotLightCount;
+	
+	/*
+	* Keeps track of the last issued glabal texture unit. Global texture units
+	* are kept with each render pass
+	*/
+	int lastIssuedGlobalTextureUnit = -1;
+
+	/*
+	* Keeps track of the last issued drawing texture unit. Drawing texture units
+	* are kept only within drawing of a mesh and its material.
+	*/
+	int lastIssuedDrawingTextureUnit = MAX_GLOBAL_TEXTURE_UNITS + 0;
 
     /**
      * Keeps track of where the program is, like a handle

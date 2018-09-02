@@ -4,7 +4,7 @@
 
 const int MAX_POINT_LIGHTS = 3;
 const int MAX_SPOT_LIGHTS = 3;
-const int MAX_MATERIAL_TEXTURES = 16;
+const int MAX_MATERIAL_TEXTURES = 3;
 
 // -----------------------------------------------------------
 
@@ -13,6 +13,7 @@ const int MAX_MATERIAL_TEXTURES = 16;
 in vec2 vTexCoord;
 in vec3 vNormal;
 in vec3 vFragPos;
+in vec4 vDirectionalLightSpacePosition;
 
 // ---------------------------------------------------------
 
@@ -33,6 +34,8 @@ struct Light{
 struct DirectionalLight{
     Light base;
     vec3 direction;
+	
+	sampler2D shadowMap;
 };
 
 struct PointLight{
@@ -64,8 +67,6 @@ struct Material{
 
 //uniform variables -----------------------------------------
 
-uniform sampler2D texture0;
-
 uniform DirectionalLight directionalLight;
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
@@ -85,6 +86,26 @@ vec4 totalSpecularTexture;
 
 // -----------------------------------------------------------
 
+
+float CalcDirectionalLightShadowFactor(DirectionalLight directionalLight){
+	
+	//Convert into normalized device coordinates (-1,1)
+	vec3 projCoords = vDirectionalLightSpacePosition.xyz / vDirectionalLightSpacePosition.w;
+	//Convert to 0-1 range. Which is what depth range is
+	projCoords = (projCoords * 0.5) + 0.5;
+
+	//Get depth of the fragment relative to the light in orthographic projection.
+	float closestDepth = texture(directionalLight.shadowMap, projCoords.xy).r; 
+	
+	//Get how far (forwards and backwards) from the light the fragment is.
+	float currentDepth = projCoords.z; 
+
+	float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
+
+	return 0.0f;
+}
+
+
 void CalcTotalDiffuseTexture(){
 	totalDiffuseTexture = vec4(1, 1, 1, 1);
     for(int i = 0; i < material.diffuseTextureCount; i++){
@@ -99,7 +120,7 @@ void CalcTotalSpecularTexture(){
     }
 }
 
-vec4 CalcLightByDirection(Light light, vec3 lightDirection){
+vec4 CalcLightByDirection(Light light, vec3 lightDirection, float shadowFactor){
 	vec3 normalizedNormal = normalize(vNormal);
 
     /**
@@ -136,7 +157,7 @@ vec4 CalcLightByDirection(Light light, vec3 lightDirection){
     /**
      * MAIN fragment colouring
      * */
-    return (ambient + diffuse + specular);
+    return (ambient + (1.0 - shadowFactor) * (diffuse + specular));
 
 }
 
@@ -147,7 +168,7 @@ vec4 CalcLightByPoint(PointLight pLight){
 
     lightDirection = normalize(lightDirection); //For a qualified unit vector
 
-    vec4 col = CalcLightByDirection(pLight.base, lightDirection);
+    vec4 col = CalcLightByDirection(pLight.base, lightDirection,0.0f);
 
     float attenuation = pLight.attenuationQuadratic * distance * distance +
                         pLight.attenuationLinear * distance +
@@ -182,7 +203,11 @@ vec4 CalcLightBySpot(SpotLight sLight){
 }
 
 vec4 CalcDirectionalLight(){
-    return CalcLightByDirection(directionalLight.base,directionalLight.direction);
+    return CalcLightByDirection(
+		directionalLight.base,
+		directionalLight.direction,
+		CalcDirectionalLightShadowFactor(directionalLight)
+	);
 }
 
 vec4 CalcPointLights(){

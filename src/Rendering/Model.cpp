@@ -9,24 +9,31 @@ Model::Model(const char* path)
 
 Model::~Model() {}
 
-void Model::Draw(Shader* shader){
+void Model::Draw(Shader* shader, bool shadowPass){
 	for (GLuint i = 0; i < this->components.size(); i++) {
+
 		shader->UpdateModel(this->components[i].getTransform());
+		
+		if (!shadowPass) {
 
-		//if (isScaled) {
-			shader->UpdateNormalMatrix(
-				glm::mat3(glm::transpose(glm::inverse(this->components[i].getTransform().GetModel())))
-			);
-		//}
-		//else {
-		//	shader.UpdateNormalMatrix(
-		//		glm::mat3(components[i].getTransform().GetModel())
-		//	);
-		//}
+			if (this->components[i].getTransform().isNonUnformScaled()) {
+				shader->UpdateNormalMatrix(
+					glm::mat3(glm::transpose(glm::inverse(this->components[i].getTransform().GetModel())))
+				);
+			} else {
+				shader->UpdateNormalMatrix(
+					glm::mat3(components[i].getTransform().GetModel())
+				);
+			}
 
-		this->components[i].getMaterial().UseMaterial(shader->getMaterialUniforms());
+			this->components[i].getMaterial().UseMaterial(shader);
+		}
 
 		this->components[i].getMesh().Draw();
+
+		if (!shadowPass) {
+			shader->resetDrawingTextureUnits();
+		}
 	}
 }
 
@@ -72,10 +79,19 @@ void Model::processComponent(aiMesh * mesh, const aiScene * scene) {
 		vector.z = mesh->mVertices[i].z;
 		vertex.SetPos(vector);
 
-		vector.x = mesh->mNormals[i].x;
-		vector.y = mesh->mNormals[i].y;
-		vector.z = mesh->mNormals[i].z;
-		vertex.SetNormal(vector);
+		if (mesh->mNormals != NULL) {
+			vector.x = mesh->mNormals[i].x;
+			vector.y = mesh->mNormals[i].y;
+			vector.z = mesh->mNormals[i].z;
+			vertex.SetNormal(vector);
+		}
+		else {
+			vector.x = 0;
+			vector.y = 0;
+			vector.z = 0;
+			vertex.SetNormal(vector);
+		}
+		
 
 		if (mesh->mTextureCoords[0]) {
 			glm::vec2 vec;

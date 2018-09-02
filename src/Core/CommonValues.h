@@ -7,7 +7,11 @@
 
 #include <GL/glew.h>
 
-const int MAX_POINT_LIGHTS = 3, MAX_SPOT_LIGHTS = 3, MAX_MATERIALS_TEXTURES = 16;
+const int MAX_POINT_LIGHTS = 3, 
+	MAX_SPOT_LIGHTS = 3, 
+	MAX_MATERIALS_TEXTURES = 3, 
+	MAX_GLOBAL_TEXTURE_UNITS = 16, 
+	MAX_DRAWING_TEXTURE_UNITS = 16;
 
 /**
  * Uniforms used
@@ -17,8 +21,8 @@ enum ShaderUniforms : unsigned int {
     VIEW_U,
     PROJECTION_U,
     NORMAL_MATRIX_U,
-
-    POINT_LIGHT_COUNT_U,
+    
+	POINT_LIGHT_COUNT_U,
     SPOT_LIGHT_COUNT_U,
 
     CAMERA_POSITION_U,
@@ -43,6 +47,9 @@ struct DirectionalLightUniforms{
     LightUniforms base;
 
     GLint direction_u;
+
+	GLint shadow_map_u;
+	GLint light_space_u;
 };
 
 /**
@@ -52,6 +59,9 @@ struct PointLightUniforms{
     LightUniforms base;
 
     GLint position_u;
+
+	GLint shadow_map_u;
+	GLint light_space_u;
 
     GLint attenuation_constant_u;
     GLint attenuation_linear_u;
@@ -68,6 +78,9 @@ struct SpotLightUniforms{
     GLint position_u;
     GLint direction_u;
     GLint edge_u;
+
+	GLint shadow_map_u;
+	GLint light_space_u;
 
     GLint attenuation_constant_u;
     GLint attenuation_linear_u;

@@ -7,14 +7,19 @@
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include "Shadows/ShadowMap.h"
 
 class Light {
 public:
     Light();
 
-    Light(glm::vec3 color,GLfloat ambientIntensity, GLfloat diffuseIntensity);
+    Light(glm::vec3 color,GLfloat ambientIntensity, GLfloat diffuseIntensity, GLfloat shadowWidth, GLfloat shadowHeight);
 
     virtual ~Light();
+
+	ShadowMap* GetShadowMap() { return shadowMap; }
 
 protected:
     glm::vec3 color;
@@ -22,6 +27,12 @@ protected:
     GLfloat ambientIntensity;
 
     GLfloat diffuseIntensity;
+
+	glm::mat4 lightProjection;
+
+	glm::mat4 lightSpace;
+
+	ShadowMap* shadowMap;
 };
 
 

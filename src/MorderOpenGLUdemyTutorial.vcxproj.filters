@@ -24,15 +24,6 @@
     <ClCompile Include="Physics\PhysicsObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Physics\Coliders\AxisAlignedBoundingBox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Physics\Coliders\BoundingSphere.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Physics\Coliders\Plane.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Rendering\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -95,18 +86,6 @@
     <ClCompile Include="Physics\PhysicsObject.h">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClInclude Include="Physics\Coliders\AxisAlignedBoundingBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics\Coliders\BoundingSphere.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics\Coliders\IntersectData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics\Coliders\Plane.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Rendering\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>

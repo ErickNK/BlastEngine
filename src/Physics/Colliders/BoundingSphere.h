@@ -1,4 +1,6 @@
-#pragma once
+#ifndef BOUNDINGSPHERE_INCLUDED_H
+#define BOUNDINGSPHERE_INCLUDED_H
+
 #include "../../Core/math3d.h"
 #include "IntersectData.h"
 #include "Collider.h"
@@ -33,3 +35,4 @@ private:
 	float m_radius;
 };
 
+#endif

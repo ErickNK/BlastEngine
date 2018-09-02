@@ -31,6 +31,8 @@ public:
 
     void Clear(float r, float b, float g, float a);
 
+	void ResetViewPort();
+
 //GETTERS AND SETTERS
 
     bool getShouldClose() const;

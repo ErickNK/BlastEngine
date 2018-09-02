@@ -13,12 +13,15 @@ class DirectionalLight : public Light {
 public:
     DirectionalLight();
 
-    DirectionalLight(glm::vec3 color,glm::vec3 direction,GLfloat ambientIntensity, GLfloat diffuseIntensity);
+    DirectionalLight(glm::vec3 color,glm::vec3 direction,GLfloat ambientIntensity, GLfloat diffuseIntensity,
+		GLfloat shadowWidth, GLfloat shadowHeight);
 
     ~DirectionalLight() override;
 
-    void UseLight(DirectionalLightUniforms *directionalLightUniforms);
+	void SetupLightSpace(DirectionalLightUniforms *directionalLightUniforms, GLuint shaderProgram);
 
+	void UseLight(DirectionalLightUniforms *directionalLightUniforms,int shadowTextureUnit);
+	
     static void SetupUniforms(DirectionalLightUniforms *directionalLightUniforms,GLuint shaderProgram);
 
 private:

@@ -159,6 +159,14 @@ void Window::setupSettings(){
 
 }
 
+void Window::ResetViewPort() {
+	//Get buffer size information
+	glfwGetFramebufferSize(mainWindow, &bufferWidth, &bufferHeight);
+
+	//Set Viewport.
+	glViewport(0, 0, bufferWidth, bufferHeight);
+}
+
 //GETTERS AND SETTERS
 
 int Window::getBufferWidth() const {

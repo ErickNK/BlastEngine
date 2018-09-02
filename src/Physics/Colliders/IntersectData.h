@@ -1,10 +1,14 @@
-#pragma once
+#ifndef INTERSECTDATA_INCLUDED_H
+#define INTERSECTDATA_INCLUDED_H
+
+#include "../../Core/math3d.h"
+
 class IntersectData
 {
 public:
-	IntersectData(bool doesIntersect, const Vector3f& direction) : 
+	IntersectData(const bool doesIntersect, const Vector3f& direction) : 
 		m_doesIntersect(doesIntersect), 
-		m_direction(direction) {};
+		m_direction(direction) {}
 
 	inline bool GetDoesIntersect() const { return m_doesIntersect; }
 	inline float GetDistance() const { return m_direction.Length(); }
@@ -14,3 +18,4 @@ private:
 	const Vector3f m_direction;
 };
 
+#endif

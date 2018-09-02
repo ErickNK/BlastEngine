@@ -19,39 +19,40 @@ Material::Material(GLfloat specularIntensity, GLfloat shininess, std::vector<Tex
 
 Material::~Material() {}
 
-void Material::UseMaterial(MaterialUniforms *materialUniforms) {
+void Material::UseMaterial(Shader* shader) {
 	unsigned int diffuseNr = 0;
 	unsigned int specularNr = 0;
 	for (unsigned int i = 0; i < textures.size(); i++)
 	{
+		int textureUnit = shader->getAvailableDrawingTextureUnit();
 		TextureTypeEnum type = textures[i].GetTextureType();
 		if (type == DIFFUSE_TEXTURE) {
 			if (diffuseNr == 16) return;
 
 			//Set Diffuse texture texture-unit
-			glUniform1i(materialUniforms->diffuse_texture_u[i], i);
+			glUniform1i(shader->getMaterialUniforms()->diffuse_texture_u[i], textureUnit);
 			diffuseNr++;
-			glUniform1i(materialUniforms->diffuse_texture_count_u, diffuseNr);	
+			glUniform1i(shader->getMaterialUniforms()->diffuse_texture_count_u, diffuseNr);
 		}
 		else if (type == SPECULAR_TEXTURE)
 		{
 			if (specularNr == 16) return;
 
 			//Set Diffuse texture texture-unit
-			glUniform1i(materialUniforms->specular_texture_u[i], i);
+			glUniform1i(shader->getMaterialUniforms()->specular_texture_u[i], textureUnit);
 			specularNr++;
-			glUniform1i(materialUniforms->specular_texture_count_u, specularNr);
+			glUniform1i(shader->getMaterialUniforms()->specular_texture_count_u, specularNr);
 		}
 		
 		//Bind texture to texture-unit i
-		textures[i].Bind(i);
+		textures[i].Bind(textureUnit);
 	}
 	
 	//Set Specular Intensity
-    glUniform1f(materialUniforms->specular_intensity_u,specularIntensity);
+    glUniform1f(shader->getMaterialUniforms()->specular_intensity_u,specularIntensity);
 
     //Set Shininess
-    glUniform1f(materialUniforms->shininess_u,shininess);
+    glUniform1f(shader->getMaterialUniforms()->shininess_u,shininess);
 }
 
 void Material::SetupUniforms(MaterialUniforms *materialUniforms,GLuint shaderProgram) {

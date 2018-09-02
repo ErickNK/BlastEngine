@@ -17,14 +17,15 @@ public:
             int id, glm::vec3 color, glm::vec3 position, glm::vec3 direction,
             GLfloat ambientIntensity, GLfloat diffuseIntensity,
             GLfloat constant, GLfloat linear, GLfloat quadratic,
-            GLfloat edge
-               );
+            GLfloat edge, GLfloat shadowWidth, GLfloat shadowHeight);
 
     ~SpotLight() override;
 
-    void UseLight(SpotLightUniforms *spotLightUniforms);
+    void UseLight(SpotLightUniforms *spotLightUniforms, int shadowTextureUnit);
 
-    void SetFlashLight(glm::vec3 position, glm::vec3 direction);
+    void SetAsFlashLight(glm::vec3 position, glm::vec3 direction);
+
+	static void SetupUniforms(SpotLightUniforms *spotLightUniforms, GLuint shaderProgram);
 
 private:
 

@@ -34,86 +34,36 @@ void Shader::CreateUniforms() {
     m_uniforms[MODEL_U] = glGetUniformLocation(m_program, "model");
     m_uniforms[PROJECTION_U] = glGetUniformLocation(m_program, "projection");
     m_uniforms[NORMAL_MATRIX_U] = glGetUniformLocation(m_program, "normalMatrix");
-    m_uniforms[CAMERA_POSITION_U] = glGetUniformLocation(m_program, "cameraPosition");
-    m_uniforms[CAMERA_POSITION_U] = glGetUniformLocation(m_program, "cameraDirection");
-
+    
     m_uniforms[POINT_LIGHT_COUNT_U] = glGetUniformLocation(m_program, "pointLightCount");
     m_uniforms[SPOT_LIGHT_COUNT_U] = glGetUniformLocation(m_program, "spotLightCount");
 
-    for (size_t i = 0; i < MAX_POINT_LIGHTS; i++){
+	m_uniforms[CAMERA_POSITION_U] = glGetUniformLocation(m_program, "cameraPosition");
+	m_uniforms[CAMERA_DIRECTION_U] = glGetUniformLocation(m_program, "cameraDirection");
 
-        char locBuff[100] = {'\0'};
-
-        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.colour",i);
-        m_point_lights[i].base.color_u = glGetUniformLocation(m_program, locBuff);
-
-        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.ambientIntensity",i);
-        m_point_lights[i].base.ambient_intensity_u = glGetUniformLocation(m_program, locBuff);
-
-        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.diffuseIntensity",i);
-        m_point_lights[i].base.diffuse_intensity_u = glGetUniformLocation(m_program, locBuff);
-
-        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].position",i);
-        m_point_lights[i].position_u = glGetUniformLocation(m_program, locBuff);
-
-        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].attenuationConstant",i);
-        m_point_lights[i].attenuation_constant_u = glGetUniformLocation(m_program, locBuff);
-
-        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].attenuationLinear",i);
-        m_point_lights[i].attenuation_linear_u = glGetUniformLocation(m_program, locBuff);
-
-        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].attenuationQuadratic",i);
-        m_point_lights[i].attenuation_quadratic_u = glGetUniformLocation(m_program, locBuff);
-    }
-
-    for (size_t i = 0; i < MAX_SPOT_LIGHTS; i++){
-
-        char locBuff[100] = {'\0'};
-
-        snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.colour",i);
-        m_spot_lights[i].base.color_u = glGetUniformLocation(m_program, locBuff);
-
-        snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.ambientIntensity",i);
-        m_spot_lights[i].base.ambient_intensity_u = glGetUniformLocation(m_program, locBuff);
-
-        snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.diffuseIntensity",i);
-        m_spot_lights[i].base.diffuse_intensity_u = glGetUniformLocation(m_program, locBuff);
-
-        snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.position",i);
-        m_spot_lights[i].position_u = glGetUniformLocation(m_program, locBuff);
-
-        snprintf(locBuff, sizeof(locBuff), "spotLights[%d].direction",i);
-        m_spot_lights[i].direction_u = glGetUniformLocation(m_program, locBuff);
-
-        snprintf(locBuff, sizeof(locBuff), "spotLights[%d].edge",i);
-        m_spot_lights[i].edge_u = glGetUniformLocation(m_program, locBuff);
-
-        snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.attenuationConstant",i);
-        m_spot_lights[i].attenuation_constant_u = glGetUniformLocation(m_program, locBuff);
-
-        snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.attenuationLinear",i);
-        m_spot_lights[i].attenuation_linear_u = glGetUniformLocation(m_program, locBuff);
-
-        snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.attenuationQuadratic",i);
-        m_spot_lights[i].attenuation_quadratic_u = glGetUniformLocation(m_program, locBuff);
-    }
+    
 }
 
+//TODO: figure out how to add multiple items in vector without the previous once being destroyed.
 Shader::~Shader() {
     //Detach shaders to the program.
-    for (GLuint m_shader : m_shaders) {
-        glDetachShader(m_program, m_shader);
-        glDeleteShader(m_shader);
-    }
+    //for (GLuint m_shader : m_shaders) {
+    //    glDetachShader(m_program, m_shader);
+    //    glDeleteShader(m_shader);
+    //}
 
-    glDeleteProgram(m_program);
+    //glDeleteProgram(m_program);
 }
 
 void Shader::Bind() {
+	resetDrawingTextureUnits();
+	resetGlobalTextureUnits();
     glUseProgram(m_program);
 }
 
 void Shader::UnBind() {
+	resetDrawingTextureUnits();
+	resetGlobalTextureUnits();
     glUseProgram(0);
 }
 
@@ -209,7 +159,9 @@ std::vector<GLuint> Shader::getShaders() { return m_shaders; }
 
 GLuint Shader::getShaderProgram() { return m_program; }
 
-void Shader::SetDirectionalLight(DirectionalLight *dLight) { dLight->UseLight(&m_directional_light); }
+void Shader::SetDirectionalLight(DirectionalLight *dLight) {
+	dLight->UseLight(&m_directional_light, getAvailableGlobalTextureUnit());
+}
 
 void Shader::SetPointLights(PointLight *pLights, unsigned int lightCount) {
 
@@ -218,7 +170,7 @@ void Shader::SetPointLights(PointLight *pLights, unsigned int lightCount) {
     glUniform1i(m_uniforms[POINT_LIGHT_COUNT_U],lightCount);
 
     for(size_t i = 0; i < lightCount; i++){
-        pLights[i].UseLight(m_point_lights);
+        pLights[i].UseLight(m_point_lights, getAvailableGlobalTextureUnit());
     }
 }
 
@@ -229,7 +181,7 @@ void Shader::SetSpotLights(SpotLight *sLights, unsigned int lightCount) {
     glUniform1i(m_uniforms[SPOT_LIGHT_COUNT_U],lightCount);
 
     for(size_t i = 0; i < lightCount; i++){
-        sLights[i].UseLight(m_spot_lights);
+        sLights[i].UseLight(m_spot_lights, getAvailableGlobalTextureUnit());
     }
 }
 
@@ -241,8 +193,35 @@ PointLightUniforms* Shader::getPointLightUniformsArray() {
     return m_point_lights;
 }
 
+SpotLightUniforms* Shader::getSpotLightUniformsArray() {
+	return m_spot_lights;
+}
+
 MaterialUniforms* Shader::getMaterialUniforms() {
     return &m_material;
+}
+
+
+int Shader::getAvailableGlobalTextureUnit() {
+	if (lastIssuedGlobalTextureUnit >= MAX_GLOBAL_TEXTURE_UNITS) {
+		//TODO: Throw error
+	}
+	return ++lastIssuedGlobalTextureUnit;
+}
+
+int Shader::getAvailableDrawingTextureUnit() {
+	if (lastIssuedDrawingTextureUnit >= MAX_DRAWING_TEXTURE_UNITS) {
+		//TODO: Throw error
+	}
+	return ++lastIssuedDrawingTextureUnit;
+}
+
+void Shader::resetGlobalTextureUnits() {
+	lastIssuedGlobalTextureUnit = -1;
+}
+
+void Shader::resetDrawingTextureUnits() {
+	lastIssuedDrawingTextureUnit = MAX_DRAWING_TEXTURE_UNITS + 0;
 }
 
 

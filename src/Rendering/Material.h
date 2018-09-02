@@ -19,7 +19,7 @@ public:
 
     virtual ~Material();
 
-    void UseMaterial(MaterialUniforms *materialUniforms) ;
+    void UseMaterial(Shader* shader) ;
 
     static void SetupUniforms(MaterialUniforms *materialUniforms,GLuint shaderProgram);
 

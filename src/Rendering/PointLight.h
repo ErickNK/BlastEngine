@@ -15,11 +15,14 @@ public:
 
     PointLight(int id, glm::vec3 color, glm::vec3 position,
             GLfloat ambientIntensity, GLfloat diffuseIntensity,
-            GLfloat constant, GLfloat linear, GLfloat quadratic);
+            GLfloat constant, GLfloat linear, GLfloat quadratic,
+			GLfloat shadowWidth, GLfloat shadowHeight);
 
     ~PointLight() override;
 
-    void UseLight(PointLightUniforms *pointLightUniforms);
+    void UseLight(PointLightUniforms *pointLightUniforms, int shadowTextureUnit);
+
+	static void SetupUniforms(PointLightUniforms *pointLightUniforms, GLuint shaderProgram);
 
 protected:
     int id;

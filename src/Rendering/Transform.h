@@ -40,16 +40,22 @@ public:
 
     inline void SetRot(const glm::vec3 &rot) { m_rot = rot; }
 
+	//TODO: Check if its non uniform
     inline glm::vec3& GetScale()  { return m_scale; }
 
-    inline void SetScale(const glm::vec3 &scale) { m_scale = scale; }
+    inline void SetScale(const glm::vec3 &scale) {
+		m_nonUniformScaled = true; //TODO: Check if its non uniform
+		m_scale = scale; 
+	}
+
+	inline bool isNonUnformScaled() const { return m_nonUniformScaled; }
 
 protected:
 private:
     glm::vec3 m_pos;
     glm::vec3 m_rot;
     glm::vec3 m_scale;
-
+	bool m_nonUniformScaled = false;
 };
 
 

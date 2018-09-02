@@ -1,20 +1,38 @@
 #version 330
 
-//Attribute Pointers
+//Attribute Pointers --------------------------------------
+
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec2 texCoord;
 layout (location = 2) in vec3 normal;
 
-//Output variables
+//---------------------------------------------------------
+
+//Output(Varying) variables -------------------------------
+
 out vec2 vTexCoord;
 out vec3 vNormal;
 out vec3 vFragPos;
 
-//Uniform variables
+/* Position of the fragment relative to the light */
+out vec4 vDirectionalLightSpacePosition; 
+
+//---------------------------------------------------------
+
+//Lighting ------------------------------------------------
+
+uniform mat4 directionalLightSpace;
+
+//---------------------------------------------------------
+
+//Uniform variables ---------------------------------------
+
 uniform mat4 view;
 uniform mat4 model;
 uniform mat4 projection;
 uniform mat3 normalMatrix;
+
+//---------------------------------------------------------
 
 void main(){
 
@@ -49,4 +67,11 @@ void main(){
      * We apply swizzling (vec4).xyz to get a vec3.
      * */
     vFragPos = (model * vec4(position, 1.0)).xyz;
+
+	 /**
+     * We need the world position of a vertex/Fragment relative to the lights point of view
+	 *(thus its lightSpaceTransform). 
+     *
+     * */
+	vDirectionalLightSpacePosition = directionalLightSpace * model * vec4(position, 1.0);
 }

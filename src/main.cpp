@@ -17,16 +17,15 @@
 #include "Rendering/Mesh.h"
 #include "Rendering/Camera.h"
 #include "Rendering/Texture.h"
-#include "Rendering/Object.h"
 #include "Rendering/DirectionalLight.h"
 #include "Rendering/PointLight.h"
 #include "Rendering/SpotLight.h"
 #include "Rendering/Model.h"
 
 const float toRadians = 3.14139265f / 180.0f;
-std::vector<Object> objectList;
 std::vector<Model> modelList;
 std::vector<Shader> shaderList;
+int CurrentShader = 0;
 
 GLfloat deltaTime;
 GLfloat lastTime;
@@ -40,69 +39,63 @@ unsigned int pointLightCount = 0;
 SpotLight spotLights[MAX_SPOT_LIGHTS];
 unsigned int spotLightCount = 0;
 
-bool direction = true;
-float triOffset = 0.0f;
-float triMaxOffset = 6.0f;
-float triIncrement = 1.0f;
-
-float curAngle = 0.0f;
-
-bool sizeDirection = true;
-float curSize = 0.4f;
-float minSize = 0.8f;
-float maxSize = 0.1f;
-
 void CreateObjects(){
     //Nanosuit
-	modelList.emplace_back("./res/models/nanosuit/nanosuit.obj");
-
-	//Monkey
-	//std::vector<Texture> textures;
-	/*Texture texture1("./res/textures/white-wall.jpg", DIFFUSE_TEXTURE);
-	Texture texture2("./res/textures/white-wall.jpg", SPECULAR_TEXTURE);
-	textures.push_back(texture1);
-	textures.push_back(texture2);*/
-
-	/*objectList.emplace_back(
-		*new Mesh("./res/models/nanosuit/nanosuit.obj"),
-		*new Transform(),
-		*new Material(0.5f,32.0f,textures)
-	);*/
+	modelList.emplace_back("./res/models/Race track/10605_Slot_Car_Race_Track_v1_L3.obj");
 }
 
 void CreateShaders(){
-	std::map<int, std::string> shaderFiles;
+	std::map<int, std::string> shaderFiles1;
 	
 	//Main shader
-	shaderFiles[GL_VERTEX_SHADER] = "./res/shaders/BasicShader.vert";
-	shaderFiles[GL_FRAGMENT_SHADER] = "./res/shaders/Lighting.frag";
-    shaderList.emplace_back(shaderFiles);
+	shaderFiles1[GL_VERTEX_SHADER] = "./res/shaders/BasicShader.vert";
+	shaderFiles1[GL_FRAGMENT_SHADER] = "./res/shaders/Lighting.frag";
+    shaderList.emplace_back(shaderFiles1);
+	
+	std::map<int, std::string> shaderFiles2;
+	shaderFiles2[GL_VERTEX_SHADER] = "./res/shaders/DirectionalLightShadowMapShader.vert";
+	shaderList.emplace_back(shaderFiles2);
 }
 
 void SetupLighting(){
-    DirectionalLight::SetupUniforms(shaderList[0].getDirectionalLightUniforms(),shaderList[0].getShaderProgram());
+    DirectionalLight::SetupUniforms(shaderList[CurrentShader].getDirectionalLightUniforms(),shaderList[CurrentShader].getShaderProgram());
+    SpotLight::SetupUniforms(shaderList[CurrentShader].getSpotLightUniformsArray(),shaderList[CurrentShader].getShaderProgram());
+    PointLight::SetupUniforms(shaderList[CurrentShader].getPointLightUniformsArray(),shaderList[CurrentShader].getShaderProgram());
 
-    Material::SetupUniforms(shaderList[0].getMaterialUniforms(),shaderList[0].getShaderProgram());
+    Material::SetupUniforms(shaderList[CurrentShader].getMaterialUniforms(),shaderList[CurrentShader].getShaderProgram());
 
     directionalLight = DirectionalLight(
             glm::vec3(1.0f,1.0f,1.0f),
-            glm::vec3(0.0f,-1.0f,0.0f),
-            0.4f, 0.7f);
+            glm::vec3(0.0f,-7.0f,-1.0f),
+            1.0f, 0.7f,
+			1024, 1024);
 
-    pointLights[pointLightCount] = PointLight(
-            pointLightCount,glm::vec3(1.0f,1.0f,0.0f),glm::vec3(0.0f,0.0f,2.0f),
-            0.0f, 0.1f,
-            1.0f,0.4f,0.3f);
-    pointLightCount++;
+   // pointLights[pointLightCount] = PointLight(
+   //         pointLightCount,glm::vec3(1.0f,1.0f,0.0f),glm::vec3(0.0f,0.0f,2.0f),
+   //         0.0f, 0.1f,
+   //         1.0f,0.4f,0.3f,
+			//1024,1024);
+   // pointLightCount++;
 
-    spotLights[spotLightCount] = SpotLight(spotLightCount,
-            glm::vec3(1.0f,1.0f,1.0f),/*Color*/
-            glm::vec3(0.0f,0.0f,2.0f),/*position*/
-            glm::vec3(0.0f,0.0f,1.0f),/*direction*/
-            0.1f, 0.3f,/*Ambient/diffuse intensity*/
-            1.0f,0.4f,0.3f, /*attenuation*/
-            10.0f);/*angle*/
-    spotLightCount++;
+   // spotLights[spotLightCount] = SpotLight(spotLightCount,
+   //         glm::vec3(1.0f,1.0f,1.0f),/*Color*/
+   //         glm::vec3(0.0f,0.0f,2.0f),/*position*/
+   //         glm::vec3(0.0f,0.0f,1.0f),/*direction*/
+   //         0.1f, 0.3f,/*Ambient/diffuse intensity*/
+   //         1.0f,0.4f,0.3f, /*attenuation*/
+   //         10.0f, /*angle*/
+			//1024, 1024);
+   // spotLightCount++;
+}
+
+void InjectLighting() {
+	shaderList[CurrentShader].SetDirectionalLight(&directionalLight);
+
+	//spotLights[CurrentShader].SetAsFlashLight(camera.getPosition(),camera.getDirection());
+
+	shaderList[CurrentShader].SetPointLights(pointLights, pointLightCount);
+
+	shaderList[CurrentShader].SetSpotLights(spotLights, spotLightCount);
 }
 
 void SetupPerspective(){
@@ -121,45 +114,73 @@ void SetupCamera(){
             glm::vec3(0.0f,1.0f,0.0f),
             -90.0f,
             0.0f,
-            5.0f,
+            15.0f,
             0.5f
     );
 }
 
-void UpdateTransformations(){
-    //Translate
-    if(direction){
-        triOffset += triIncrement;
-    }else{
-        triOffset -= triIncrement;
-    }
-
-    if(abs(triOffset) >= triMaxOffset){
-        direction = !direction;
-    }
-
-    //Rotate
-    curAngle += 1.0f;
-    if(curAngle >= 360){
-        curAngle -= 360;
-    }
-
-    //Scale
-    if(sizeDirection){
-        curSize += 0.01f;
-    }else{
-        curSize -= 0.01f;
-    }
-
-    if(curSize >= maxSize || curSize <= minSize){
-        sizeDirection = !sizeDirection;
-    }
-}
-
-void TimeManagement() {
+void ManagementTime() {
 	auto now = static_cast<GLfloat>(glfwGetTime());
 	deltaTime = now - lastTime;
 	lastTime = now;
+}
+
+void DrawSceneObjects(bool shadowPass) {
+	for (Model model : modelList) {
+		model.Draw(&shaderList[CurrentShader],shadowPass);
+	}
+}
+
+void RenderDirectionalLightShadowMap(DirectionalLight* dlight) {
+	CurrentShader = 1; //Use DirectionalLightShadowMapShader
+
+	shaderList[CurrentShader].Bind();
+
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		//Set view port same size as our shadow-map framebuffer
+		glViewport(0, 0, dlight->GetShadowMap()->GetShadowWidth(), dlight->GetShadowMap()->GetShadowHeight());
+
+		dlight->GetShadowMap()->BindFrameBuffer(); //Begin writing
+
+			dlight->SetupLightSpace(shaderList[CurrentShader].getDirectionalLightUniforms(), shaderList[CurrentShader].getShaderProgram());
+
+			DrawSceneObjects(true);
+
+		dlight->GetShadowMap()->UnBindFrameBuffer(); //stop writing
+
+	shaderList[CurrentShader].UnBind();
+}
+
+void RenderShadows() {
+	RenderDirectionalLightShadowMap(&directionalLight);
+}
+
+void RenderScene() {
+	CurrentShader = 0; //Use Basic Shader
+
+	window.Clear(0.0f, 0.0f, 0.0f, 1.0f);
+	window.ResetViewPort();
+
+		shaderList[CurrentShader].Bind();
+
+			shaderList[CurrentShader].UpdateProjection(projection);
+
+			shaderList[CurrentShader].UpdateView(camera);
+
+			InjectLighting();
+
+			DrawSceneObjects(false);
+
+		shaderList[CurrentShader].UnBind();
+
+	window.Update();
+}
+
+void HandleInput() {
+	glfwPollEvents();
+	camera.handleKeys(window.getKeys(), deltaTime);
+	camera.handleMouse(window.getXChange(), window.getYChange());
 }
 
 int main() {
@@ -182,50 +203,17 @@ int main() {
 
     while(!window.getShouldClose()){
 
-    //Time Management
-		TimeManagement();
+    //Do time management
+		ManagementTime();
 
     //Get * Handle user input events
-        glfwPollEvents();
-        camera.handleKeys(window.getKeys(), deltaTime);
-        camera.handleMouse(window.getXChange(), window.getYChange());
+		HandleInput();
 
-        window.Clear(0.0f,0.0f,0.0f,1.0f);
+	//Render Shadows
+		RenderShadows();
 
-            shaderList[0].Bind();
-
-                shaderList[0].UpdateProjection(projection);
-
-                shaderList[0].UpdateView(camera);
-                
-				//spotLights[0].SetFlashLight(camera.getPosition(),camera.getDirection());
-
-                shaderList[0].SetDirectionalLight(&directionalLight);
-
-                //shaderList[0].SetPointLights(pointLights, pointLightCount);
-
-                //shaderList[0].SetSpotLights(spotLights, spotLightCount);
-
-				modelList[0].Draw(&shaderList[0]);
-
-     //           for(int i = 0; i < objectList.size(); i++){
-					//shaderList[0].UpdateModel(objectList[i].getTransform());
-
-					//shaderList[0].UpdateNormalMatrix(
-					//	//glm::mat3(glm::transpose(glm::inverse(objectlist[i].gettransform()->getmodel())))
-					//	glm::mat3(objectList[i].getTransform().GetModel())
-					//);
-
-					//objectList[i].getMaterial().UseMaterial(shaderList[0].getMaterialUniforms());
-
-     //               objectList[i].getMesh().Draw();
-     //           }
-
-            shaderList[0].UnBind();
-
-        window.Update();
-
-        UpdateTransformations();
+    //Render
+		RenderScene();
     }
 
     return 0;

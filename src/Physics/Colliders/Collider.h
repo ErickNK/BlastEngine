@@ -1,12 +1,11 @@
 
 #ifndef COLLIDER_INCLUDED_H
-#define COLLIDER_OBJECT_INCLUDED_H
+#define COLLIDER_INCLUDED_H
 
 #include <iostream>
 #include "IntersectData.h"
 #include "../../Core/math3d.h"
 #include "../../Core/referenceCounter.h"
-#include "BoundingSphere.h"
 
 class Collider: public ReferenceCounter {
 public:
@@ -17,6 +16,7 @@ public:
 	enum {
 		TYPE_BOUNDINGSPHERE,
 		TYPE_AABB,
+		TYPE_PLANE,
 
 		NUM_TYPES
 	};
