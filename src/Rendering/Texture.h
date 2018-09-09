@@ -8,7 +8,7 @@
 
 #include <string>
 #include <GL/glew.h>
-#include "../Core/CommonValues.h"
+#include "../Common/CommonValues.h"
 
 class Texture {
 public:
@@ -36,6 +36,10 @@ public:
     void Bind(unsigned int unit);
 
     /**
+     * Delete Texture
+     * */
+	void Delete();
+	/**
      * Load the texture provided by the fileLocation without an alpha channel
      * */
     bool LoadTexture();

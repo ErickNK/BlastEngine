@@ -4,8 +4,8 @@
 
 #include <iostream>
 #include "IntersectData.h"
-#include "../../Core/math3d.h"
-#include "../../Core/referenceCounter.h"
+#include "../../Common/math3d.h"
+#include "../../Common/referenceCounter.h"
 
 class Collider: public ReferenceCounter {
 public:

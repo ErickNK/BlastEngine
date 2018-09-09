@@ -1,10 +1,11 @@
-#version 330
+#version 400
 
 //Attribute Pointers --------------------------------------
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec2 texCoord;
 layout (location = 2) in vec3 normal;
+layout (location = 3) in vec4 color;
 
 //---------------------------------------------------------
 
@@ -13,6 +14,7 @@ layout (location = 2) in vec3 normal;
 out vec2 vTexCoord;
 out vec3 vNormal;
 out vec3 vFragPos;
+out vec4 vCol;
 
 /* Position of the fragment relative to the light */
 out vec4 vDirectionalLightSpacePosition; 
@@ -46,6 +48,7 @@ void main(){
      * Directly pass the texture coordinates
      * */
     vTexCoord = texCoord;
+    vCol = color;
 
     /**
      * The normal is just a direction from the vertex. The position of the vertex is

@@ -1,7 +1,7 @@
 #ifndef PHYSICS_OBJECT_INCLUDED_H
 #define PHYSICS_OBJECT_INCLUDED_H
 
-#include "../core/math3d.h"
+#include "../Common/math3d.h"
 #include "Colliders/BoundingSphere.h"
 #include "Colliders/Collider.h"
 

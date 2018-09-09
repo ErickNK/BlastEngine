@@ -1,7 +1,7 @@
 #ifndef INTERSECTDATA_INCLUDED_H
 #define INTERSECTDATA_INCLUDED_H
 
-#include "../../Core/math3d.h"
+#include "../../Common/math3d.h"
 
 class IntersectData
 {

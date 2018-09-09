@@ -31,6 +31,8 @@ void Camera::updateAngle() {
     m_right = glm::normalize(glm::cross(m_forward,m_worldUp));
 
     m_up = glm::normalize(glm::cross(m_right,m_forward));
+
+	m_viewMatrix = glm::lookAt(m_position, m_position + m_forward, m_up);
 }
 
 void Camera::handleKeys(const bool *keys, GLfloat deltaTime) {
@@ -53,10 +55,15 @@ void Camera::handleKeys(const bool *keys, GLfloat deltaTime) {
         m_position -= m_right * velocity;
     }
 
+	m_viewMatrix = glm::lookAt(m_position, m_position + m_forward, m_up);
 }
 
 glm::mat4 Camera::getViewMatrix() const {
-    return glm::lookAt(m_position,m_position + m_forward , m_up);
+	return m_viewMatrix;
+}
+
+void Camera::setViewMatrix(glm::mat4x4 viewMatrix) {
+	m_viewMatrix = viewMatrix;
 }
 
 void Camera::handleMouse(double xChange, double yChange) {

@@ -26,10 +26,10 @@ void PhysicsObject::Integrate(float delta)
 void PhysicsObject::operator=(PhysicsObject other)
 {
 	//Implemented using the copy/swap idiom.
-	char* temp[sizeof(PhysicsObject) / sizeof(char)];
-	memcpy(temp, this, sizeof(PhysicsObject));
-	memcpy(this, &other, sizeof(PhysicsObject));
-	memcpy(&other, temp, sizeof(PhysicsObject));
+//	char* temp[sizeof(PhysicsObject) / sizeof(char)];
+//	memcpy(temp, this, sizeof(PhysicsObject));
+//	memcpy(this, &other, sizeof(PhysicsObject));
+//	memcpy(&other, temp, sizeof(PhysicsObject));
 }
 
 void PhysicsObject::Test()

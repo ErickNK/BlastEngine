@@ -1,4 +1,4 @@
-#version 330
+#version 400
 
 //Constant variables -----------------------------------------
 
@@ -13,6 +13,8 @@ const int MAX_MATERIAL_TEXTURES = 3;
 in vec2 vTexCoord;
 in vec3 vNormal;
 in vec3 vFragPos;
+in vec4 vCol;
+
 in vec4 vDirectionalLightSpacePosition;
 
 // ---------------------------------------------------------
@@ -54,7 +56,7 @@ struct SpotLight{
 
 struct Material{
     sampler2D diffuse_texture[MAX_MATERIAL_TEXTURES];
-	sampler2D specular_texture[MAX_MATERIAL_TEXTURES];	
+	sampler2D specular_texture[MAX_MATERIAL_TEXTURES];
 
 	int diffuseTextureCount;
 	int specularTextureCount;
@@ -88,23 +90,54 @@ vec4 totalSpecularTexture;
 
 
 float CalcDirectionalLightShadowFactor(DirectionalLight directionalLight){
-	
+
 	//Convert into normalized device coordinates (-1,1)
 	vec3 projCoords = vDirectionalLightSpacePosition.xyz / vDirectionalLightSpacePosition.w;
 	//Convert to 0-1 range. Which is what depth range is
 	projCoords = (projCoords * 0.5) + 0.5;
 
-	//Get depth of the fragment relative to the light in orthographic projection.
-	float closestDepth = texture(directionalLight.shadowMap, projCoords.xy).r; 
-	
 	//Get how far (forwards and backwards) from the light the fragment is.
-	float currentDepth = projCoords.z; 
+	float currentDepth = projCoords.z;
 
-	float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
+	//Deal with shadow acne
+    vec3 normalizedNormal = normalize(vNormal);
+    vec3 normalizedLightDir = normalize(-directionalLight.direction);
+    float bias = max(0.05 * (1 - dot(normalizedNormal,normalizedLightDir)), 0.0005);
 
-	return 0.0f;
+    //PCF
+    float shadow = 0.0f;
+    vec2 texelSize = 1.0 / textureSize(directionalLight.shadowMap, 0); //find out how big a unit texel is.
+
+    //We sample all the first texels around this fragment's texel. Forming a cube.
+    for(int x = -1 /*Start at further left of the exact x texel of this fragment*/;
+    x <= 1 /*Upto the right*/;
+    ++x){
+        for(int y = -1/*Start at further top of the exact y texel of this fragment*/;
+        y <= 1 /*Upto the bottom*/; ++y){
+            /*
+             * Get depth of the fragment relative to the light in orthographic projection.
+             * Each texel in the shadow map contains depth data in the .r attribute instead
+             * of color like a normal texture.
+             * */
+            float pcfDepth = texture(
+                directionalLight.shadowMap,
+                projCoords.xy + vec2(x,y) * texelSize /*Get the exact texel in the current loop. Remember
+                * the .xy only point to the current fragments texel not the one we want in the current
+                * loop. */
+            ).r;
+            //Deal with shadow acne
+            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0; /*Accumulate the average shadow.*/
+        }
+    }
+
+    shadow /= 9.0f; /*Find average of the shadows we are collecting from the sample*/
+
+	if(projCoords.z > 1.0){ //For points beyond the light space/ beyond the far plane
+	    shadow = 0.0; //Disable shadow and just say there is total light.
+	}
+
+	return shadow;
 }
-
 
 void CalcTotalDiffuseTexture(){
 	totalDiffuseTexture = vec4(1, 1, 1, 1);
@@ -126,14 +159,14 @@ vec4 CalcLightByDirection(Light light, vec3 lightDirection, float shadowFactor){
     /**
     * Calculate Ambient Light
     * */
-    vec4 ambient = (vec4(light.colour, 1.0f) * light.ambientIntensity) * totalDiffuseTexture ;
+    vec4 ambient = (vec4(light.colour, 1.0f) * light.ambientIntensity) * (totalDiffuseTexture * vCol) ;
 
     /**
      * Calculate Diffuse light
      * */
     float diffuseFactor = max(dot(normalizedNormal, -lightDirection), 0.0f);
 
-    vec4 diffuse = (vec4(light.colour, 1.0f) * light.diffuseIntensity) * (diffuseFactor * totalDiffuseTexture);
+    vec4 diffuse = (vec4(light.colour, 1.0f) * light.diffuseIntensity) * (diffuseFactor * totalDiffuseTexture * vCol);
 
     /**
      * Calculate Specular lighting
@@ -143,14 +176,14 @@ vec4 CalcLightByDirection(Light light, vec3 lightDirection, float shadowFactor){
 
         vec3 fragToEyeVector = normalize(cameraPosition - vFragPos);
 
-        vec3 reflectionVector = normalize(reflect(-lightDirection, normalizedNormal));
+        vec3 reflectionVector = normalize(reflect(lightDirection, normalizedNormal));
 
         float specularFactor = max(dot(fragToEyeVector, reflectionVector), 0.0f);
 
         if(specularFactor > 0.0f){
             specularFactor = pow(specularFactor, material.shininess);
 
-            specular = (vec4(light.colour, 1.0f) * material.specularIntensity) * (specularFactor * totalSpecularTexture);
+            specular = (vec4(light.colour, 1.0f) * material.specularIntensity) * (specularFactor * totalSpecularTexture * vCol);
         }
     }
 
@@ -197,7 +230,7 @@ vec4 CalcLightBySpot(SpotLight sLight){
 
     }else{ //Not within edge just show ambience
 
-        return (vec4(sLight.base.base.colour, 1.0f) * sLight.base.base.ambientIntensity) * totalDiffuseTexture;
+        return (vec4(sLight.base.base.colour, 1.0f) * sLight.base.base.ambientIntensity) * (totalDiffuseTexture * vCol);
 
     }
 }

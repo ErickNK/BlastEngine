@@ -1,0 +1,112 @@
+//
+// Created by erick on 9/7/18.
+//
+
+#include "CoreEngine.h"
+#include "../Common/Time.h"
+
+void CoreEngine::Start() {
+    if(m_isRunning) { return; }
+    Run();
+}
+
+void CoreEngine::Run() {
+    m_isRunning = true;
+
+    double lastTime = Time::GetTime(); //Current time at the start of the Engine
+    double unProcessedTime = 0; //Amount of passed time that the engine hasn't accounted for
+
+    double FPSDisplayTimer = 0;           //Total passed time since last frame counter display
+    int FPSFrameCounter = 0;                    //Number of FPSFrameCounter rendered since last
+
+    while(m_isRunning){
+        m_shouldRender = false;
+
+        double startTime = Time::GetTime();       //Current time at the start of the frame.
+        double passedTime = startTime - lastTime; //Amount of passed time since last frame.
+        lastTime = startTime;
+
+        unProcessedTime += passedTime;
+        FPSDisplayTimer += passedTime;
+
+        //DO profiling statistics display
+        //The engine displays profiling statistics after every second because it needs to display them at some point.
+        //The choice of once per second is arbitrary, and can be changed as needed.
+        if(FPSDisplayTimer >= 1.0)
+        {
+            double totalTime = ((1000.0 * FPSDisplayTimer)/((double)FPSFrameCounter));
+            double totalMeasuredTime = 0.0;
+
+            totalMeasuredTime += m_game->DisplayInputTime((double)FPSFrameCounter);
+            totalMeasuredTime += m_game->DisplayUpdateTime((double)FPSFrameCounter);
+            totalMeasuredTime += m_renderingEngine->DisplayRenderTime((double)FPSFrameCounter);
+            totalMeasuredTime += m_sleepTimer.DisplayAndReset("Sleep Time: ", (double)FPSFrameCounter);
+            totalMeasuredTime += m_swapBufferTimer.DisplayAndReset("Buffer Swap Time: ", (double)FPSFrameCounter);
+//            totalMeasuredTime += m_renderingEngine->DisplayWindowSyncTime((double)FPSFrameCounter);
+
+            printf("Frames (FPS):                           %d ps\n", FPSFrameCounter);
+            printf("FrameLimit:                             %lf s\n", m_frameTimeLimit);
+            printf("Other Time:                             %f ms\n", (totalTime - totalMeasuredTime));
+            printf("Total Time:                             %f ms\n\n", totalTime);
+            FPSFrameCounter = 0;
+            FPSDisplayTimer = 0;
+        }
+
+        //The engine works on a fixed update system, where each update is 1/frameRate seconds of time.
+        //Because of this, there can be a situation where there is, for instance, a fixed update of 16ms,
+        //but 20ms of actual time has passed. To ensure all time is accounted for, all passed time is
+        //stored in unprocessedTime, and then the engine processes as much time as it can. Any
+        //unaccounted time can then be processed later, since it will remain stored in unprocessedTime.
+        while(unProcessedTime > m_frameTimeLimit)
+        {
+            if(m_window->getShouldClose()) Stop();
+
+            //Input must be processed here because the window may have found new
+            //input events from the OS when it updated. Since inputs can trigger
+            //new game actions, the game also needs to be updated immediately
+            //afterwards.
+            glfwPollEvents(); //Update input system
+            m_game->ProcessInput(m_window->getInput(), (float)m_frameTimeLimit);
+            m_renderingEngine->ProcessInput(m_window->getInput(), (float)m_frameTimeLimit);
+            m_game->Update((float)m_frameTimeLimit);
+
+            //The scene has been updated therefore rerender the scene.
+            m_shouldRender = true;
+            unProcessedTime -= m_frameTimeLimit; //Account for un-processed time
+        }
+
+        if(m_shouldRender)
+        {
+            m_window->Clear(0.0f, 0.0f, 0.0f, 1.0f);
+
+            //Render game
+            m_game->Render(m_renderingEngine);
+
+            //The newly rendered image will be in the window's backbuffer,
+            //so the buffers must be swapped to display the new image.
+            m_swapBufferTimer.StartInvocation();
+            m_window->Update();
+            m_swapBufferTimer.StopInvocation();
+            FPSFrameCounter++;
+        } else {
+            //If no rendering is needed, sleep for some time so the OS
+            //can use the processor for other tasks.
+            m_sleepTimer.StartInvocation();
+            Util::Sleep(1);
+            m_sleepTimer.StopInvocation();
+        }
+
+    }
+}
+
+
+void CoreEngine::Stop() {
+    if(!m_isRunning)
+    {
+        return;
+    }
+
+    m_isRunning = false;
+    m_shouldRender = false;
+}
+

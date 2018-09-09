@@ -1,7 +1,7 @@
 #ifndef AXISALIGNEDBOUNDINGBOX_INCLUDED_H
 #define AXISALIGNEDBOUNDINGBOX_INCLUDED_H
 
-#include "../../Core/math3d.h"
+#include "../../Common/math3d.h"
 #include "IntersectData.h"
 #include "Collider.h"
 

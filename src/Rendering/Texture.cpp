@@ -2,7 +2,6 @@
 #include <iostream>
 #include <fstream>
 #include "Texture.h"
-#include "stb_image.h"
 
 Texture::Texture() = default;
 
@@ -21,10 +20,8 @@ Texture::Texture(std::string path,std::string directory, TextureTypeEnum typeNam
 bool Texture::LoadTexture(){
     // One char is equal to a byte. Useful for representing - image array, string.
     // When its a pointer it acts like an array
-	std::ifstream in(m_fileLocation, std::ifstream::ate | std::ifstream::binary);
-	unsigned char * texture_data = new unsigned char[in.tellg()];
-
-	texture_data = stbi_load(m_fileLocation.c_str(),&width,&height,&bitDepth, 0);
+//	std::ifstream in(m_fileLocation, std::ifstream::ate | std::ifstream::binary);
+	unsigned char * texture_data = stbi_load(m_fileLocation.c_str(),&width,&height,&bitDepth, 0);
 
     if(texture_data == nullptr){
         std::cerr << "Error: Texture loading failed for:"<< m_fileLocation << std::endl;
@@ -90,6 +87,11 @@ void Texture::Bind(unsigned int unit) {
 
     // Bind the texture for use
     glBindTexture(GL_TEXTURE_2D,m_texture);
+}
+
+void Texture::Delete() {
+	//glDeleteTextures(1,&m_texture);
+	//m_texture = static_cast<GLuint>(width = height = bitDepth = 0);
 }
 
 

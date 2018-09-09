@@ -26,6 +26,8 @@ public:
 
     glm::mat4 getViewMatrix() const;
 
+	void setViewMatrix(glm::mat4x4 viewMatrix);
+
     glm::vec3 getPosition() const;
 
     glm::vec3 getDirection() const;
@@ -47,6 +49,8 @@ private:
 
     GLfloat m_movementSpeed;
     GLfloat m_turnSpeed;
+
+	glm::mat4 m_viewMatrix;
 
     void updateAngle();
 };

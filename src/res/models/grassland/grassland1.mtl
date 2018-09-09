@@ -1,0 +1,12 @@
+# Blender MTL File: 'grassland.blend'
+# Material Count: 1
+
+newmtl ground_texture
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.156786 0.044922 0.008647
+Ks 0.031860 0.031860 0.031860
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2

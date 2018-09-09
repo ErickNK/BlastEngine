@@ -114,6 +114,7 @@
     <ClCompile Include="Physics\PhysicsObject.cpp" />
     <ClCompile Include="Physics\PhysicsEngine.cpp" />
     <ClCompile Include="Rendering\Shadows\ShadowMap.cpp" />
+    <ClCompile Include="Rendering\SkyBox.cpp" />
     <ClCompile Include="Rendering\stb_image.c" />
     <ClCompile Include="Rendering\Camera.cpp" />
     <ClCompile Include="Rendering\DirectionalLight.cpp" />
@@ -140,6 +141,7 @@
     <ClInclude Include="Physics\Colliders\IntersectData.h" />
     <ClInclude Include="Physics\Colliders\Plane.h" />
     <ClInclude Include="Rendering\Shadows\ShadowMap.h" />
+    <ClInclude Include="Rendering\SkyBox.h" />
     <ClInclude Include="Rendering\stb_image.h" />
     <ClInclude Include="Rendering\Camera.h" />
     <ClInclude Include="Core\CommonValues.h" />
