@@ -8,7 +8,7 @@
 #include "../../Core/CoreEngine.h"
 
 DirectionalLight::DirectionalLight() :
-    Light(),
+    Light(DIRECTIONAL_LIGHT),
     direction(glm::vec3(0.0f,-1.0f,0.0f))
 {
     lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 100.0f);
@@ -20,7 +20,7 @@ DirectionalLight::DirectionalLight(
         GLfloat ambientIntensity, GLfloat diffuseIntensity,
         GLfloat shadowWidth, GLfloat shadowHeight,
         glm::mat4 lightProj) :
-    Light(color,ambientIntensity,diffuseIntensity,shadowWidth,shadowHeight),
+    Light(DIRECTIONAL_LIGHT,color,ambientIntensity,diffuseIntensity,shadowWidth,shadowHeight),
     direction(glm::normalize(direction))
 {
     lightProjection = lightProj;
@@ -82,6 +82,6 @@ void DirectionalLight::SetupUniforms(std::map<std::string, GLint>& m_uniforms,GL
             glGetUniformLocation(shaderProgram, "directionalLight.base.diffuseIntensity");
 }
 
-void DirectionalLight::AddToEngine(CoreEngine *engine) {
+/*void DirectionalLight::AddToEngine(CoreEngine *engine) {
     engine->GetRenderingEngine()->AddDirectionalLight(this);
-}
+}*/

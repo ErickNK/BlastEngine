@@ -10,15 +10,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "ShadowMap.h"
-#include "../../Core/Components/GameComponent.h"
+#include "../../Core/Entities/LightEntity.h"
+#include "../../Common/CommonValues.h"
 
 class CoreEngine;
 
-class Light : public GameComponent{
+class Light : public LightEntity{
 public:
-    Light();
+    Light(LightType lightType);
 
-    Light(glm::vec3 color,GLfloat ambientIntensity, GLfloat diffuseIntensity, GLfloat shadowWidth, GLfloat shadowHeight);
+    Light(LightType lightType,glm::vec3 color,GLfloat ambientIntensity, GLfloat diffuseIntensity, GLfloat shadowWidth, GLfloat shadowHeight);
 
     virtual ~Light();
 
@@ -28,7 +29,8 @@ public:
 
 	GLfloat getAmbientIntensity() const;
 
-    void AddToEngine(CoreEngine* engine) override {};
+    LightType getType() const;
+/*    void AddToEngine(CoreEngine* engine) override {};*/
 
 protected:
 
@@ -43,6 +45,8 @@ protected:
 	glm::mat4 lightSpace;
 
 	ShadowMap* shadowMap;
+
+	LightType m_type;
 };
 
 

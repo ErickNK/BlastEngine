@@ -17,16 +17,11 @@
 
 #include "../Common/CommonValues.h"
 #include "../Core/Window.h"
-#include "../Core/GameObject.h"
+#include "../Core/Scene.h"
 #include "Shaders/Shader.h"
-#include "Transform.h"
-#include "Mesh.h"
 #include "Camera.h"
-#include "Texture.h"
-#include "Lighting/DirectionalLight.h"
-#include "Lighting/PointLight.h"
-#include "Lighting/SpotLight.h"
 #include "SkyBox.h"
+#include "Shaders/FogShader.h"
 
 RenderingEngine::RenderingEngine(Window* window): m_window(window) {
     CreateShaders();
@@ -36,20 +31,30 @@ RenderingEngine::RenderingEngine(Window* window): m_window(window) {
 }
 
 void RenderingEngine::CreateShaders(){
-    m_directional_light_shadow_map_shader = DirectionalLightShadowMapShader();
-    m_directional_light_shadow_map_shader.Init();
 
-    m_forward_ambient_shader = ForwardAmbientShader();
-    m_forward_ambient_shader.Init();
+    auto  * directionalLightShadowMapShader = new DirectionalLightShadowMapShader();
+    directionalLightShadowMapShader->Init();
+    m_shaders[DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER] = directionalLightShadowMapShader;
 
-    m_directional_Light_shader = ForwardDirectionalLightShader();
-    m_directional_Light_shader.Init();
+    auto * forwardAmbientShader = new ForwardAmbientShader();
+    forwardAmbientShader->Init();
+    m_shaders[FORWARD_AMBIENT_SHADER] = forwardAmbientShader;
 
-    m_point_Light_shader = ForwardPointLightShader();
-    m_point_Light_shader.Init();
+    auto * forwardDirectionalLightShader = new ForwardDirectionalLightShader();
+    forwardDirectionalLightShader->Init();
+    m_shaders[FORWARD_DIRECTIONAL_LIGHT_SHADER] = forwardDirectionalLightShader;
 
-    m_spot_Light_shader = ForwardSpotLightShader();
-    m_spot_Light_shader.Init();
+    auto * forwardPointLightShader = new ForwardPointLightShader();
+    forwardPointLightShader->Init();
+    m_shaders[FORWARD_POINT_LIGHT_SHADER] = forwardPointLightShader;
+
+    auto * forwardSpotLightShader = new ForwardSpotLightShader();
+    forwardSpotLightShader->Init();
+    m_shaders[FORWARD_SPOT_LIGHT_SHADER] = forwardSpotLightShader;
+
+    auto  * fogShader = new FogShader();
+    fogShader->Init();
+    m_shaders[FOG_SHADER] = fogShader;
 }
 
 void RenderingEngine::SetupSkyBox() {
@@ -99,124 +104,79 @@ void RenderingEngine::EndBlendColor(){
     glDisable(GL_BLEND);
 }
 
-void RenderingEngine::RenderAmbientLight(GameObject &object){
-    m_forward_ambient_shader.Bind();
+void RenderingEngine::RenderAmbientLight(){
+    auto * ambient_light_shader = (ForwardAmbientShader*)  m_shaders[FORWARD_AMBIENT_SHADER];
 
-        m_forward_ambient_shader.UpdateProjection(m_projection);
+    m_current_shader = FORWARD_AMBIENT_SHADER;
 
-        m_forward_ambient_shader.UpdateView(m_camera);
+    ambient_light_shader->Bind();
 
-        m_forward_ambient_shader.setLight(glm::vec3(1,1,1),0.06);
+        ambient_light_shader->setLight(glm::vec3(1,1,1),0.06);
 
-        object.RenderAll(&m_forward_ambient_shader);
+        RenderAllMeshed();
 
-    m_forward_ambient_shader.UnBind();
+    ambient_light_shader->UnBind();
 }
 
-void RenderingEngine::RenderDirectionalLightShadowMap(DirectionalLight* dlight,GameObject &object) {
-    m_directional_light_shadow_map_shader.Bind();
-
-        glClear(GL_DEPTH_BUFFER_BIT);
-
-        //Set view port same size as our shadow-map framebuffer
-        glViewport(0, 0, dlight->GetShadowMap()->GetShadowWidth(), dlight->GetShadowMap()->GetShadowHeight());
-
-        dlight->GetShadowMap()->BindFrameBuffer(); //Begin writing
-
-            m_directional_light_shadow_map_shader.SetDirectionalLight(dlight);
-
-            object.RenderAll(&m_directional_light_shadow_map_shader);
-
-        dlight->GetShadowMap()->UnBindFrameBuffer(); //stop writing
-
-    m_directional_light_shadow_map_shader.UnBind();
-}
-
-void RenderingEngine::RenderDirectionalLight(DirectionalLight* dlight,GameObject &object){
-    m_window->ResetViewPort();
-
-    m_directional_Light_shader.Bind();
-
-        m_directional_Light_shader.UpdateProjection(m_projection);
-
-        m_directional_Light_shader.UpdateView(m_camera);
-
-        m_directional_Light_shader.setLight(dlight);
-
-        object.RenderAll(&m_directional_Light_shader);
-
-    m_directional_Light_shader.UnBind();
-}
-
-void RenderingEngine::RenderPointLight(PointLight* plight,GameObject &object){
-    m_window->ResetViewPort();
-
-    m_point_Light_shader.Bind();
-
-        m_point_Light_shader.UpdateProjection(m_projection);
-
-        m_point_Light_shader.UpdateView(m_camera);
-
-        m_point_Light_shader.setLight(plight);
-
-        object.RenderAll(&m_point_Light_shader);
-
-    m_point_Light_shader.UnBind();
-}
-
-void RenderingEngine::RenderSpotLight(SpotLight* slight,GameObject &object){
-    m_window->ResetViewPort();
-
-    m_spot_Light_shader.Bind();
-
-        m_spot_Light_shader.UpdateProjection(m_projection);
-
-        m_spot_Light_shader.UpdateView(m_camera);
-
-        m_spot_Light_shader.setLight(slight);
-
-        object.RenderAll(&m_spot_Light_shader);
-
-    m_spot_Light_shader.UnBind();
-}
-
-void RenderingEngine::RenderScene(GameObject &object) {
-    m_window->ResetViewPort();
-
-    skybox.Draw(m_camera, m_projection);
-
-    RenderAmbientLight(object);
-
-    for (auto &m_directional_light : m_directional_lights) {
+//void RenderingEngine::RenderDirectionalLightShadowMap(DirectionalLight* dlight,GameObject &object) {
+//    m_directional_light_shadow_map_shader.Bind();
+//
+//        glClear(GL_DEPTH_BUFFER_BIT);
+//
+//        //Set view port same size as our shadow-map framebuffer
+//        glViewport(0, 0, dlight->GetShadowMap()->GetShadowWidth(), dlight->GetShadowMap()->GetShadowHeight());
+//
+//        dlight->GetShadowMap()->BindFrameBuffer(); //Begin writing
+//
+//            m_directional_light_shadow_map_shader.SetDirectionalLight(dlight);
+//
+//            object.RenderAll(&m_directional_light_shadow_map_shader);
+//
+//        dlight->GetShadowMap()->UnBindFrameBuffer(); //stop writing
+//
+//    m_directional_light_shadow_map_shader.UnBind();
+//}
+//
+void RenderingEngine::RenderEffects() {
+    for (auto m_light : m_current_scene->getEffectEntities()) {
         StartBlendColor();
-
-//            RenderDirectionalLightShadowMap(m_directional_light,object);
-
-            RenderDirectionalLight(m_directional_light,object);
-
+            m_light->RenderEffect(this);
         EndBlendColor();
     }
+}
 
-    for (auto &m_point_light : m_point_lights) {
+void RenderingEngine::RenderAllMeshed(){
+    for (auto m_meshed : m_current_scene->getMeshedEntities()) {
+
+        m_shaders[m_current_shader]->UpdateView(m_camera);
+
+        m_shaders[m_current_shader]->UpdateProjection(m_projection);
+
+        m_meshed->RenderAll(m_shaders[m_current_shader]);
+    }
+}
+
+void RenderingEngine::RenderLights()
+{
+    for (auto m_light : m_current_scene->getLights()) {
         StartBlendColor();
-
-//            RenderDirectionalLightShadowMap(m_directional_light,object);
-
-            RenderPointLight(m_point_light,object);
-
+            m_light->RenderLight(this);
         EndBlendColor();
     }
+}
 
-    for (auto &m_spot_light : m_spot_lights) {
-        StartBlendColor();
+void RenderingEngine::RenderScene() {
+    m_window->ResetViewPort();
 
-//            RenderDirectionalLightShadowMap(m_directional_light,object);
+    m_renderProfileTimer.StartInvocation();
 
-            RenderSpotLight(m_spot_light,object);
+        skybox.Draw(m_camera, m_projection);
 
-        EndBlendColor();
-    }
+        RenderAmbientLight();
+        RenderLights();
+        RenderEffects();
 
+    m_renderProfileTimer.StopInvocation();
 }
 
 void RenderingEngine::ProcessInput(Input* input,float delta){
@@ -225,11 +185,16 @@ void RenderingEngine::ProcessInput(Input* input,float delta){
 //    spotLights[0].SetAsFlashLight(m_camera);
 }
 
-void RenderingEngine::Render(GameObject &object) {
-    m_renderProfileTimer.StartInvocation();
 
-        RenderScene(object);
+Shader* RenderingEngine::GetShader(ShaderType type) {
+    return m_shaders[type];
+}
 
-    m_renderProfileTimer.StopInvocation();
+void RenderingEngine::SetCurrentShader(ShaderType type) {
+    m_current_shader = type;
+}
+
+void RenderingEngine::SetCurrentScene(Scene * scene) {
+    m_current_scene = scene;
 }
 

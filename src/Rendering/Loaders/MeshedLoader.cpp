@@ -1,105 +1,19 @@
 //
-// Created by erick on 9/7/18.
+// Created by erick on 9/9/18.
 //
 
-#include "GameObject.h"
-#include "Components/GameComponent.h"
-#include "Components/MeshRenderer.h"
+#include "MeshedLoader.h"
+#include "../../Core/Entities/MeshedEntity.h"
+#include "../../Core/Components/MeshedRendererComponent.h"
 
-GameObject::GameObject(std::string path):
-    path(path),
-    directory(path.substr(0, path.find_last_of('/'))) {}
 
-GameObject::~GameObject()
-{
-    for (auto &m_component : m_components) {
-        delete m_component;
-    }
+MeshedLoader::MeshedLoader() = default;
 
-    for (auto &i : m_children) {
-        delete i;
-    }
-}
 
-GameObject* GameObject::AddChild(GameObject* child)
-{
-    m_children.push_back(child);
-//    child->GetTransform()->SetParent(&m_transform);
-//    child->SetEngine(m_coreEngine);
-    return this;
-}
+bool MeshedLoader::LoadGameObject(std::string path, MeshedEntity* root) {
+    MeshedLoader::path = path;
+    MeshedLoader::directory = path.substr(0, path.find_last_of('/'));
 
-GameObject* GameObject::AddComponent(GameComponent* component)
-{
-    m_components.push_back(component);
-    component->SetParent(this);
-    return this;
-}
-
-void GameObject::ProcessInputAll(const Input* input, float delta)
-{
-    ProcessInput(input, delta);
-
-    for (auto &i : m_children) {
-        i->ProcessInputAll(input, delta);
-    }
-}
-
-void GameObject::UpdateAll(float delta)
-{
-    Update(delta);
-
-    for (auto &i : m_children) {
-        i->UpdateAll(delta);
-    }
-}
-
-void GameObject::RenderAll(Shader* shader) const
-{
-    Render(shader);
-
-    for (auto i : m_children) {
-        i->RenderAll(shader);
-    }
-}
-
-void GameObject::ProcessInput(const Input* input, float delta)
-{
-//    m_transform.Update();
-
-    for (auto &m_component : m_components) {
-        m_component->ProcessInput(input, delta);
-    }
-}
-
-void GameObject::Update(float delta)
-{
-    for (auto &m_component : m_components) {
-        m_component->Update(delta);
-    }
-}
-
-void GameObject::Render(Shader* shader) const
-{
-    for (auto m_component : m_components) {
-        m_component->Render(shader);
-    }
-}
-
-std::vector<GameObject*> GameObject::GetAllAttached()
-{
-    std::vector<GameObject*> result;
-
-    for (auto &i : m_children) {
-        std::vector<GameObject*> childObjects = i->GetAllAttached();
-        result.insert(result.end(), childObjects.begin(), childObjects.end());
-    }
-
-    result.push_back(this);
-    return result;
-}
-
-bool GameObject::LoadGameObject() {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
@@ -108,40 +22,40 @@ bool GameObject::LoadGameObject() {
         return false;
     }
 
-    this->processNode(scene->mRootNode, scene);
+    this->processNode(scene->mRootNode, scene, root);
 
     return true;
 }
 
-void GameObject::processNode(aiNode * node, const aiScene * scene) {
+void MeshedLoader::processNode(aiNode * node, const aiScene * scene, MeshedEntity* root) {
 
     //Process leaf nodes
     for (GLuint i = 0; i < node->mNumMeshes; i++) {
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
 
         //Process Object
-        GameObject * child = this->processObject(mesh, scene);
+        MeshedEntity * child = this->processObject(mesh, scene);
 
         //Add Components
-        auto * renderer = new MeshRenderer(child);
+        auto * renderer = new MeshedRendererComponent(child);
         child->AddComponent(renderer);
 
         //Add children
-        this->AddChild(child);
+        root->AddChild(child);
     }
 
     //Process nodes
     for (GLuint i = 0; i < node->mNumChildren; i++) {
-        auto * group = new GameObject(path);
+        auto * group = new MeshedEntity();
 
-        group->processNode(node->mChildren[i], scene);
+        this->processNode(node->mChildren[i], scene, group);
 
         //Add node
-        this->AddChild(group);
+        root->AddChild(group);
     }
 }
 
-GameObject* GameObject::processObject(aiMesh *mesh, const aiScene *scene) {
+MeshedEntity* MeshedLoader::processObject(aiMesh *mesh, const aiScene *scene) {
 
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
@@ -226,14 +140,14 @@ GameObject* GameObject::processObject(aiMesh *mesh, const aiScene *scene) {
         vertices.push_back(vertex);
     }
 
-    return new GameObject(
+    return new MeshedEntity(
             *new Mesh(vertices, vertices.size(), indices, indices.size()),
             *new Transform(),
             *new Material(7.0f, 30.0f, textures)
     );
 }
 
-std::vector<Texture> GameObject::loadMaterialTextures(aiMaterial * material, aiTextureType type, TextureTypeEnum typeName) {
+std::vector<Texture> MeshedLoader::loadMaterialTextures(aiMaterial * material, aiTextureType type, TextureTypeEnum typeName) {
     std::vector<Texture> textures;
 
     for (GLuint i = 0; i < material->GetTextureCount(type); i++) {
@@ -263,26 +177,4 @@ std::vector<Texture> GameObject::loadMaterialTextures(aiMaterial * material, aiT
     }
 
     return textures;
-}
-
-void GameObject::SetEngine(CoreEngine* engine)
-{
-    if(m_coreEngine != engine)
-    {
-        m_coreEngine = engine;
-
-        for(unsigned int i = 0; i < m_components.size(); i++)
-        {
-            m_components[i]->AddToEngine(engine);
-        }
-
-        for(unsigned int i = 0; i < m_children.size(); i++)
-        {
-            m_children[i]->SetEngine(engine);
-        }
-    }
-}
-
-bool GameObject::getIsLoadedCorrectly() const {
-    return isLoadedCorrectly;
 }

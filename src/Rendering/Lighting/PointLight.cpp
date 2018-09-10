@@ -6,14 +6,15 @@
 #include "../../Core/CoreEngine.h"
 
 PointLight::PointLight() :
-    Light(), position(glm::vec3(5.0f,0.0f,0.0f)),
+    Light(POINT_LIGHT), position(glm::vec3(5.0f,0.0f,0.0f)),
     constant(1.0f),linear(0.045f),quadratic(0.0075f){}
 
 PointLight::PointLight(glm::vec3 color, glm::vec3 position,
                        GLfloat ambientIntensity, GLfloat diffuseIntensity,
                        GLfloat constant, GLfloat linear, GLfloat quadratic,
 						GLfloat shadowWidth, GLfloat shadowHeight) :
-    Light(color,ambientIntensity,diffuseIntensity,shadowWidth,shadowHeight), id(id), position(position),
+    Light(POINT_LIGHT,color,ambientIntensity,diffuseIntensity,shadowWidth,shadowHeight),
+    position(position),
     constant(constant),linear(linear),quadratic(quadratic){}
 
 
@@ -61,6 +62,8 @@ void PointLight::SetupUniforms(std::map<std::string, GLint>& m_uniforms, GLuint 
 	m_uniforms["pointLight.attenuationQuadratic"] = glGetUniformLocation(shaderProgram, "pointLight.attenuationQuadratic");
 }
 
+/*
 void PointLight::AddToEngine(CoreEngine *engine) {
     engine->GetRenderingEngine()->AddPointLight(this);
 }
+*/

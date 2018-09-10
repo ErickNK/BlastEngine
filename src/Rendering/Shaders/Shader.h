@@ -23,6 +23,9 @@ public:
     /**
      * Constructor
      * */
+
+    Shader() : m_type(BASIC_SHADER){};
+
     Shader(ShaderType type);
 
     Shader(std::map<int, std::string> shaderFiles,ShaderType type);

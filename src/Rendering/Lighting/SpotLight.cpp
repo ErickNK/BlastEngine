@@ -9,20 +9,26 @@
 SpotLight::SpotLight():
     PointLight(),
     direction(glm::vec3(0.0f,-1.0f, 0.0f)),
-    edge(0.0f),  procEdge(cosf(glm::radians(edge))){}
+    edge(0.0f),  procEdge(cosf(glm::radians(edge)))
+{
+    m_type = SPOT_LIGHT;
+}
 
 SpotLight::SpotLight(
-        glm::vec3 color, glm::vec3 position, glm::vec3 direction,
-        GLfloat ambientIntensity, GLfloat diffuseIntensity,
-        GLfloat constant, GLfloat linear, GLfloat quadratic,
-        GLfloat edge, GLfloat shadowWidth, GLfloat shadowHeight) :
-        PointLight(
-                color, position,
-                ambientIntensity, diffuseIntensity,
-                constant, linear, quadratic,
-				shadowWidth,shadowHeight
-                ),
-        direction(direction), edge(edge), procEdge(cosf(glm::radians(edge))){}
+    glm::vec3 color, glm::vec3 position, glm::vec3 direction,
+    GLfloat ambientIntensity, GLfloat diffuseIntensity,
+    GLfloat constant, GLfloat linear, GLfloat quadratic,
+    GLfloat edge, GLfloat shadowWidth, GLfloat shadowHeight) :
+    PointLight(
+            color, position,
+            ambientIntensity, diffuseIntensity,
+            constant, linear, quadratic,
+            shadowWidth,shadowHeight
+            ),
+    direction(direction), edge(edge), procEdge(cosf(glm::radians(edge)))
+{
+    m_type = SPOT_LIGHT;
+}
 
 SpotLight::~SpotLight() {}
 
@@ -79,8 +85,4 @@ void SpotLight::SetupUniforms(std::map<std::string, GLint>& m_uniforms, GLuint s
 
 	m_uniforms["spotLight.base.attenuationQuadratic"] = glGetUniformLocation(shaderProgram, "spotLight.base.attenuationQuadratic");
 
-}
-
-void SpotLight::AddToEngine(CoreEngine *engine) {
-    engine->GetRenderingEngine()->AddSpotLight(this);
 }

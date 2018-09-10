@@ -4,26 +4,41 @@
 
 #include "Game.h"
 #include "../Rendering/RenderingEngine.h"
+#include "../Core/CoreEngine.h"
+
+void Game::Init() {
+    //Load required scene;
+
+}
 
 void Game::ProcessInput(const Input* input, float delta)
 {
     m_inputTimer.StartInvocation();
-    m_root.ProcessInputAll(input, delta);
+    m_currentScene->ProcessInput(input, delta);
     m_inputTimer.StopInvocation();
 }
 
 void Game::Update(float delta)
 {
     m_updateTimer.StartInvocation();
-    m_root.UpdateAll(delta);
+    m_currentScene->Update(delta);
     m_updateTimer.StopInvocation();
 }
 
-void Game::Render(RenderingEngine* renderingEngine)
+void Game::Render()
 {
-    renderingEngine->Render(m_root);
+    m_core_engine->GetRenderingEngine()->RenderScene();
 }
 
-GameObject &Game::getRootObject() {
-    return m_root;
+CoreEngine *Game::getCoreEngine() const {
+    return m_core_engine;
+}
+
+Scene* Game::getCurrentScene() const {
+    return m_currentScene;
+}
+
+void Game::SetCurrentScene(Scene* scene) {
+    m_core_engine->GetRenderingEngine()->SetCurrentScene(scene);
+    m_currentScene = scene;
 }

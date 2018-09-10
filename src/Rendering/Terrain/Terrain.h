@@ -6,9 +6,9 @@
 #define MORDEROPENGLUDEMYTUTORIAL_TERRAIN_H
 
 #include "../../Common/CommonValues.h"
-#include "../../Core/GameObject.h"
+#include "../../Core/Entities/MeshedEntity.h"
 
-class Terrain : public GameObject{
+class Terrain : public MeshedEntity{
 
 public:
     Terrain() = default;

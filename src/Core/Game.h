@@ -8,19 +8,25 @@
 
 #include "Input.h"
 #include "../Common/ProfileTimer.h"
-#include "GameObject.h"
 #include "Window.h"
+#include "Scene.h"
 
 class CoreEngine;
 
 class RenderingEngine;
 
+/**
+ * Main game. This is what other games using this engine will extend.
+ * */
 class Game {
 public:
     Game(){};
     ~Game(){};
 
-    virtual void Init(const Window* window) {}
+    /**
+     * Figure out and initialize the current scene
+     * */
+    virtual void Init();
 
     /**
      * Process the input, and update the objects
@@ -35,28 +41,27 @@ public:
     /**
      * Draw the objects to the screen
      * */
-    void Render(RenderingEngine* renderingEngine);
-
-    /**
-     * Get reference variable to root object.
-     * */
-    GameObject &getRootObject();
+    void Render();
 
     /**
     * Set engine.
     * */
-    inline void SetEngine(CoreEngine* engine) { m_root.SetEngine(engine); }
+    inline void SetEngine(CoreEngine* engine) { m_core_engine = engine; }
+    void SetCurrentScene(Scene* scene);
+
+    CoreEngine *getCoreEngine() const;
+    Scene *getCurrentScene() const;
 
     //PROFILING
     inline double DisplayInputTime(double dividend) { return m_inputTimer.DisplayAndReset("Input Time: ", dividend); }
     inline double DisplayUpdateTime(double dividend) { return m_updateTimer.DisplayAndReset("Update Time: ", dividend); }
-protected:
-    void AddToScene(GameObject* child) { m_root.AddChild(child); }
+
 private:
     ProfileTimer m_updateTimer;
     ProfileTimer m_inputTimer;
 
-    GameObject m_root;
+    CoreEngine* m_core_engine;
+    Scene* m_currentScene;
 };
 
 

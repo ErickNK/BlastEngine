@@ -80,7 +80,7 @@ void CoreEngine::Run() {
             m_window->Clear(0.0f, 0.0f, 0.0f, 1.0f);
 
             //Render game
-            m_game->Render(m_renderingEngine);
+            m_game->Render();
 
             //The newly rendered image will be in the window's backbuffer,
             //so the buffers must be swapped to display the new image.

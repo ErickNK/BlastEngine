@@ -60,9 +60,7 @@ set(SOURCE_FILES
         Core/Input.h
         Rendering/RenderingEngine.cpp Rendering/RenderingEngine.h
         Common/ProfileTimer.h Common/ProfileTimer.cpp
-        Core/GameObject.cpp Core/GameObject.h
-        Core/Components/GameComponent.h
-        Core/Components/MeshRenderer.h
+        Core/Components/MeshedComponent.h
         Rendering/Shaders/DirectionalLightShadowMapShader.cpp Rendering/Shaders/DirectionalLightShadowMapShader.h
         Game/SlickDriveGame.cpp Game/SlickDriveGame.h
         Rendering/Shaders/ForwardAmbientShader.cpp Rendering/Shaders/ForwardAmbientShader.h
@@ -70,7 +68,18 @@ set(SOURCE_FILES
         Rendering/Shaders/ForwardPointLightShader.cpp Rendering/Shaders/ForwardPointLightShader.h
         Rendering/Shaders/ForwardSpotLightShader.cpp Rendering/Shaders/ForwardSpotLightShader.h
         Rendering/Terrain/Terrain.cpp Rendering/Terrain/Terrain.h
-        Rendering/Shaders/TerrainShader.cpp Rendering/Shaders/TerrainShader.h Core/Components/TerrainRenderer.h) # which files should be compiled
+        Rendering/Shaders/TerrainShader.cpp Rendering/Shaders/TerrainShader.h
+        #        Rendering/Animation/Joint.cpp Rendering/Animation/Joint.h
+#        Rendering/Animation/AnimatedGameObject.cpp Rendering/Animation/AnimatedGameObject.h
+        Rendering/Loaders/MeshedLoader.cpp Rendering/Loaders/MeshedLoader.h
+        Rendering/Shaders/FogShader.cpp Rendering/Shaders/FogShader.h
+        Core/Components/FogComponent.h Rendering/Fog.h
+        Core/Entities/LightEntity.cpp Core/Entities/LightEntity.h
+        Core/Components/LightComponent.h
+        Core/Entities/MeshedEntity.cpp Core/Entities/MeshedEntity.h
+        Core/Components/MeshedRendererComponent.h
+        Core/Scene.cpp Core/Scene.h
+        Game/Scenes/TestScene.cpp Game/Scenes/TestScene.h Core/Entities/EffectEntity.cpp Core/Entities/EffectEntity.h Core/Components/EffectComponent.h) # which files should be compiled
 
 add_executable(MorderOpenGLUdemyTutorial ${SOURCE_FILES}) # which files should produce executables
 

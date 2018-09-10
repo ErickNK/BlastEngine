@@ -5,8 +5,7 @@
 //
 
 #include "Terrain.h"
-#include "../../Core/Components/MeshRenderer.h"
-#include "../../Core/Components/TerrainRenderer.h"
+#include "../../Core/Components/MeshedRendererComponent.h"
 
 Terrain::Terrain(int gridX, int gridZ,std::map<TextureTypeEnum, std::string> textureLocations) :
     m_textureLocations(std::move(textureLocations))
@@ -57,10 +56,7 @@ void Terrain::InitTerrain() {
     m_transform.GetPos().z = z;
 
     //ADD COMPONENTS
-//    auto * terrainRenderer = new TerrainRenderer(this);
-//    this->AddComponent(terrainRenderer);
-
-    auto * renderer = new MeshRenderer(this);
+    auto * renderer = new MeshedRendererComponent();
     this->AddComponent(renderer);
 }
 

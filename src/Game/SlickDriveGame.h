@@ -12,7 +12,7 @@ class SlickDriveGame : public Game{
 public:
     SlickDriveGame() = default;
 
-    void Init(const Window* window) override;
+    void Init() override;
 protected:
 private:
 

@@ -29,7 +29,7 @@ public:
 	
     static void SetupUniforms(std::map<std::string, GLint>& m_uniforms,GLuint shaderProgram);
 
-    void AddToEngine(CoreEngine *engine) override;
+//    void AddToEngine(CoreEngine *engine) override;
 
 private:
 
