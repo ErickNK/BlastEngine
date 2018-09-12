@@ -27,6 +27,8 @@ public:
 
     bool LoadGameObject(std::string path, MeshedEntity* root);
 
+    bool LoadGameObjectWithTexture(std::string path,std::map<TextureTypeEnum, std::string> textureLocations, MeshedEntity *root);
+
     void processNode(aiNode *node, const aiScene *scene, MeshedEntity* root);
 
     MeshedEntity* processObject(aiMesh *mesh, const aiScene *scene);

@@ -9,6 +9,9 @@
 
 MeshedLoader::MeshedLoader() = default;
 
+bool MeshedLoader::LoadGameObjectWithTexture(std::string path,std::map<TextureTypeEnum, std::string> textureLocations, MeshedEntity *root) {
+
+}
 
 bool MeshedLoader::LoadGameObject(std::string path, MeshedEntity* root) {
     MeshedLoader::path = path;

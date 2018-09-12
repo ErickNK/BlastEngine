@@ -41,16 +41,18 @@ void TestScene::SetupSkyBox() {
 
 void TestScene::SetupCamera(){
     this->AddCamera(
-        new Camera(
+        new FPSCamera(
             glm::vec3(2.0f,2.0f,5.0f),
             glm::vec3(0.0f,1.0f,0.0f),
             -90.0f,
             0.0f,
+            0.0f,
             15.0f,
-            0.5f
+            0.005f
         )
     );
     this->SetCurrentCamera(0);
+    this->getCurrentCamera()->LookAt(glm::vec3(5.0f,5.0f,5.0f));
 }
 
 void  TestScene::CreateTerrain(){

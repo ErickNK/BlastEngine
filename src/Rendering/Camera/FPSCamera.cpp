@@ -10,12 +10,7 @@ FPSCamera::FPSCamera(glm::vec3 startPosition, glm::vec3 startUp,
         GLfloat startYaw, GLfloat startPitch,GLfloat startRoll,
         GLfloat startMovementSpeed, GLfloat startTurningSpeed) :
         Camera(startPosition,startUp,startYaw,startPitch,startMovementSpeed,startTurningSpeed)
-{
-    m_transform.SetPos(startPosition);
-//    m_transform.SetPos(startPosition);
-
-    UpdateView();
-}
+{}
 //void FPSCamera::UpdateView()
 //{
 //
@@ -40,65 +35,32 @@ FPSCamera::FPSCamera(glm::vec3 startPosition, glm::vec3 startUp,
 
 void FPSCamera::UpdateView()
 {
-    //temporary frame quaternion from pitch,yaw,roll
-    //here roll is not used
-    glm::quat key_quat = glm::quat(glm::vec3(m_pitch, m_yaw, m_roll));
-    //reset values
-    m_pitch = m_yaw = m_roll = 0;
+//    m_forward = glm::normalize(m_look_at - m_transform.GetPos());
 
-    //order matters,update camera_quat
-    m_transform.GetRot() = key_quat * m_transform.GetRot(); //Multiply the new quat by the old one
-    m_transform.GetRot() = m_transform.GetRot();
-//    glm::mat4 rotate = glm::mat4_cast(m_transform.GetRot());
+    //detmine axis for pitch rotation
+    m_right = glm::normalize(glm::cross(m_forward, m_up));
+    //compute quaternion for pitch based on the camera pitch angle
+    glm::quat pitch_quat = glm::angleAxis(m_pitch, m_right);
+    //determine heading quaternion from the camera up vector and the heading angle
+    glm::quat heading_quat = glm::angleAxis(-m_yaw, m_up);
+    //add the two quaternions
+    glm::quat temp = glm::cross(pitch_quat, heading_quat);
+    temp = glm::normalize(temp);
+    //update the direction from the quaternion
+    m_forward = glm::rotate(temp, m_forward);
+    //set the look at to be infront of the camera
+    m_look_at = m_transform.GetPos() + m_forward * 1.0f;
+    //damping for smooth camera
+    m_yaw *= .5;
+    m_pitch *= .5;
 
-//    glm::mat4 translate = glm::mat4(1.0f);
-//    translate = glm::translate(translate, -m_transform.GetPos());
-
-    m_forward = glm::normalize(m_transform.GetForward()); //remove magnitude
-    m_right = glm::normalize(glm::cross(m_forward,m_worldUp));
-    m_up = glm::normalize(glm::cross(m_right,m_forward));
-
-    m_viewMatrix = glm::lookAt(m_transform.GetPos(), m_transform.GetPos() + m_forward, m_up);
-//    m_viewMatrix = rotate * translate;
+    m_viewMatrix = glm::lookAt(m_transform.GetPos(), m_look_at, m_up);
 }
 
 void FPSCamera::ProcessInput(Input *input, float delta) {
     handleMouse(input->getXChange(),input->getYChange());
     handleKeys(input->getKeys(),delta);
     UpdateView();
-}
-
-void FPSCamera::handleKeys(const bool *keys, GLfloat deltaTime) {
-
-    GLfloat velocity = m_movementSpeed * deltaTime;
-
-    float dx = 0; //how much we strafe on x
-    float dz = 0; //how much we walk on z
-
-    if(keys[GLFW_KEY_W]){
-        dz = 2;
-    }
-
-    if(keys[GLFW_KEY_D]){
-        dx = 2;
-    }
-
-    if(keys[GLFW_KEY_S]){
-        dz = -2;
-    }
-
-    if(keys[GLFW_KEY_A]){
-        dx = -2;
-    }
-
-
-    //row major
-    glm::vec3 forward(m_viewMatrix[0][2], m_viewMatrix[1][2], m_viewMatrix[2][2]);
-    glm::vec3 strafe( m_viewMatrix[0][0], m_viewMatrix[1][0], m_viewMatrix[2][0]);
-
-    //forward vector must be negative to look forward.
-    //read :http://in2gpu.com/2015/05/17/view-matrix/
-    m_transform.GetPos() += (-dz * forward + dx * strafe) * velocity;
 }
 
 void FPSCamera::handleMouse(double xChange, double yChange) {
@@ -118,7 +80,26 @@ void FPSCamera::handleMouse(double xChange, double yChange) {
     }
 }
 
-Transform FPSCamera::getTransform()  {
-    return m_transform;
+void FPSCamera::LookAt(glm::vec3 point) {
+    m_look_at = point;
+
+    assert(m_look_at != m_transform.GetPos()); //Not looking at self.
+
+    m_forward = glm::normalize(m_look_at - m_transform.GetPos());
+
+    float dot = glm::dot(glm::vec3(0, 0, 1), m_forward);
+    if (fabs(dot - (-1.0f)) < 0.000001f) {
+        m_transform.SetRot(glm::angleAxis((float)glm::degrees(glm::radians(M_PI)), glm::vec3(0, 1, 0)));
+        return;
+    }
+    else if (fabs(dot - (1.0f)) < 0.000001f) {
+        m_transform.SetRot(glm::quat());
+        return;
+    }
+
+    float angle = - glm::degrees(glm::radians(acosf(dot)));
+
+    glm::vec3 cross = glm::normalize(glm::cross(glm::vec3(0, 0, 1), m_forward));
+    m_transform.SetRot(glm::normalize(glm::angleAxis(angle, cross)));
 }
 

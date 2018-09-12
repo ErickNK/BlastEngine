@@ -25,14 +25,9 @@ public:
 
     void handleMouse(double xChange, double yChange) override;
 
-    void handleKeys(const bool *keys, GLfloat deltaTime) override;
+    void LookAt(glm::vec3 point) override;
 
-    Transform getTransform();
 
-private:
-    GLfloat m_roll;
-
-    Transform m_transform = Transform();
 };
 
 

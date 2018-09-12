@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 class Transform {
 public:
@@ -72,18 +73,27 @@ public:
         return right;
     }
 
-    inline glm::vec3 SetDirection(glm::vec3 direction){
-        glm::quat key_quat = glm::quat(direction);
-        glm::quat new_quat = key_quat * m_rot; //Multiply the new quat by the old one
-        m_rot.x = new_quat.x;
-        m_rot.y = new_quat.y;
-        m_rot.z = new_quat.z;
-        m_rot.w = new_quat.w;
+
+    //ROTATIONS
+    inline void SetRot(const glm::quat &rot) {
+        m_rot = rot;
     }
 
-    inline void SetRot(const glm::quat &rot) { m_rot = rot; }
+    inline void Rotate(float angle, glm::vec3 axis){
+        m_rot = glm::angleAxis(glm::radians(angle), glm::normalize(axis));
+    }
 
-	//TODO: Check if its non uniform
+    inline void Rotate(glm::vec3 rotation){
+        glm::quat key_quat = glm::quat(rotation);
+        m_rot = key_quat * m_rot;
+    }
+
+    inline void Rotate(glm::quat rotation){
+        m_rot = rotation * m_rot;
+    }
+
+
+    //TODO: Check if its non uniform
     inline glm::vec3& GetScale()  { return m_scale; }
 
     inline void SetScale(const glm::vec3 &scale) {

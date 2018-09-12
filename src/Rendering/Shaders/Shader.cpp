@@ -83,9 +83,10 @@ void Shader::UpdateNormalMatrix(const glm::mat3& normalMatrix){
 
 void Shader::UpdateView(const Camera& camera) {
     glUniformMatrix4fv(m_uniforms["view"],1,GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
+//    glUniformMatrix4fv(m_uniforms["projection"],1,GL_FALSE, glm::value_ptr(camera.getProjection()));
 
     //Update position
-    glUniform3f(m_uniforms["cameraPosition"],camera.getPosition().x,camera.getPosition().y,camera.getPosition().z);
+    glUniform3f(m_uniforms["cameraPosition"],camera.getTransform().GetPos().x,camera.getTransform().GetPos().y,camera.getTransform().GetPos().z);
     glUniform3f(m_uniforms["cameraDirection"],camera.getDirection().x,camera.getDirection().y,camera.getDirection().z);
 }
 

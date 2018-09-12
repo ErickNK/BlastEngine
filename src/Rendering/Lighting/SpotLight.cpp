@@ -63,8 +63,8 @@ void SpotLight::UseLight(std::map<std::string, GLint>& m_uniforms, int shadowTex
 }
 
 void SpotLight::SetAsFlashLight(const Camera& camera) {
-        m_transform.SetPos(camera.getPosition());
-        direction = camera.getDirection();
+    m_transform = camera.getTransform();
+    direction = camera.getDirection();
 }
 
 void SpotLight::SetupUniforms(std::map<std::string, GLint>& m_uniforms, GLuint shaderProgram) {
