@@ -31,7 +31,7 @@ public:
     /**
      * Process the input, and update the objects
      * */
-    void ProcessInput(const Input* input, float delta);
+    void ProcessInput(Input* input, float delta);
 
     /**
      * Update the state of our objects

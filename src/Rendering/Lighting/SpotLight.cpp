@@ -3,7 +3,7 @@
 //
 
 #include "SpotLight.h"
-#include "../Camera.h"
+#include "../Camera/Camera.h"
 #include "../../Core/CoreEngine.h"
 
 SpotLight::SpotLight():
@@ -17,12 +17,12 @@ SpotLight::SpotLight():
 SpotLight::SpotLight(
     glm::vec3 color, glm::vec3 position, glm::vec3 direction,
     GLfloat ambientIntensity, GLfloat diffuseIntensity,
-    GLfloat constant, GLfloat linear, GLfloat quadratic,
+    glm::vec3 attenuation,
     GLfloat edge, GLfloat shadowWidth, GLfloat shadowHeight) :
     PointLight(
             color, position,
             ambientIntensity, diffuseIntensity,
-            constant, linear, quadratic,
+            attenuation,
             shadowWidth,shadowHeight
             ),
     direction(direction), edge(edge), procEdge(cosf(glm::radians(edge)))
@@ -40,27 +40,30 @@ void SpotLight::UseLight(std::map<std::string, GLint>& m_uniforms, int shadowTex
 		//Set shadowTextureUnit
 		glUniform1i(m_uniforms["spotLight.shadowMap"], shadowTextureUnit);
 
-        glUniform3f(m_uniforms["spotLight.base.position"],position.x,position.y,position.z);
+        glUniform3f(m_uniforms["spotLight.base.position"],m_transform.GetPos().x,m_transform.GetPos().y,m_transform.GetPos().z);
 
-        glUniform3f(m_uniforms["spotLight.dir"],direction.x,position.y,position.z);
+        glUniform3f(m_uniforms["spotLight.dir"],direction.x,direction.y,direction.z);
 
         glUniform1f(m_uniforms["spotLight.edge"],procEdge);
 
-        glUniform1f(m_uniforms["spotLight.base.attenuationConstant"],constant);
+        glUniform1f(m_uniforms["spotLight.base.attenuationConstant"],m_attenuation.z);
 
-        glUniform1f(m_uniforms["spotLight.base.attenuationLinear"],linear);
+        glUniform1f(m_uniforms["spotLight.base.attenuationLinear"],m_attenuation.y);
 
-        glUniform1f(m_uniforms["spotLight.base.attenuationQuadratic"],quadratic);
+        glUniform1f(m_uniforms["spotLight.base.attenuationQuadratic"],m_attenuation.x);
 
         glUniform3f(m_uniforms["spotLight.base.base.colour"],color.x,color.y,color.z);
 
         glUniform1f(m_uniforms["spotLight.base.base.ambientIntensity"],ambientIntensity);
 
         glUniform1f(m_uniforms["spotLight.base.base.diffuseIntensity"] ,diffuseIntensity);
+
+        glUniform1f(m_uniforms["spotLight.base.range"],m_range);
+
 }
 
 void SpotLight::SetAsFlashLight(const Camera& camera) {
-        position = camera.getPosition();
+        m_transform.SetPos(camera.getPosition());
         direction = camera.getDirection();
 }
 
@@ -84,5 +87,7 @@ void SpotLight::SetupUniforms(std::map<std::string, GLint>& m_uniforms, GLuint s
 	m_uniforms["spotLight.base.attenuationLinear"] = glGetUniformLocation(shaderProgram, "spotLight.base.attenuationLinear");
 
 	m_uniforms["spotLight.base.attenuationQuadratic"] = glGetUniformLocation(shaderProgram, "spotLight.base.attenuationQuadratic");
+
+	m_uniforms["spotLight.base.range"] = glGetUniformLocation(shaderProgram, "spotLight.base.range");
 
 }

@@ -19,15 +19,13 @@
 #include "../Core/Window.h"
 #include "../Core/Scene.h"
 #include "Shaders/Shader.h"
-#include "Camera.h"
+#include "Camera/Camera.h"
 #include "SkyBox.h"
 #include "Shaders/FogShader.h"
 
 RenderingEngine::RenderingEngine(Window* window): m_window(window) {
     CreateShaders();
     SetupPerspective();
-    SetupCamera();
-    SetupSkyBox();
 }
 
 void RenderingEngine::CreateShaders(){
@@ -57,18 +55,7 @@ void RenderingEngine::CreateShaders(){
     m_shaders[FOG_SHADER] = fogShader;
 }
 
-void RenderingEngine::SetupSkyBox() {
-    std::vector<std::string> faceLocations;
 
-    faceLocations.emplace_back("../res/textures/skybox/cloudtop_lf.tga");
-    faceLocations.emplace_back("../res/textures/skybox/cloudtop_rt.tga");
-    faceLocations.emplace_back("../res/textures/skybox/cloudtop_up.tga");
-    faceLocations.emplace_back("../res/textures/skybox/cloudtop_dn.tga");
-    faceLocations.emplace_back("../res/textures/skybox/cloudtop_ft.tga");
-    faceLocations.emplace_back("../res/textures/skybox/cloudtop_bk.tga");
-
-    skybox = SkyBox(faceLocations);
-}
 
 void RenderingEngine::SetupPerspective(){
     //Setup projection
@@ -77,17 +64,6 @@ void RenderingEngine::SetupPerspective(){
             (GLfloat)m_window->getBufferWidth()/(GLfloat)m_window->getBufferHeight(),
             0.1f,
             1000.0f
-    );
-}
-
-void RenderingEngine::SetupCamera(){
-    m_camera = Camera(
-            glm::vec3(2.0f,2.0f,5.0f),
-            glm::vec3(0.0f,1.0f,0.0f),
-            -90.0f,
-            0.0f,
-            15.0f,
-            0.5f
     );
 }
 
@@ -111,7 +87,7 @@ void RenderingEngine::RenderAmbientLight(){
 
     ambient_light_shader->Bind();
 
-        ambient_light_shader->setLight(glm::vec3(1,1,1),0.06);
+        ambient_light_shader->setLight(glm::vec3(1,1,1),0.006);
 
         RenderAllMeshed();
 
@@ -139,16 +115,16 @@ void RenderingEngine::RenderAmbientLight(){
 //
 void RenderingEngine::RenderEffects() {
     for (auto m_light : m_current_scene->getEffectEntities()) {
-        StartBlendColor();
+//        StartBlendColor();
             m_light->RenderEffect(this);
-        EndBlendColor();
+//        EndBlendColor();
     }
 }
 
 void RenderingEngine::RenderAllMeshed(){
     for (auto m_meshed : m_current_scene->getMeshedEntities()) {
 
-        m_shaders[m_current_shader]->UpdateView(m_camera);
+        m_shaders[m_current_shader]->UpdateView(*m_camera);
 
         m_shaders[m_current_shader]->UpdateProjection(m_projection);
 
@@ -159,32 +135,32 @@ void RenderingEngine::RenderAllMeshed(){
 void RenderingEngine::RenderLights()
 {
     for (auto m_light : m_current_scene->getLights()) {
-        StartBlendColor();
+//        StartBlendColor();
             m_light->RenderLight(this);
-        EndBlendColor();
+//        EndBlendColor();
     }
 }
 
 void RenderingEngine::RenderScene() {
+    m_camera = m_current_scene->getCurrentCamera();
+
     m_window->ResetViewPort();
 
     m_renderProfileTimer.StartInvocation();
 
-        skybox.Draw(m_camera, m_projection);
+        m_current_scene->getCurrentSkybox()->Draw(*m_camera, m_projection);
 
         RenderAmbientLight();
+
+        StartBlendColor();
+
         RenderLights();
         RenderEffects();
 
+        EndBlendColor();
+
     m_renderProfileTimer.StopInvocation();
 }
-
-void RenderingEngine::ProcessInput(Input* input,float delta){
-    m_camera.handleMouse(input->getXChange(),input->getYChange());
-    m_camera.handleKeys(input->getKeys(),delta);
-//    spotLights[0].SetAsFlashLight(m_camera);
-}
-
 
 Shader* RenderingEngine::GetShader(ShaderType type) {
     return m_shaders[type];

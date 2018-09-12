@@ -4,19 +4,28 @@
 
 #include "PointLight.h"
 #include "../../Core/CoreEngine.h"
+#include <glm/gtx/component_wise.hpp>
 
 PointLight::PointLight() :
-    Light(POINT_LIGHT), position(glm::vec3(5.0f,0.0f,0.0f)),
-    constant(1.0f),linear(0.045f),quadratic(0.0075f){}
+    Light(POINT_LIGHT),
+    m_attenuation(0.0075f,0.045f,1.0f){}
 
 PointLight::PointLight(glm::vec3 color, glm::vec3 position,
                        GLfloat ambientIntensity, GLfloat diffuseIntensity,
-                       GLfloat constant, GLfloat linear, GLfloat quadratic,
+					   glm::vec3 attenuation,
 						GLfloat shadowWidth, GLfloat shadowHeight) :
     Light(POINT_LIGHT,color,ambientIntensity,diffuseIntensity,shadowWidth,shadowHeight),
-    position(position),
-    constant(constant),linear(linear),quadratic(quadratic){}
-
+	m_attenuation(attenuation)
+{
+	m_transform.SetPos(position);
+	CalculateRange();
+}
+void PointLight::CalculateRange(){
+	float a = m_attenuation.x;
+	float b = m_attenuation.y;
+	float c = m_attenuation.z - COLOR_DEPTH * diffuseIntensity * glm::compMax(color);
+	m_range = (- b + sqrt(b * b - 4 * a * c)) / (2 * a);
+}
 
 void PointLight::UseLight(std::map<std::string, GLint>& m_uniforms, int shadowTextureUnit) {
 
@@ -26,19 +35,21 @@ void PointLight::UseLight(std::map<std::string, GLint>& m_uniforms, int shadowTe
 	//Set shadowTextureUnit
 	glUniform1i(m_uniforms["pointLight.shadowMap"], shadowTextureUnit);
 
-    glUniform3f(m_uniforms["pointLight.position"],position.x,position.y,position.z);
+    glUniform3f(m_uniforms["pointLight.position"],m_transform.GetPos().x,m_transform.GetPos().y,m_transform.GetPos().z);
 
-    glUniform1f(m_uniforms["pointLight.attenuationConstant"],constant);
+    glUniform1f(m_uniforms["pointLight.attenuationConstant"],m_attenuation.z);
 
-    glUniform1f(m_uniforms["pointLight.attenuationLinear"],linear);
+    glUniform1f(m_uniforms["pointLight.attenuationLinear"],m_attenuation.y);
 
-    glUniform1f(m_uniforms["pointLight.attenuationQuadratic"],quadratic);
+    glUniform1f(m_uniforms["pointLight.attenuationQuadratic"],m_attenuation.x);
 
     glUniform3f(m_uniforms["pointLight.base.colour"],color.x,color.y,color.z);
 
     glUniform1f(m_uniforms["pointLight.base.ambientIntensity"],ambientIntensity);
 
     glUniform1f(m_uniforms["pointLight.base.diffuseIntensity"],diffuseIntensity);
+
+	glUniform1f(m_uniforms["pointLight.range"],m_range);
 }
 
 PointLight::~PointLight() = default;
@@ -60,10 +71,6 @@ void PointLight::SetupUniforms(std::map<std::string, GLint>& m_uniforms, GLuint 
 	m_uniforms["pointLight.attenuationLinear"] = glGetUniformLocation(shaderProgram, "pointLight.attenuationLinear");
 
 	m_uniforms["pointLight.attenuationQuadratic"] = glGetUniformLocation(shaderProgram, "pointLight.attenuationQuadratic");
-}
 
-/*
-void PointLight::AddToEngine(CoreEngine *engine) {
-    engine->GetRenderingEngine()->AddPointLight(this);
+	m_uniforms["pointLight.range"] = glGetUniformLocation(shaderProgram, "pointLight.range");
 }
-*/

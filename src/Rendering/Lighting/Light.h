@@ -30,7 +30,6 @@ public:
 	GLfloat getAmbientIntensity() const;
 
     LightType getType() const;
-/*    void AddToEngine(CoreEngine* engine) override {};*/
 
 protected:
 

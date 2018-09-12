@@ -9,6 +9,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "../../Core/Input.h"
 
 class Camera {
 
@@ -20,9 +21,11 @@ public:
 
     virtual ~Camera();
 
-    void handleKeys(const bool *keys, GLfloat deltaTime);
+	virtual void ProcessInput(Input* input, float delta);
 
-    void handleMouse(double xChange, double yChange);
+	virtual void handleKeys(const bool *keys, GLfloat deltaTime);
+
+	virtual void handleMouse(double xChange, double yChange);
 
     glm::mat4 getViewMatrix() const;
 
@@ -33,7 +36,6 @@ public:
     glm::vec3 getDirection() const;
 
 protected:
-private:
     /**
     * The position of the camera
     * */
@@ -52,7 +54,7 @@ private:
 
 	glm::mat4 m_viewMatrix;
 
-    void updateAngle();
+	virtual void UpdateView();
 };
 
 

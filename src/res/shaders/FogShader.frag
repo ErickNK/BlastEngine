@@ -23,5 +23,5 @@ void main(){
     /**
      * MAIN fragment colouring
      * */
-    colour = fogColor * vVisibility;
+    colour = mix(fogColor,vec4(0,0,0,0),vVisibility);
 }

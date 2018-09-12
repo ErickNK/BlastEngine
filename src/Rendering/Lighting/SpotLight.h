@@ -7,7 +7,7 @@
 
 
 #include "PointLight.h"
-#include "../Camera.h"
+#include "../Camera/Camera.h"
 
 class SpotLight : public PointLight {
 
@@ -17,7 +17,7 @@ public:
     SpotLight(
             glm::vec3 color, glm::vec3 position, glm::vec3 direction,
             GLfloat ambientIntensity, GLfloat diffuseIntensity,
-            GLfloat constant, GLfloat linear, GLfloat quadratic,
+            glm::vec3 attenuation,
             GLfloat edge, GLfloat shadowWidth, GLfloat shadowHeight);
 
     ~SpotLight() override;

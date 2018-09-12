@@ -11,7 +11,7 @@ void Game::Init() {
 
 }
 
-void Game::ProcessInput(const Input* input, float delta)
+void Game::ProcessInput(Input* input, float delta)
 {
     m_inputTimer.StartInvocation();
     m_currentScene->ProcessInput(input, delta);

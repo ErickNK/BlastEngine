@@ -19,7 +19,7 @@ void FogShader::CreateUniforms() {
 }
 
 void FogShader::SetFog(Fog* fog) {
-    glUniform3f(m_uniforms["fogColor"],fog->m_color.x,fog->m_color.y,fog->m_color.z);
+    glUniform4f(m_uniforms["fogColor"],fog->m_color.x,fog->m_color.y,fog->m_color.z,fog->m_color.w);
     glUniform1f(m_uniforms["fogDensity"],fog->m_fogDensity);
     glUniform1f(m_uniforms["fogGradient"],fog->m_fogGradient);
 }

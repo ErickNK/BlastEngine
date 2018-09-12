@@ -14,7 +14,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "../Transform.h"
-#include "../Camera.h"
+#include "../Camera/Camera.h"
 #include "../../Common/CommonValues.h"
 
 class Shader {

@@ -23,8 +23,6 @@ class RenderingEngine {
 public:
     explicit RenderingEngine(Window* window);
 
-    void ProcessInput(Input* input,float delta);
-
     inline double DisplayRenderTime(double dividend) { return m_renderProfileTimer.DisplayAndReset("Render Time: ", dividend); }
 
 //    inline double DisplayWindowSyncTime(double dividend) { return m_windowSyncProfileTimer.DisplayAndReset("Window Sync Time: ", dividend); }
@@ -57,13 +55,11 @@ private:
 
     glm::mat4 m_projection;
     Window* m_window;
-    Camera m_camera;
-    SkyBox skybox;
+    Camera* m_camera;
+    SkyBox* skybox;
 
     void CreateShaders();
-    void SetupSkyBox();
     void SetupPerspective();
-    void SetupCamera();
     void StartBlendColor();
     void EndBlendColor();
 };

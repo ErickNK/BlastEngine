@@ -19,7 +19,7 @@
 #include <assimp/postprocess.h>
 #include "../Input.h"
 #include "../../Rendering/Shaders/Shader.h"
-#include "../../Rendering/Camera.h"
+#include "../../Rendering/Camera/Camera.h"
 #include "../../Rendering/Mesh.h"
 #include "../../Rendering/Material.h"
 #include "../Components/MeshedComponent.h"
@@ -60,8 +60,6 @@ protected:
     std::vector<MeshedEntity*> m_children;
     std::vector<MeshedComponent*> m_components;
 
-    std::string directory;
-    std::string path;
     Mesh m_mesh;
     Material m_material;
     Transform m_transform;

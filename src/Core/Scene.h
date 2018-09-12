@@ -9,6 +9,7 @@
 #include "Entities/LightEntity.h"
 #include "Entities/MeshedEntity.h"
 #include "Entities/EffectEntity.h"
+#include "../Rendering/SkyBox.h"
 
 class LightEntity;
 class Game;
@@ -27,7 +28,7 @@ public:
     /**
     * Process the input, and update the objects
     * */
-    void ProcessInput(const Input* input, float delta);
+    void ProcessInput(Input* input, float delta);
 
     /**
      * Update the state of our objects
@@ -40,6 +41,11 @@ public:
     void AddLightToScene(LightEntity* entity);
     void AddMeshedToScene(MeshedEntity* meshed);
     void AddEffectToScene(EffectEntity* effect);
+    void AddCamera(Camera *camera);
+    void AddSkyBox(SkyBox *skyBox);
+
+    void SetCurrentCamera(int position);
+    void SetCurrentSkyBox(int position);
 
     Game* getGame() const;
 
@@ -49,6 +55,10 @@ public:
 
     const std::vector<EffectEntity *> &getEffectEntities() const;
 
+    Camera *getCurrentCamera() const;
+
+    SkyBox *getCurrentSkybox();
+
 private:
 
     /**
@@ -57,9 +67,14 @@ private:
      * */
     Game* m_game;
 
+    Camera* m_current_camera;
+    SkyBox* m_current_skybox;
+
     /**
     * Objects contained in the scene
     * */
+    std::vector<Camera*> m_cameras;
+    std::vector<SkyBox*> m_skyboxes;
     std::vector<LightEntity*> m_lights;
     std::vector<MeshedEntity*> m_meshed_Entities;
     std::vector<EffectEntity*> m_effect_Entities;

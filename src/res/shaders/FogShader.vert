@@ -39,5 +39,5 @@ void main(){
 
     float viewSpaceDistance = length(viewSpace.xyz);
 
-    vVisibility = clamp( exp( -pow( (viewSpaceDistance * fogDensity), fogGradient) ), 0.0 , 0.1 );
+    vVisibility = clamp( exp( -pow( (viewSpaceDistance * fogDensity), fogGradient) ), 0.0 , 1.0 );
 }

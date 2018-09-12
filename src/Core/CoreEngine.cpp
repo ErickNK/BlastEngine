@@ -67,7 +67,6 @@ void CoreEngine::Run() {
             //afterwards.
             glfwPollEvents(); //Update input system
             m_game->ProcessInput(m_window->getInput(), (float)m_frameTimeLimit);
-            m_renderingEngine->ProcessInput(m_window->getInput(), (float)m_frameTimeLimit);
             m_game->Update((float)m_frameTimeLimit);
 
             //The scene has been updated therefore rerender the scene.

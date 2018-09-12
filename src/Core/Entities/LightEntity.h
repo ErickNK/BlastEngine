@@ -24,8 +24,11 @@ public:
     void RenderLight(RenderingEngine* engine) const;
 
     LightEntity* AddComponent(LightComponent* component);
-private:
+
+protected:
     std::vector<LightComponent*> m_components;
+
+    Transform m_transform;
 };
 
 

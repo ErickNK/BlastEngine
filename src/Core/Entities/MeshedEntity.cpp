@@ -21,8 +21,7 @@ MeshedEntity::~MeshedEntity()
 MeshedEntity* MeshedEntity::AddChild(MeshedEntity* child)
 {
     m_children.push_back(child);
-//    child->GetTransform()->SetParent(&m_transform);
-//    child->SetEngine(m_coreEngine);
+    child->getTransform().SetParent(&m_transform);
     return this;
 }
 

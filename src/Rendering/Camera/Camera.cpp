@@ -3,6 +3,9 @@
 //
 
 #include "Camera.h"
+#include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 Camera::Camera() {
 
@@ -15,14 +18,14 @@ Camera::Camera(glm::vec3 startPosition, glm::vec3 startUp, GLfloat startYaw, GLf
 
     m_forward = glm::vec3(0.0f,0.0f,0.0f);
 
-    updateAngle();
+    UpdateView();
 }
 
 Camera::~Camera() {
 
 }
 
-void Camera::updateAngle() {
+void Camera::UpdateView() {
     m_forward.x = cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
     m_forward.y = sin(glm::radians(m_pitch));
     m_forward.z = sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
@@ -33,6 +36,12 @@ void Camera::updateAngle() {
     m_up = glm::normalize(glm::cross(m_right,m_forward));
 
 	m_viewMatrix = glm::lookAt(m_position, m_position + m_forward, m_up);
+}
+
+void Camera::ProcessInput(Input *input, float delta) {
+    handleMouse(input->getXChange(),input->getYChange());
+    handleKeys(input->getKeys(),delta);
+    UpdateView();
 }
 
 void Camera::handleKeys(const bool *keys, GLfloat deltaTime) {
@@ -54,8 +63,6 @@ void Camera::handleKeys(const bool *keys, GLfloat deltaTime) {
     if(keys[GLFW_KEY_A]){
         m_position -= m_right * velocity;
     }
-
-	m_viewMatrix = glm::lookAt(m_position, m_position + m_forward, m_up);
 }
 
 glm::mat4 Camera::getViewMatrix() const {
@@ -81,8 +88,6 @@ void Camera::handleMouse(double xChange, double yChange) {
     if(m_pitch < -89.0f){
         m_pitch = -89.0f;
     }
-
-    updateAngle();
 }
 
 glm::vec3 Camera::getPosition() const {

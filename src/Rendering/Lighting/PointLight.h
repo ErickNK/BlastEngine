@@ -16,10 +16,12 @@ public:
 
     PointLight(glm::vec3 color, glm::vec3 position,
             GLfloat ambientIntensity, GLfloat diffuseIntensity,
-            GLfloat constant, GLfloat linear, GLfloat quadratic,
+            glm::vec3 attenuation,
 			GLfloat shadowWidth, GLfloat shadowHeight);
 
     ~PointLight() override;
+
+    void CalculateRange();
 
     virtual void UseLight(std::map<std::string, GLint>& m_uniforms, int shadowTextureUnit);
 
@@ -27,10 +29,12 @@ public:
 
     /*void AddToEngine(CoreEngine *engine) override;*/
 protected:
-    glm::vec3 position;
 
-    GLfloat constant, linear, quadratic;
+    glm::vec3 m_attenuation;
 
+    float m_range;
+
+    const int COLOR_DEPTH = 256;
 };
 
 
