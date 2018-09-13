@@ -20,25 +20,36 @@
 #include "../Texture.h"
 #include "../../Core/Entities/MeshedEntity.h"
 
+enum LoadingOptions{
+    Transparency,
+    FakeLighting,
+
+    Num_Options
+};
+
 class MeshedLoader {
 public:
 
     MeshedLoader();
 
-    bool LoadGameObject(std::string path, MeshedEntity* root);
+    bool LoadGameObject(std::string path, MeshedEntity* root, bool * options);
 
-    bool LoadGameObjectWithTexture(std::string path,std::map<TextureTypeEnum, std::string> textureLocations, MeshedEntity *root);
+    bool LoadGameObjectWithTexture(std::string path,std::map<TextureTypeEnum, std::string> textureLocations, MeshedEntity *root, bool* options);
 
     void processNode(aiNode *node, const aiScene *scene, MeshedEntity* root);
 
     MeshedEntity* processObject(aiMesh *mesh, const aiScene *scene);
 
     std::vector<Texture> loadMaterialTextures(aiMaterial *material, aiTextureType type, TextureTypeEnum typeName);
+
+    void Clean();
 private:
     std::string directory;
     std::string path;
     std::vector<Texture> textures_loaded;
-    bool isLoadedCorrectly = false;
+    mutable bool options[Num_Options];
+    bool hasTransparency = false;
+    bool withTexManuallyProvided = false;
 
 };
 

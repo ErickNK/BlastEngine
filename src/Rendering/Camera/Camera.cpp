@@ -42,37 +42,50 @@ void Camera::UpdateView() {
 }
 
 void Camera::ProcessInput(Input *input, float delta) {
-    handleMouse(input->getXChange(),input->getYChange());
-    handleKeys(input->getKeys(),delta);
+    if(allow_move){
+        handleKeys(input->getKeys(),delta);
+    }
+    if(allow_turn){
+        handleMouse(input->getXChange(),input->getYChange());
+    }
     UpdateView();
 }
 
 void Camera::handleKeys(const bool *keys, GLfloat deltaTime) {
 
-    GLfloat velocity = m_movementSpeed * deltaTime;
+    GLfloat mvelocity = m_movementSpeed * deltaTime;
+    GLfloat tvelocity = m_turnSpeed * deltaTime;
 
     if(keys[GLFW_KEY_W]){
-        m_transform.GetPos() += m_forward * velocity;
+        m_transform.GetPos() += m_forward * mvelocity;
     }
 
     if(keys[GLFW_KEY_D]){
-        m_transform.GetPos() += m_right * velocity;
+        m_transform.GetPos() += m_right * mvelocity;
     }
 
     if(keys[GLFW_KEY_S]){
-        m_transform.GetPos() -= m_forward * velocity;
+        m_transform.GetPos() -= m_forward * mvelocity;
     }
 
     if(keys[GLFW_KEY_A]){
-        m_transform.GetPos() -= m_right * velocity;
+        m_transform.GetPos() -= m_right * mvelocity;
     }
 
     if(keys[GLFW_KEY_UP]){
-        m_transform.GetPos() += m_up * velocity;
+        m_transform.GetPos() += m_up * mvelocity;
     }
 
     if(keys[GLFW_KEY_DOWN]){
-        m_transform.GetPos() -= m_up * velocity;
+        m_transform.GetPos() -= m_up * mvelocity;
+    }
+
+    if(keys[GLFW_KEY_LEFT]){
+        m_yaw -= glm::degrees(5.0) * tvelocity;
+    }
+
+    if(keys[GLFW_KEY_RIGHT]){
+        m_yaw += glm::degrees(5.0) * tvelocity;
     }
 }
 
@@ -134,5 +147,14 @@ Transform Camera::getTransform()  const{
 glm::mat4 Camera::getProjection() const{
     return m_projection;
 }
+
+void Camera::setAllowMovement(bool allow) {
+    Camera::allow_move = allow;
+}
+
+void Camera::setAllowTurn(bool turn) {
+    Camera::allow_turn = turn;
+}
+
 
 

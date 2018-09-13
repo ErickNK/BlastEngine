@@ -6,6 +6,7 @@
 
 #include "Terrain.h"
 #include "../../Core/Components/MeshedRendererComponent.h"
+#include "../../Core/Components/TerrainRendererComponent.h"
 
 Terrain::Terrain(int gridX, int gridZ,std::map<TextureTypeEnum, std::string> textureLocations) :
     m_textureLocations(std::move(textureLocations))
@@ -24,7 +25,7 @@ void Terrain::InitTerrain() {
         for(int j=0;j<m_vertex_count;j++){
             vertices.emplace_back(
                     glm::vec3((float)j/((float)m_vertex_count - 1) * m_size,0,(float)i/((float)m_vertex_count - 1) * m_size),
-                    glm::vec2((float)j/((float)m_vertex_count - 1),(float)i/((float)m_vertex_count - 1)) * 40.0f,
+                    glm::vec2((float)j/((float)m_vertex_count - 1),(float)i/((float)m_vertex_count - 1)),
                     glm::vec3(0,1,0)
             );
         }
@@ -58,5 +59,12 @@ void Terrain::InitTerrain() {
     //ADD COMPONENTS
     auto * renderer = new MeshedRendererComponent();
     this->AddComponent(renderer);
+
+    m_terrain_renderer = new TerrainRendererComponent();
+    m_terrain_renderer->SetParent(this);
+}
+
+void Terrain::RenderTerrain(RenderingEngine *engine) {
+    m_terrain_renderer->RenderTerrain(engine);
 }
 

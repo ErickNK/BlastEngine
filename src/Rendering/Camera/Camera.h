@@ -40,6 +40,10 @@ public:
 
     glm::mat4 getProjection() const;
 
+    void setAllowMovement(bool allow);
+
+    void setAllowTurn(bool turn);
+
 protected:
     /**
     * The position of the camera
@@ -60,6 +64,9 @@ protected:
     Transform m_transform = Transform();
 	glm::mat4 m_viewMatrix;
 
+	bool allow_move = true;
+	bool allow_turn = true;
+
     glm::mat4 m_projection;
     int viewport_x;
     int viewport_y;
@@ -67,6 +74,7 @@ protected:
     int window_height;
 
 	virtual void UpdateView();
+
 };
 
 

@@ -10,6 +10,7 @@
 #include "Entities/MeshedEntity.h"
 #include "Entities/EffectEntity.h"
 #include "../Rendering/SkyBox.h"
+#include "../Rendering/Terrain/Terrain.h"
 
 class LightEntity;
 class Game;
@@ -43,6 +44,7 @@ public:
     void AddEffectToScene(EffectEntity* effect);
     void AddCamera(Camera *camera);
     void AddSkyBox(SkyBox *skyBox);
+    void AddTerrain(Terrain *terrain);
 
     void SetCurrentCamera(int position);
     void SetCurrentSkyBox(int position);
@@ -50,6 +52,8 @@ public:
     Game* getGame() const;
 
     const std::vector<LightEntity *> &getLights() const;
+
+    const std::vector<Terrain *> &getTerrains() const;
 
     const std::vector<MeshedEntity *> &getMeshedEntities() const;
 
@@ -76,6 +80,7 @@ private:
     std::vector<Camera*> m_cameras;
     std::vector<SkyBox*> m_skyboxes;
     std::vector<LightEntity*> m_lights;
+    std::vector<Terrain*> m_terrains;
     std::vector<MeshedEntity*> m_meshed_Entities;
     std::vector<EffectEntity*> m_effect_Entities;
 

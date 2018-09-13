@@ -17,6 +17,8 @@ public:
 	
 	Material(GLfloat specularIntensity, GLfloat shininess, std::vector<Texture>& textures);
 
+    Material(float specularIntensity, float shininess, std::vector<Texture> textures, bool* options);
+
     virtual ~Material();
 
 	void UseMaterial(Shader * shader) ;
@@ -26,10 +28,19 @@ public:
 	void setSpecularIntensity(GLfloat specularIntensity);
 
 	void setShininess(GLfloat shininess);
+
+	std::vector<Texture> &getTextures();
+
+	void setHasTransparency(bool hasTransparency);
+
+    bool& isHasTransparency();
+
 private:
 	std::vector<Texture> textures;
     GLfloat specularIntensity;
     GLfloat shininess;
+    bool hasTransparency = false;
+    bool hasFakeLighting = false;
 };
 
 

@@ -29,6 +29,10 @@ public:
 
     Shader* GetShader(ShaderType type);
 
+    void EnableCulling();
+
+    void DisableCulling();
+
     void RenderAmbientLight();
 
     void RenderScene();
@@ -39,9 +43,15 @@ public:
 
     void RenderAllMeshed();
 
+    void RenderTerrain();
+
     void SetCurrentShader(ShaderType type);
 
     void SetCurrentScene(Scene * scene);
+
+    Scene *getCurrentScene() const;
+
+    const glm::mat4 &getProjection() const;
 
 private:
     //Shaders
@@ -56,7 +66,6 @@ private:
     glm::mat4 m_projection;
     Window* m_window;
     Camera* m_camera;
-    SkyBox* skybox;
 
     void CreateShaders();
     void SetupPerspective();

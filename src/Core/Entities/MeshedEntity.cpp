@@ -2,6 +2,7 @@
 // Created by erick on 9/10/18.
 //
 
+#include "../Components/MeshedComponent.h"
 #include "MeshedEntity.h"
 
 MeshedEntity::MeshedEntity(Mesh &mesh, Transform &transform, Material &material) :
@@ -32,7 +33,7 @@ MeshedEntity* MeshedEntity::AddComponent(MeshedComponent* component)
     return this;
 }
 
-void MeshedEntity::ProcessInputAll(const Input* input, float delta)
+void MeshedEntity::ProcessInputAll(Input* input, float delta)
 {
     ProcessInput(input, delta);
 
@@ -59,7 +60,7 @@ void MeshedEntity::RenderAll(Shader* shader) const
     }
 }
 
-void MeshedEntity::ProcessInput(const Input* input, float delta)
+void MeshedEntity::ProcessInput(Input* input, float delta)
 {
 //    m_transform.Update();
 

@@ -148,10 +148,6 @@ void Window::setupSettings(){
 	//Enable Depth
 	glEnable(GL_DEPTH_TEST);
 
-	//Enable Cull face
-	glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-
 }
 
 void Window::ResetViewPort() {

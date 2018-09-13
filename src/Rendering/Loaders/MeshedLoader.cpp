@@ -1,3 +1,5 @@
+#include <utility>
+
 //
 // Created by erick on 9/9/18.
 //
@@ -9,13 +11,34 @@
 
 MeshedLoader::MeshedLoader() = default;
 
-bool MeshedLoader::LoadGameObjectWithTexture(std::string path,std::map<TextureTypeEnum, std::string> textureLocations, MeshedEntity *root) {
+void MeshedLoader::Clean(){
+    withTexManuallyProvided = false;
 
+    this->textures_loaded.clear();
+
+    hasTransparency = false;
+
+    for (bool &option : options) {
+        option = false;
+    }
 }
 
-bool MeshedLoader::LoadGameObject(std::string path, MeshedEntity* root) {
+bool MeshedLoader::LoadGameObjectWithTexture(std::string path,std::map<TextureTypeEnum, std::string> textureLocations, MeshedEntity *root, bool* options) {
+    withTexManuallyProvided = true;
+    std::copy(options, options + Num_Options, MeshedLoader::options);
+
+    for (auto const& x : textureLocations) {
+        Texture texture = *new Texture(x.second, x.first);
+        this->textures_loaded.push_back(texture); //Keep so we don't reload it.
+    }
+
+    return LoadGameObject(std::move(path),root,MeshedLoader::options);
+}
+
+bool MeshedLoader::LoadGameObject(std::string path, MeshedEntity* root, bool* options) {
     MeshedLoader::path = path;
     MeshedLoader::directory = path.substr(0, path.find_last_of('/'));
+    std::copy(options, options + Num_Options, MeshedLoader::options);
 
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
@@ -26,6 +49,8 @@ bool MeshedLoader::LoadGameObject(std::string path, MeshedEntity* root) {
     }
 
     this->processNode(scene->mRootNode, scene, root);
+
+    Clean();
 
     return true;
 }
@@ -75,7 +100,7 @@ MeshedEntity* MeshedLoader::processObject(aiMesh *mesh, const aiScene *scene) {
     }
 
     //Process the textures and colors
-    if (mesh->mMaterialIndex >= 0) {
+    if (mesh->mMaterialIndex >= 0 && !withTexManuallyProvided) {
         aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
 
 
@@ -103,6 +128,10 @@ MeshedEntity* MeshedLoader::processObject(aiMesh *mesh, const aiScene *scene) {
                 SPECULAR_TEXTURE
         );
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+    }else{
+        if (withTexManuallyProvided){
+            textures = textures_loaded;
+        }
     }
 
     //Process the vertices
@@ -146,7 +175,7 @@ MeshedEntity* MeshedLoader::processObject(aiMesh *mesh, const aiScene *scene) {
     return new MeshedEntity(
             *new Mesh(vertices, vertices.size(), indices, indices.size()),
             *new Transform(),
-            *new Material(7.0f, 30.0f, textures)
+            *new Material(7.0f, 30.0f, textures, options)
     );
 }
 

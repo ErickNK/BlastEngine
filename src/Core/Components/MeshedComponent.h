@@ -5,16 +5,16 @@
 #ifndef MORDEROPENGLUDEMYTUTORIAL_MESHRENDERER_H
 #define MORDEROPENGLUDEMYTUTORIAL_MESHRENDERER_H
 
-class MeshedEntity;
+#include "../Entities/MeshedEntity.h"
+
 class Shader;
 class Input;
-
 
 class MeshedComponent {
 public:
     MeshedComponent() = default;
     MeshedComponent(MeshedEntity* meshedEntity) : m_meshedEntity(meshedEntity) {}
-    virtual void ProcessInput(const Input* input, float delta) {}
+    virtual void ProcessInput(Input* input, float delta) {}
     virtual void Update(float delta) {}
     virtual void Render(Shader* shader) const {};
     virtual void SetParent(MeshedEntity* meshedEntity) { m_meshedEntity = meshedEntity; }

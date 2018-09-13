@@ -79,7 +79,7 @@ set(SOURCE_FILES
         Core/Entities/MeshedEntity.cpp Core/Entities/MeshedEntity.h
         Core/Components/MeshedRendererComponent.h
         Core/Scene.cpp Core/Scene.h
-        Game/Scenes/TestScene.cpp Game/Scenes/TestScene.h Core/Entities/EffectEntity.cpp Core/Entities/EffectEntity.h Core/Components/EffectComponent.h Rendering/Camera/FPSCamera.cpp Rendering/Camera/FPSCamera.h) # which files should be compiled
+        Game/Scenes/TestScene.cpp Game/Scenes/TestScene.h Core/Entities/EffectEntity.cpp Core/Entities/EffectEntity.h Core/Components/EffectComponent.h Rendering/Camera/FPSCamera.cpp Rendering/Camera/FPSCamera.h Core/Components/TerrainRendererComponent.h Core/Components/Behaviours/PlayerMovement.h Rendering/Transform.cpp) # which files should be compiled
 
 add_executable(MorderOpenGLUdemyTutorial ${SOURCE_FILES}) # which files should produce executables
 

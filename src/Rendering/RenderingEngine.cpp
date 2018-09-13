@@ -22,6 +22,7 @@
 #include "Camera/Camera.h"
 #include "SkyBox.h"
 #include "Shaders/FogShader.h"
+#include "Shaders/TerrainShader.h"
 
 RenderingEngine::RenderingEngine(Window* window): m_window(window) {
     CreateShaders();
@@ -53,6 +54,10 @@ void RenderingEngine::CreateShaders(){
     auto  * fogShader = new FogShader();
     fogShader->Init();
     m_shaders[FOG_SHADER] = fogShader;
+
+    auto  * terrainShader = new TerrainShader();
+    terrainShader->Init();
+    m_shaders[TERRAIN_SHADER] = terrainShader;
 }
 
 
@@ -115,9 +120,7 @@ void RenderingEngine::RenderAmbientLight(){
 //
 void RenderingEngine::RenderEffects() {
     for (auto m_light : m_current_scene->getEffectEntities()) {
-//        StartBlendColor();
             m_light->RenderEffect(this);
-//        EndBlendColor();
     }
 }
 
@@ -135,13 +138,20 @@ void RenderingEngine::RenderAllMeshed(){
 void RenderingEngine::RenderLights()
 {
     for (auto m_light : m_current_scene->getLights()) {
-//        StartBlendColor();
             m_light->RenderLight(this);
-//        EndBlendColor();
     }
 }
 
+void RenderingEngine::RenderTerrain() {
+    for (auto m_Terrain : m_current_scene->getTerrains()) {
+        m_Terrain->RenderTerrain(this);
+    }
+}
+
+
 void RenderingEngine::RenderScene() {
+    this->EnableCulling();
+
     m_camera = m_current_scene->getCurrentCamera();
 
     m_window->ResetViewPort();
@@ -156,6 +166,7 @@ void RenderingEngine::RenderScene() {
 
         RenderLights();
         RenderEffects();
+        RenderTerrain();
 
         EndBlendColor();
 
@@ -174,3 +185,20 @@ void RenderingEngine::SetCurrentScene(Scene * scene) {
     m_current_scene = scene;
 }
 
+Scene *RenderingEngine::getCurrentScene() const {
+    return m_current_scene;
+}
+
+const glm::mat4 &RenderingEngine::getProjection() const {
+    return m_projection;
+}
+
+void RenderingEngine::EnableCulling() {
+    //Enable Cull face
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+}
+
+void RenderingEngine::DisableCulling() {
+    glDisable(GL_CULL_FACE);
+}

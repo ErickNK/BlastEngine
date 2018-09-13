@@ -18,8 +18,9 @@ public:
     {
         shader->UpdateModel(m_meshedEntity->getTransform());
 
-        if (shader->getType() != OMNI_DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER ||
-            shader->getType() != DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER) {
+        if (shader->getType() != OMNI_DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER &&
+            shader->getType() != DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER &&
+            shader->getType() != TERRAIN_SHADER) {
 
 
             if (m_meshedEntity->getTransform().isNonUnformScaled()) {

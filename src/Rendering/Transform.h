@@ -22,15 +22,13 @@ public:
     m_scale(scale) {}
 
     inline glm::mat4 GetModel() const{
-        glm::mat4 parentModel;
-
         glm::mat4 posMatrix = glm::translate(m_pos);
 
         glm::mat4 rotMatrix = glm::mat4_cast(m_rot);
 
         glm::mat4 scaleMatrix = glm::scale(m_scale);
 
-        if (m_parent != nullptr){
+        if (m_parent != nullptr && m_parent->HasChanged()){
             return m_parent->GetModel() * (posMatrix * rotMatrix * scaleMatrix);
         }else{
             return (posMatrix * rotMatrix * scaleMatrix); //Identity
@@ -89,9 +87,8 @@ public:
     }
 
     inline void Rotate(glm::quat rotation){
-        m_rot = rotation * m_rot;
+        m_rot = glm::normalize(rotation * m_rot);
     }
-
 
     //TODO: Check if its non uniform
     inline glm::vec3& GetScale()  { return m_scale; }
@@ -101,12 +98,21 @@ public:
 		m_scale = scale; 
 	}
 
-	inline bool isNonUnformScaled() const { return m_nonUniformScaled; }
+	inline bool isNonUnformScaled() const {
+        return m_nonUniformScaled;
+    }
 
 	inline void SetParent(Transform* parent){
         m_parent = parent;
     }
 
+    bool HasChanged();
+
+    void Update();
+
+    glm::quat GetTransformedRot() const;
+
+    void LookAt(glm::vec3 point);
 protected:
 private:
     glm::vec3 m_pos;
@@ -115,6 +121,10 @@ private:
 	bool m_nonUniformScaled = false;
 
     Transform* m_parent = nullptr;
+    mutable glm::vec3 m_oldPos;
+    mutable glm::quat m_oldRot;
+    mutable glm::vec3 m_oldScale;
+    mutable bool m_initializedOldStuff;
 };
 
 

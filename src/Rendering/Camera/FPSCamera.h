@@ -21,8 +21,6 @@ public:
 
     void UpdateView() override;
 
-    void ProcessInput(Input* input, float delta) override;
-
     void handleMouse(double xChange, double yChange) override;
 
     void LookAt(glm::vec3 point) override;

@@ -34,6 +34,7 @@ uniform mat4 model;
 uniform mat4 projection;
 uniform mat3 normalMatrix;
 
+uniform bool hasFakeLighting;
 //---------------------------------------------------------
 
 void main(){
@@ -44,6 +45,11 @@ void main(){
      * */
     gl_Position = projection * view * model * vec4(position, 1.0);
 
+    //Check for fake lighting
+    vec3 actualNormal = normal;
+    if(hasFakeLighting){
+        actualNormal = vec3(0.0,1.0,0.0);
+    }
     /**
      * Directly pass the texture coordinates
      * */
@@ -60,7 +66,7 @@ void main(){
      * non-uniform scaling. We then convert to mat3 to disable translation. The mat3 will multiplication
      * will return a vec3 which is what we want.
      * */
-    vNormal = normalMatrix * normal;
+    vNormal = normalMatrix * actualNormal;
 
     /**
      * We need the world position of a vertex/Fragment. This is the position after transformation

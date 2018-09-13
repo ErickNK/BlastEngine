@@ -8,6 +8,9 @@
 #include "../../Common/CommonValues.h"
 #include "../../Core/Entities/MeshedEntity.h"
 
+class TerrainRendererComponent;
+class RenderingEngine;
+
 class Terrain : public MeshedEntity{
 
 public:
@@ -16,8 +19,12 @@ public:
     Terrain(int gridX, int gridY,std::map<TextureTypeEnum, std::string> textureLocations);
 
     void InitTerrain();
+
+    void RenderTerrain(RenderingEngine* engine);
 private:
     std::map<TextureTypeEnum, std::string> m_textureLocations;
+
+    TerrainRendererComponent* m_terrain_renderer;
 
     float m_size = 800, x , z ;
 

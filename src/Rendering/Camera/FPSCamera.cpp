@@ -57,12 +57,6 @@ void FPSCamera::UpdateView()
     m_viewMatrix = glm::lookAt(m_transform.GetPos(), m_look_at, m_up);
 }
 
-void FPSCamera::ProcessInput(Input *input, float delta) {
-    handleMouse(input->getXChange(),input->getYChange());
-    handleKeys(input->getKeys(),delta);
-    UpdateView();
-}
-
 void FPSCamera::handleMouse(double xChange, double yChange) {
 
     xChange *= m_turnSpeed;

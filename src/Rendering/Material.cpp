@@ -1,8 +1,11 @@
+#include <utility>
+
 //
 // Created by erick on 8/24/18.
 //
 
 #include "Material.h"
+#include "Loaders/MeshedLoader.h"
 
 Material::Material() :
     specularIntensity(0.0f),
@@ -17,6 +20,12 @@ Material::Material(GLfloat specularIntensity, GLfloat shininess, std::vector<Tex
     specularIntensity(specularIntensity),
     shininess(shininess) {}
 
+Material::Material(float specularIntensity, float shininess, std::vector<Texture> textures,  bool* options):
+        textures(std::move(textures)),
+        specularIntensity(specularIntensity),
+        shininess(shininess),
+        hasTransparency(options[Transparency]),
+        hasFakeLighting(options[FakeLighting]){}
 Material::~Material() {}
 
 void Material::UseMaterial(Shader * shader) {
@@ -62,6 +71,15 @@ void Material::UseMaterial(Shader * shader) {
 
     //Set Shininess
     glUniform1f(shader->getUniforms()["material.shininess"],shininess);
+
+    //Set has transparency
+    if(hasTransparency){
+        glDisable(GL_CULL_FACE);
+    }
+
+    glUniform1i(shader->getUniforms()["material.hasTransparency"],hasTransparency);
+
+    glUniform1i(shader->getUniforms()["hasFakeLighting"],hasFakeLighting);
 }
 
 void Material::SetupUniforms(std::map<std::string, GLint>& m_uniforms,GLuint shaderProgram) {
@@ -87,6 +105,11 @@ void Material::SetupUniforms(std::map<std::string, GLint>& m_uniforms,GLuint sha
 
 	//Create Specular Intensity Uniform
 	m_uniforms["material.specularIntensity"] = glGetUniformLocation(shaderProgram, "material.specularIntensity");
+
+	//Create transparency check
+	m_uniforms["material.hasTransparency"] = glGetUniformLocation(shaderProgram, "material.hasTransparency");
+
+	m_uniforms["hasFakeLighting"] = glGetUniformLocation(shaderProgram, "hasFakeLighting");
 }
 
 void Material::setSpecularIntensity(GLfloat s) {
@@ -95,5 +118,17 @@ void Material::setSpecularIntensity(GLfloat s) {
 
 void Material::setShininess(GLfloat s) {
     shininess = s;
+}
+
+std::vector<Texture> &Material::getTextures() {
+    return textures;
+}
+
+void Material::setHasTransparency(bool hasTransparency) {
+    Material::hasTransparency = hasTransparency;
+}
+
+bool& Material::isHasTransparency() {
+    return hasTransparency;
 }
 

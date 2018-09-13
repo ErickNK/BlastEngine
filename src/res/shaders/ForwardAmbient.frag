@@ -26,6 +26,8 @@ struct Material{
     sampler2D diffuse_texture[MAX_MATERIAL_TEXTURES];
 
     int diffuseTextureCount;
+
+    bool hasTransparency;
 };
 
 // ---------------------------------------------------------
@@ -46,14 +48,24 @@ vec4 totalSpecularTexture;
 
 void CalcTotalDiffuseTexture(){
     totalDiffuseTexture = vec4(1, 1, 1, 1);
-    for(int i = 0; i < material.diffuseTextureCount; i++){
-        totalDiffuseTexture *= texture(material.diffuse_texture[i], vTexCoord);
+    if(material.diffuseTextureCount == 0){
+        totalDiffuseTexture = vec4(0, 0, 0, 0);
+    }else{
+        for(int i = 0; i < material.diffuseTextureCount; i++){
+            totalDiffuseTexture *= texture(material.diffuse_texture[i], vTexCoord);
+        }
     }
+
 }
 
 void main(){
 
     CalcTotalDiffuseTexture();
+
+    //Check transparency
+    if(material.hasTransparency && (totalDiffuseTexture.a < 0.1)){
+        discard;
+    }
 
     /**
     * Calculate Ambient Light

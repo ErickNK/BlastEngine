@@ -22,7 +22,8 @@
 #include "../../Rendering/Camera/Camera.h"
 #include "../../Rendering/Mesh.h"
 #include "../../Rendering/Material.h"
-#include "../Components/MeshedComponent.h"
+
+class MeshedComponent;
 
 class MeshedEntity {
 public:
@@ -32,7 +33,7 @@ public:
 
     virtual ~MeshedEntity();
 
-    void ProcessInputAll(const Input* input, float delta);
+    void ProcessInputAll(Input* input, float delta);
 
     void UpdateAll(float delta);
 
@@ -64,7 +65,7 @@ protected:
     Material m_material;
     Transform m_transform;
 
-    void ProcessInput(const Input* input, float delta);
+    void ProcessInput(Input* input, float delta);
 
     void Update(float delta);
 
