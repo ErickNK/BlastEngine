@@ -11,27 +11,6 @@ FPSCamera::FPSCamera(glm::vec3 startPosition, glm::vec3 startUp,
         GLfloat startMovementSpeed, GLfloat startTurningSpeed) :
         Camera(startPosition,startUp,startYaw,startPitch,startMovementSpeed,startTurningSpeed)
 {}
-//void FPSCamera::UpdateView()
-//{
-//
-//    //roll can be removed from here. because is not actually used in FPS camera
-//    glm::mat4 matRoll  = glm::mat4(1.0f);//identity matrix;
-//    glm::mat4 matPitch = glm::mat4(1.0f);//identity matrix
-//    glm::mat4 matYaw   = glm::mat4(1.0f);//identity matrix
-//
-//    //roll, pitch and yaw are used to store our angles in our class
-//    matRoll  = glm::rotate(matRoll,  m_roll,  glm::vec3(0.0f, 0.0f, 1.0f));
-//    matPitch = glm::rotate(matPitch, m_pitch, glm::vec3(1.0f, 0.0f, 0.0f));
-//    matYaw   = glm::rotate(matYaw,  m_yaw,    glm::vec3(0.0f, 1.0f, 0.0f));
-//
-//    //order matters
-//    glm::mat4 rotate = matRoll * matPitch * matYaw;
-//
-//    glm::mat4 translate = glm::mat4(1.0f);
-//    translate = glm::translate(translate, -m_transform.GetPos());
-//
-//    m_viewMatrix = rotate * translate;
-//}
 
 void FPSCamera::UpdateView()
 {
@@ -95,5 +74,9 @@ void FPSCamera::LookAt(glm::vec3 point) {
 
     glm::vec3 cross = glm::normalize(glm::cross(glm::vec3(0, 0, 1), m_forward));
     m_transform.SetRot(glm::normalize(glm::angleAxis(angle, cross)));
+}
+
+void FPSCamera::LookAt(MeshedEntity* entity) {
+    LookAt(entity->getTransform().GetPos());
 }
 

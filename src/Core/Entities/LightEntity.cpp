@@ -3,7 +3,7 @@
 //
 
 #include "LightEntity.h"
-#include "../Components/LightComponent.h"
+#include "../Components/RenderingComponents/LightComponent.h"
 
 void LightEntity::ProcessInput(const Input* input, float delta)
 {

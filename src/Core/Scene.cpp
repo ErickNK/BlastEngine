@@ -11,10 +11,10 @@ Scene::Scene(Game* game) : m_game(game){}
 void Scene::Init() {}
 
 void Scene::ProcessInput(Input* input, float delta) {
-    m_current_camera->ProcessInput(input,delta);
     for(MeshedEntity* m_meshed_Entity: m_meshed_Entities){
         m_meshed_Entity->ProcessInputAll(input,delta);
     }
+    m_current_camera->ProcessInput(input,delta);
 }
 
 void Scene::Update(float delta) {

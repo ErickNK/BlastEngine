@@ -8,13 +8,14 @@
 #include "../../Rendering/Lighting/PointLight.h"
 #include "../../Rendering/Lighting/SpotLight.h"
 #include "../../Rendering/Terrain/Terrain.h"
-#include "../../Core/Components/LightComponent.h"
-#include "../../Core/Components/MeshedRendererComponent.h"
+#include "../../Core/Components/RenderingComponents/LightComponent.h"
+#include "../../Core/Components/RenderingComponents/MeshedRendererComponent.h"
 #include "../../Rendering/Loaders/MeshedLoader.h"
 #include "../../Rendering/Fog.h"
-#include "../../Core/Components/FogComponent.h"
+#include "../../Core/Components/RenderingComponents/FogComponent.h"
 #include "../../Rendering/Camera/FPSCamera.h"
 #include "../../Core/Components/Behaviours/PlayerMovement.h"
+#include "../../Rendering/Camera/TPSCamera.h"
 
 void TestScene::Init() {
     m_meshed_loader = new MeshedLoader();
@@ -41,19 +42,28 @@ void TestScene::SetupSkyBox() {
 }
 
 void TestScene::SetupCamera(){
-    this->AddCamera(
-        new FPSCamera(
-            glm::vec3(0.0f,5.0f,5.0f),
+    auto * tpsCamera = new TPSCamera(
+            glm::vec3(0.0f,10.0f,5.0f),
             glm::vec3(0.0f,1.0f,0.0f),
-            -90.0f,
+            0.0f,
             0.0f,
             0.0f,
             15.0f,
             0.005f
-        )
     );
+
+//    this->AddCamera(tpsCamera);
+
+    this->AddCamera(new FPSCamera(
+            glm::vec3(0.0f,10.0f,5.0f),
+            glm::vec3(0.0f,1.0f,0.0f),
+            0.0f,
+            0.0f,
+            0.0f,
+            15.0f,
+            0.005f
+    ));
     this->SetCurrentCamera(0);
-//    this->getCurrentCamera()->setAllowMovement(false);
 }
 
 void  TestScene::CreateTerrain(){
@@ -165,9 +175,9 @@ void TestScene::CreateCharacters() {
     m_meshed_loader->LoadGameObject("../res/models/nanosuit/nanosuit.obj",nanosuit,options);
     auto * playMovement = new PlayerMovement();
     nanosuit->AddComponent(playMovement);
-    nanosuit->getTransform().GetPos().z = 5.0f;
-    nanosuit->getTransform().GetPos().x = 5.0f;
-//    nanosuit->getTransform().LookAt(glm::vec3(5.0f,0.0f,-5.0f));
+//
+//    ((TPSCamera *)(this->getCurrentCamera()))->LookAt(nanosuit);
+//    ((TPSCamera *)(this->getCurrentCamera()))->SetAttachmentComponent(new TPSCameraAttachment(nanosuit));
     this->AddMeshedToScene(nanosuit);
 
 }

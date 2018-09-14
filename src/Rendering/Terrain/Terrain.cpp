@@ -5,8 +5,8 @@
 //
 
 #include "Terrain.h"
-#include "../../Core/Components/MeshedRendererComponent.h"
-#include "../../Core/Components/TerrainRendererComponent.h"
+#include "../../Core/Components/RenderingComponents/MeshedRendererComponent.h"
+#include "../../Core/Components/RenderingComponents/TerrainRendererComponent.h"
 
 Terrain::Terrain(int gridX, int gridZ,std::map<TextureTypeEnum, std::string> textureLocations) :
     m_textureLocations(std::move(textureLocations))

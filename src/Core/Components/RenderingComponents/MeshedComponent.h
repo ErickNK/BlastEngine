@@ -5,7 +5,7 @@
 #ifndef MORDEROPENGLUDEMYTUTORIAL_MESHRENDERER_H
 #define MORDEROPENGLUDEMYTUTORIAL_MESHRENDERER_H
 
-#include "../Entities/MeshedEntity.h"
+#include "../../Entities/MeshedEntity.h"
 
 class Shader;
 class Input;

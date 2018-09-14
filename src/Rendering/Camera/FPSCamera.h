@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "../Transform.h"
 #include "../../Core/Input.h"
+#include "../../Core/Entities/MeshedEntity.h"
 
 class FPSCamera : public Camera {
 
@@ -24,6 +25,8 @@ public:
     void handleMouse(double xChange, double yChange) override;
 
     void LookAt(glm::vec3 point) override;
+
+    void LookAt(MeshedEntity* entity);
 
 
 };

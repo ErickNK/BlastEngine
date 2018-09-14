@@ -6,8 +6,8 @@
 #define MORDEROPENGLUDEMYTUTORIAL_FOGCOMPONENT_H
 
 #include "EffectComponent.h"
-#include "../../Rendering/Shaders/FogShader.h"
-#include "../../Rendering/RenderingEngine.h"
+#include "../../../Rendering/Shaders/FogShader.h"
+#include "../../../Rendering/RenderingEngine.h"
 
 class FogComponent : public EffectComponent {
 

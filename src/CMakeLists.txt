@@ -60,7 +60,7 @@ set(SOURCE_FILES
         Core/Input.h
         Rendering/RenderingEngine.cpp Rendering/RenderingEngine.h
         Common/ProfileTimer.h Common/ProfileTimer.cpp
-        Core/Components/MeshedComponent.h
+        Core/Components/RenderingComponents/MeshedComponent.h
         Rendering/Shaders/DirectionalLightShadowMapShader.cpp Rendering/Shaders/DirectionalLightShadowMapShader.h
         Game/SlickDriveGame.cpp Game/SlickDriveGame.h
         Rendering/Shaders/ForwardAmbientShader.cpp Rendering/Shaders/ForwardAmbientShader.h
@@ -73,13 +73,13 @@ set(SOURCE_FILES
 #        Rendering/Animation/AnimatedGameObject.cpp Rendering/Animation/AnimatedGameObject.h
         Rendering/Loaders/MeshedLoader.cpp Rendering/Loaders/MeshedLoader.h
         Rendering/Shaders/FogShader.cpp Rendering/Shaders/FogShader.h
-        Core/Components/FogComponent.h Rendering/Fog.h
+        Core/Components/RenderingComponents/FogComponent.h Rendering/Fog.h
         Core/Entities/LightEntity.cpp Core/Entities/LightEntity.h
-        Core/Components/LightComponent.h
+        Core/Components/RenderingComponents/LightComponent.h
         Core/Entities/MeshedEntity.cpp Core/Entities/MeshedEntity.h
-        Core/Components/MeshedRendererComponent.h
+        Core/Components/RenderingComponents/MeshedRendererComponent.h
         Core/Scene.cpp Core/Scene.h
-        Game/Scenes/TestScene.cpp Game/Scenes/TestScene.h Core/Entities/EffectEntity.cpp Core/Entities/EffectEntity.h Core/Components/EffectComponent.h Rendering/Camera/FPSCamera.cpp Rendering/Camera/FPSCamera.h Core/Components/TerrainRendererComponent.h Core/Components/Behaviours/PlayerMovement.h Rendering/Transform.cpp) # which files should be compiled
+        Game/Scenes/TestScene.cpp Game/Scenes/TestScene.h Core/Entities/EffectEntity.cpp Core/Entities/EffectEntity.h Core/Components/RenderingComponents/EffectComponent.h Rendering/Camera/FPSCamera.cpp Rendering/Camera/FPSCamera.h Core/Components/RenderingComponents/TerrainRendererComponent.h Core/Components/Behaviours/PlayerMovement.h Rendering/Transform.cpp Core/Components/Attachment/TPSCameraAttachment.h Rendering/Camera/TPSCamera.cpp Rendering/Camera/TPSCamera.h Core/Components/Attachment/TPSCameraAttachment.cpp) # which files should be compiled
 
 add_executable(MorderOpenGLUdemyTutorial ${SOURCE_FILES}) # which files should produce executables
 

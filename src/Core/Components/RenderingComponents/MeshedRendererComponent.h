@@ -6,7 +6,7 @@
 #define MORDEROPENGLUDEMYTUTORIAL_MESHEDRENDERERCOMPONENT_H
 
 
-#include "../Entities/MeshedEntity.h"
+#include "../../Entities/MeshedEntity.h"
 #include "MeshedComponent.h"
 
 class MeshedRendererComponent: public MeshedComponent {

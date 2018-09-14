@@ -131,11 +131,20 @@ void Window::handleMouseCallback(GLFWwindow *window, double xPos, double yPos){
     theWindow->m_input.setLastY(yPos);
 }
 
+void Window::handleScrollCallback(GLFWwindow *window, double dx, double dy){
+    //Get the user pointer of the incoming window
+    auto *theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+    theWindow->m_input.setXWheelChange(dx);
+    theWindow->m_input.setYWheelChange(dy);
+}
+
 void Window::createCallbacks() {
 
     glfwSetKeyCallback(mainWindow, handleKeysCallback);
 
     glfwSetCursorPosCallback(mainWindow, handleMouseCallback);
+
+    glfwSetScrollCallback(mainWindow, handleScrollCallback);
 }
 
 void Window::setupSettings(){

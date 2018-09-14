@@ -6,12 +6,13 @@
 #define MORDEROPENGLUDEMYTUTORIAL_PLAYERMOVEMENT_H
 
 #include <GLFW/glfw3.h>
-#include "../MeshedComponent.h"
+#include "../RenderingComponents/MeshedComponent.h"
 
 class PlayerMovement : public MeshedComponent{
 
     virtual void ProcessInput(Input* input, float delta) {
-        this->handleKeys(input->getKeys(),delta);
+//        this->handleKeys(input->getKeys(),delta);
+//        this->handleMouse(input->getXChange(),input->getYChange());
     }
     virtual void Update(float delta) {
         //Deal with falling
@@ -55,18 +56,14 @@ class PlayerMovement : public MeshedComponent{
                 is_in_air = true;
             }
         }
+    }
 
-        if(keys[GLFW_KEY_DOWN]){
-//            m_meshedEntity->getTransform().GetPos() -= m_meshedEntity->getTransform().GetUp() * movement_velocity;
-        }
+    void handleMouse(double xChange, double yChange) {
 
-        if(keys[GLFW_KEY_LEFT]){
-//            m_meshedEntity->getTransform().Rotate(static_cast<float>(glm::degrees(1000.0) * -turn_velocity), glm::vec3(0, 1, 0));
-        }
+        xChange *= m_turn_speed;
+        yChange *= m_turn_speed;
 
-        if(keys[GLFW_KEY_RIGHT]){
-//            m_meshedEntity->getTransform().Rotate(static_cast<float>(glm::degrees(1000.0) * turn_velocity), glm::vec3(0, 1, 0));
-        }
+        m_meshedEntity->getTransform().Rotate(xChange,glm::vec3(0,1,0));
     }
 
 private:

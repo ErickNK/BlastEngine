@@ -54,6 +54,12 @@ bool Texture::LoadTexture(){
 					GL_TEXTURE_MAG_FILTER, // Applied when texture is closer/bigger
 					GL_LINEAR
 			);
+			//MipMap Load bias
+			glTexParameterf(
+					GL_TEXTURE_2D,
+					GL_TEXTURE_LOD_BIAS, // Applied when texture is closer/bigger
+					-0.4f
+			);
 
 			glTexImage2D(
 					GL_TEXTURE_2D, //Texture target

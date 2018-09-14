@@ -6,7 +6,7 @@
 
 #include "MeshedLoader.h"
 #include "../../Core/Entities/MeshedEntity.h"
-#include "../../Core/Components/MeshedRendererComponent.h"
+#include "../../Core/Components/RenderingComponents/MeshedRendererComponent.h"
 
 
 MeshedLoader::MeshedLoader() = default;

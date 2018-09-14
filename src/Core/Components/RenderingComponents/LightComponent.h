@@ -6,9 +6,9 @@
 #define MORDEROPENGLUDEMYTUTORIAL_LIGHTCOMPONENT_H
 
 
-#include "../../Rendering/Lighting/Light.h"
-#include "../../Rendering/Shaders/ForwardDirectionalLightShader.h"
-#include "../../Core/CoreEngine.h"
+#include "../../../Rendering/Lighting/Light.h"
+#include "../../../Rendering/Shaders/ForwardDirectionalLightShader.h"
+#include "../../CoreEngine.h"
 
 class LightComponent {
 public:

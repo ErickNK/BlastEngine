@@ -39,6 +39,16 @@ public:
 
     inline void SetPos(const glm::vec3 &pos) { m_pos = pos; }
 
+    inline void SetXPos(float d) {
+        m_pos.x = d;
+    }
+    inline void SetYPos(float d) {
+        m_pos.y = d;
+    }
+    inline void SetZPos(float d) {
+        m_pos.z = d;
+    }
+
     inline glm::quat& GetRot() { return m_rot; }
 
     inline glm::vec3 GetForward(){

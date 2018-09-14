@@ -8,7 +8,7 @@
 
 #include <glm/glm.hpp>
 #include "../Core/Entities/EffectEntity.h"
-#include "../Core/Components/FogComponent.h"
+#include "../Core/Components/RenderingComponents/FogComponent.h"
 
 class Fog : public EffectEntity{
 public:

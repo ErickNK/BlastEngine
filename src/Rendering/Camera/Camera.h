@@ -24,6 +24,8 @@ public:
 
 	virtual void ProcessInput(Input* input, float delta);
 
+    virtual void Update(float delta){};
+
 	virtual void handleKeys(const bool *keys, GLfloat deltaTime);
 
 	virtual void handleMouse(double xChange, double yChange);

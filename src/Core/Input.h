@@ -13,6 +13,8 @@ private:
     double lastY = 0;
     double XChange = 0;
     double YChange = 0;
+    double XWheelChange = 0;
+    double YWheelChange = 0;
     bool keys[1024] {false};
     bool invertedX = false;
     bool invertedY = false;
@@ -92,6 +94,25 @@ public:
         Input::YChange = YChange;
     }
 
+    double getXWheelChange() {
+        double tempXChange = XWheelChange;
+        YWheelChange = 0;
+        return tempXChange;
+    }
+
+    double getYWheelChange() {
+        double tempYChange = YWheelChange;
+        YWheelChange = 0;
+        return tempYChange;
+    }
+
+    void setXWheelChange(double XWheelChange) {
+        Input::XWheelChange = XWheelChange;
+    }
+
+    void setYWheelChange(double YWheelChange) {
+        Input::YWheelChange = YWheelChange;
+    }
 };
 
 

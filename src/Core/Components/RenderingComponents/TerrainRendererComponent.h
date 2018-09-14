@@ -6,8 +6,8 @@
 #define MORDEROPENGLUDEMYTUTORIAL_TERRAINRENDERERCOMPONENT_H
 
 
-#include "../../Rendering/RenderingEngine.h"
-#include "../../Rendering/Shaders/TerrainShader.h"
+#include "../../../Rendering/RenderingEngine.h"
+#include "../../../Rendering/Shaders/TerrainShader.h"
 #include "MeshedComponent.h"
 
 class TerrainRendererComponent: public MeshedComponent {

@@ -63,6 +63,8 @@ private:
     static void handleKeysCallback(GLFWwindow *window, int key, int code, int action, int mode);
 
     static void handleMouseCallback(GLFWwindow *window, double xPos, double yPos);
+
+	static void handleScrollCallback(GLFWwindow *window, double dx, double dy);
 };
 
 
