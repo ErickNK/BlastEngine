@@ -18,17 +18,39 @@ public:
 
     Terrain(int gridX, int gridY,std::map<TextureTypeEnum, std::string> textureLocations);
 
-    void InitTerrain();
+    ~Terrain();
 
     void RenderTerrain(RenderingEngine* engine);
+
+    float getTerrainHeight(float x, float z);
 private:
     std::map<TextureTypeEnum, std::string> m_textureLocations;
 
     TerrainRendererComponent* m_terrain_renderer;
 
-    float m_size = 800, x , z ;
+    float SIZE = 800, x , z ;
 
-    int m_vertex_count = 128;
+    float** heights;
+
+    int height_map_width,height_map_height,height_map_bitDepth;
+
+    int HEIGHT_MAX = 40;
+
+    int MAX_PIXEL_COLOR = 256 * 256 * 256;
+
+    unsigned char * height_map;
+
+    bool LoadHeightMap();
+
+    void UnLoadHeightMap();
+
+    void AddComponents();
+
+    void InitTerrain();
+
+    float getPixelHeight(int x, int y);
+
+    glm::vec3 calculateNormal(int x, int y);
 };
 
 

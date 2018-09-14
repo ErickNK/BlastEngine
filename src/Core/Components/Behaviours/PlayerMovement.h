@@ -7,6 +7,7 @@
 
 #include <GLFW/glfw3.h>
 #include "../RenderingComponents/MeshedComponent.h"
+#include "../../../Rendering/Terrain/Terrain.h"
 
 class PlayerMovement : public MeshedComponent{
 
@@ -17,8 +18,13 @@ class PlayerMovement : public MeshedComponent{
     virtual void Update(float delta) {
         //Deal with falling
         upward_speed += gravity * delta;
-
         m_meshedEntity->getTransform().GetPos() += m_meshedEntity->getTransform().GetUp() * upward_speed;
+
+        //Terrain Collusion detection
+        terrain_height = m_currentTerrain->getTerrainHeight(
+                    m_meshedEntity->getTransform().GetPos().x,
+                    m_meshedEntity->getTransform().GetPos().z
+                );
 
         if(m_meshedEntity->getTransform().GetPos().y < terrain_height){
             upward_speed = 0;
@@ -75,6 +81,7 @@ private:
     float gravity = -0.2;
 
     float terrain_height = 0;
+    Terrain* m_currentTerrain;
 };
 
 

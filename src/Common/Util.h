@@ -46,11 +46,20 @@
 
 #include <vector>
 #include <string>
+#include <glm/glm.hpp>
 
 namespace Util
 {
     void Sleep(unsigned int milliseconds);
     std::vector<std::string> Split(const std::string &s, char delim);
+    /**
+     * Finds height of point an object is on, on a triangle.
+     * @param p1 - one side of the triangle (containing height)
+     * @param p2 - one side of the triangle (containing height)
+     * @param p3 - one side of the triangle (containing height)
+     * @param pos - position of object on triangle
+     * */
+    float barryCentric(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec2 pos);
 };
 
 #endif

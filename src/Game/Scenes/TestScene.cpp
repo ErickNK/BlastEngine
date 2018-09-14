@@ -76,6 +76,7 @@ void  TestScene::CreateTerrain(){
     terrainTextures[G_TEXTURE] = "../res/textures/terrain/pinkFlowers.png";
     terrainTextures[B_TEXTURE] = "../res/textures/terrain/path.png";
     terrainTextures[BLEND_MAP_TEXTURE] = "../res/textures/terrain/blendMap.png";
+    terrainTextures[HEIGHT_MAP_TEXTURE] = "../res/textures/terrain/heightmap.png";
     Terrain* terrain = new Terrain(0,0,terrainTextures);
     this->AddTerrain(terrain);
 
@@ -186,7 +187,7 @@ void TestScene::CreateLighting() {
     DirectionalLight* directionalLight = new DirectionalLight(
             glm::vec3(1.0f,1.0f,1.0f),
             glm::vec3(0.0f,-1.0,-1.0f),
-            0.0f, 0.3f,
+            0.0f, 0.7f,
             2018, 2018,
             glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 1000.0f));
 
