@@ -16,6 +16,7 @@ void Scene::ProcessInput(Input* input, float delta) {
         m_meshed_Entity->ProcessInputAll(input,delta);
     }
     m_current_camera->ProcessInput(input,delta);
+    m_current_mouse->ProcessInput(input,delta);
 }
 
 void Scene::Update(float delta) {
@@ -34,6 +35,8 @@ void Scene::AddTerrain(Terrain *terrain) {
     m_meshed_Entities.push_back(terrain);
     m_terrains.push_back(terrain);
 }
+void Scene::AddMousePicker(MousePicker *picker) { m_current_mouse = picker; }
+
 
 Game *Scene::getGame() const {
     return m_game;

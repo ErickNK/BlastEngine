@@ -11,6 +11,7 @@
 #include "Entities/EffectEntity.h"
 #include "../Rendering/SkyBox.h"
 #include "../Rendering/Terrain/Terrain.h"
+#include "MousePicker.h"
 
 class GUIEntity;
 class LightEntity;
@@ -47,6 +48,7 @@ public:
     void AddSkyBox(SkyBox *skyBox);
     void AddTerrain(Terrain *terrain);
     void AddGUI(GUIEntity *gui);
+    void AddMousePicker(MousePicker *picker);
 
     void SetCurrentCamera(int position);
     void SetCurrentSkyBox(int position);
@@ -81,6 +83,7 @@ protected:
     Camera* m_current_camera;
     SkyBox* m_current_skybox;
     GUIEntity* m_current_gui;
+    MousePicker* m_current_mouse;
 
     /**
     * Objects contained in the scene

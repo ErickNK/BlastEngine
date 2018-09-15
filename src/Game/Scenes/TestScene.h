@@ -8,6 +8,7 @@
 #include "../../Core/Scene.h"
 #include "../../Rendering/Loaders/MeshedLoader.h"
 #include "../../Rendering/Loaders/GUILoader.h"
+#include "../../Core/MousePicker.h"
 
 class TestScene : public Scene{
 public:

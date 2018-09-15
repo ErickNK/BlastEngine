@@ -21,6 +21,7 @@
 #include "../../Core/Components/RenderingComponents/ShadowRendererComponent.h"
 #include "../../Core/Components/RenderingComponents/SkyBoxRendererComponent.h"
 #include "../../Core/Components/Behaviours/SkyBoxEffectsComponent.h"
+#include "../../Core/MousePicker.h"
 
 void TestScene::Init() {
     m_meshed_loader = new MeshedLoader();
@@ -94,6 +95,10 @@ void TestScene::SetupCamera(){
     );
     this->AddCamera(fpsCam);
     this->SetCurrentCamera(0);
+
+    auto * mousePicker = new MousePicker(this->getCurrentCamera(),this->getGame()->getCoreEngine()->GetWindow());
+    this->AddMousePicker(mousePicker);
+
 }
 
 void TestScene::CreateTerrain(){
