@@ -30,7 +30,8 @@
 //} while (0)
 
 #ifndef WIN32
-#include <unistd.h>
+    #include <unistd.h>
+    #include <dirent.h>
 #endif
 
 #ifdef WIN32
@@ -60,6 +61,7 @@ namespace Util
      * @param pos - position of object on triangle
      * */
     float barryCentric(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec2 pos);
+    int getDirFiles (std::string dir, std::vector<std::string> &files);
 };
 
 #endif

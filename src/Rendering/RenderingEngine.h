@@ -8,7 +8,6 @@
 
 #include "Shaders/DirectionalLightShadowMapShader.h"
 #include "../Core/Window.h"
-#include "SkyBox.h"
 #include "Shaders/ForwardAmbientShader.h"
 #include "Shaders/ForwardDirectionalLightShader.h"
 #include "Shaders/ForwardPointLightShader.h"
@@ -45,6 +44,8 @@ public:
 
     void RenderTerrain();
 
+    void RenderGUI();
+
     void SetCurrentShader(ShaderType type);
 
     void SetCurrentScene(Scene * scene);
@@ -71,6 +72,8 @@ private:
     void SetupPerspective();
     void StartBlendColor();
     void EndBlendColor();
+    void StartAlphaBlending();
+    void EndAlphaBlending();
 };
 
 

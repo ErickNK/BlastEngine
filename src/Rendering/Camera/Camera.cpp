@@ -17,6 +17,7 @@ Camera::Camera(glm::vec3 startPosition, glm::vec3 startUp, GLfloat startYaw, GLf
         m_movementSpeed(startMovementSpeed), m_turnSpeed(startTurningSpeed){
     m_transform.SetPos(startPosition);
     m_forward = glm::vec3(0.0f,0.0f,0.0f);
+//    m_projection = glm::perspective(field_of_view, aspect, near_clip, far_clip);
     UpdateView();
 }
 
@@ -37,8 +38,6 @@ void Camera::UpdateView() {
     m_look_at = m_transform.GetPos() + m_forward * 1.0f;
 
 	m_viewMatrix = glm::lookAt(m_transform.GetPos(), m_look_at, m_up);
-//    m_projection = glm::perspective(field_of_view, aspect, near_clip, far_clip);
-
 }
 
 void Camera::ProcessInput(Input *input, float delta) {

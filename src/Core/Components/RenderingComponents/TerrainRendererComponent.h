@@ -8,7 +8,7 @@
 
 #include "../../../Rendering/RenderingEngine.h"
 #include "../../../Rendering/Shaders/TerrainShader.h"
-#include "MeshedComponent.h"
+#include "../MeshedComponent.h"
 
 class TerrainRendererComponent: public MeshedComponent {
 public:

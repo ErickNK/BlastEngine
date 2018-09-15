@@ -12,6 +12,7 @@
 #include "../Rendering/SkyBox.h"
 #include "../Rendering/Terrain/Terrain.h"
 
+class GUIEntity;
 class LightEntity;
 class Game;
 class RenderingEngine;
@@ -45,13 +46,17 @@ public:
     void AddCamera(Camera *camera);
     void AddSkyBox(SkyBox *skyBox);
     void AddTerrain(Terrain *terrain);
+    void AddGUI(GUIEntity *gui);
 
     void SetCurrentCamera(int position);
     void SetCurrentSkyBox(int position);
+    void SetCurrentGUI(int position);
 
     Game* getGame() const;
 
     const std::vector<LightEntity *> &getLights() const;
+
+    const std::vector<GUIEntity *> getGUIs() const;
 
     const std::vector<Terrain *> &getTerrains() const;
 
@@ -63,6 +68,8 @@ public:
 
     SkyBox *getCurrentSkybox();
 
+    GUIEntity *getCurrentGUI();
+
 private:
 
     /**
@@ -73,10 +80,12 @@ private:
 
     Camera* m_current_camera;
     SkyBox* m_current_skybox;
+    GUIEntity* m_current_gui;
 
     /**
     * Objects contained in the scene
     * */
+    std::vector<GUIEntity*> m_guis;
     std::vector<Camera*> m_cameras;
     std::vector<SkyBox*> m_skyboxes;
     std::vector<LightEntity*> m_lights;

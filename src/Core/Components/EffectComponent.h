@@ -5,8 +5,8 @@
 #ifndef MORDEROPENGLUDEMYTUTORIAL_EFFECTCOMPONENT_H
 #define MORDEROPENGLUDEMYTUTORIAL_EFFECTCOMPONENT_H
 
-#include "../../Scene.h"
-#include "../../Entities/EffectEntity.h"
+#include "../Scene.h"
+#include "../Entities/EffectEntity.h"
 
 class EffectComponent {
 public:

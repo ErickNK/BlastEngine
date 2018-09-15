@@ -7,7 +7,7 @@
 
 
 #include "../../Entities/MeshedEntity.h"
-#include "MeshedComponent.h"
+#include "../MeshedComponent.h"
 
 class MeshedRendererComponent: public MeshedComponent {
 public:

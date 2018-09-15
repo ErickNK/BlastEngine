@@ -23,6 +23,9 @@
 #include "SkyBox.h"
 #include "Shaders/FogShader.h"
 #include "Shaders/TerrainShader.h"
+//TODO: avoid including entities in here
+#include "../Core/Entities/GUIEntity.h"
+#include "Shaders/GUIShader.h"
 
 RenderingEngine::RenderingEngine(Window* window): m_window(window) {
     CreateShaders();
@@ -58,6 +61,10 @@ void RenderingEngine::CreateShaders(){
     auto  * terrainShader = new TerrainShader();
     terrainShader->Init();
     m_shaders[TERRAIN_SHADER] = terrainShader;
+
+    auto  * guiShader = new GUIShader();
+    guiShader->Init();
+    m_shaders[GUI_SHADER] = guiShader;
 }
 
 
@@ -148,6 +155,11 @@ void RenderingEngine::RenderTerrain() {
     }
 }
 
+void RenderingEngine::RenderGUI() {
+    auto * entity = m_current_scene->getCurrentGUI();
+    if(entity != nullptr) entity->RenderGUI(this);
+}
+
 
 void RenderingEngine::RenderScene() {
     this->EnableCulling();
@@ -164,11 +176,17 @@ void RenderingEngine::RenderScene() {
 
         StartBlendColor();
 
-        RenderLights();
-        RenderEffects();
-        RenderTerrain();
+            RenderLights();
+            RenderEffects();
+            RenderTerrain();
 
         EndBlendColor();
+
+        StartAlphaBlending();
+        glDisable(GL_DEPTH_TEST);
+            RenderGUI();
+        glEnable(GL_DEPTH_TEST);
+        EndAlphaBlending();
 
     m_renderProfileTimer.StopInvocation();
 }
@@ -201,4 +219,13 @@ void RenderingEngine::EnableCulling() {
 
 void RenderingEngine::DisableCulling() {
     glDisable(GL_CULL_FACE);
+}
+
+void RenderingEngine::StartAlphaBlending() {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void RenderingEngine::EndAlphaBlending() {
+    glDisable(GL_BLEND);
 }

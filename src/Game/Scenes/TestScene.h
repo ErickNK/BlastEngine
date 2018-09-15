@@ -7,6 +7,7 @@
 
 #include "../../Core/Scene.h"
 #include "../../Rendering/Loaders/MeshedLoader.h"
+#include "../../Rendering/Loaders/GUILoader.h"
 
 class TestScene : public Scene{
 public:
@@ -24,9 +25,11 @@ public:
 
     void SetupSkyBox();
 
+    void CreateGUI();
 
 private:
     MeshedLoader * m_meshed_loader;
+    GUILoader * m_gui_loader;
 };
 
 

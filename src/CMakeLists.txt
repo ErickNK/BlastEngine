@@ -60,7 +60,7 @@ set(SOURCE_FILES
         Core/Input.h
         Rendering/RenderingEngine.cpp Rendering/RenderingEngine.h
         Common/ProfileTimer.h Common/ProfileTimer.cpp
-        Core/Components/RenderingComponents/MeshedComponent.h
+        Core/Components/MeshedComponent.h
         Rendering/Shaders/DirectionalLightShadowMapShader.cpp Rendering/Shaders/DirectionalLightShadowMapShader.h
         Game/SlickDriveGame.cpp Game/SlickDriveGame.h
         Rendering/Shaders/ForwardAmbientShader.cpp Rendering/Shaders/ForwardAmbientShader.h
@@ -79,7 +79,7 @@ set(SOURCE_FILES
         Core/Entities/MeshedEntity.cpp Core/Entities/MeshedEntity.h
         Core/Components/RenderingComponents/MeshedRendererComponent.h
         Core/Scene.cpp Core/Scene.h
-        Game/Scenes/TestScene.cpp Game/Scenes/TestScene.h Core/Entities/EffectEntity.cpp Core/Entities/EffectEntity.h Core/Components/RenderingComponents/EffectComponent.h Rendering/Camera/FPSCamera.cpp Rendering/Camera/FPSCamera.h Core/Components/RenderingComponents/TerrainRendererComponent.h Core/Components/Behaviours/PlayerMovement.h Rendering/Transform.cpp Core/Components/Attachment/TPSCameraAttachment.h Rendering/Camera/TPSCamera.cpp Rendering/Camera/TPSCamera.h Core/Components/Attachment/TPSCameraAttachment.cpp Core/Components/CollusionDetection/TerrainCollusionDetection.h Rendering/TextureAtlas.cpp Rendering/TextureAtlas.h) # which files should be compiled
+        Game/Scenes/TestScene.cpp Game/Scenes/TestScene.h Core/Entities/EffectEntity.cpp Core/Entities/EffectEntity.h Core/Components/EffectComponent.h Rendering/Camera/FPSCamera.cpp Rendering/Camera/FPSCamera.h Core/Components/RenderingComponents/TerrainRendererComponent.h Core/Components/Behaviours/PlayerMovement.h Rendering/Transform.cpp Core/Components/Attachment/TPSCameraAttachment.h Rendering/Camera/TPSCamera.cpp Rendering/Camera/TPSCamera.h Core/Components/Attachment/TPSCameraAttachment.cpp Core/Components/CollusionDetection/TerrainCollusionDetection.h Rendering/TextureAtlas.cpp Rendering/TextureAtlas.h Rendering/GUI/GUITexture.cpp Rendering/GUI/GUITexture.h Rendering/GUI/GUIMesh.cpp Rendering/GUI/GUIMesh.h Core/Components/RenderingComponents/GUIRendererComponent.h Core/Entities/GUIEntity.cpp Core/Entities/GUIEntity.h Rendering/GUI/GUIMaterial.cpp Rendering/GUI/GUIMaterial.h Core/Components/GUIComponent.h Rendering/Shaders/GUIShader.cpp Rendering/Shaders/GUIShader.h Rendering/Loaders/GUILoader.cpp Rendering/Loaders/GUILoader.h Rendering/GUI/GUICamera.cpp Rendering/GUI/GUICamera.h) # which files should be compiled
 
 add_executable(MorderOpenGLUdemyTutorial ${SOURCE_FILES}) # which files should produce executables
 

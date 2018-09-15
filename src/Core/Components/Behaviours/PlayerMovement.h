@@ -6,7 +6,7 @@
 #define MORDEROPENGLUDEMYTUTORIAL_PLAYERMOVEMENT_H
 
 #include <GLFW/glfw3.h>
-#include "../RenderingComponents/MeshedComponent.h"
+#include "../MeshedComponent.h"
 #include "../../../Rendering/Terrain/Terrain.h"
 
 class PlayerMovement : public MeshedComponent{

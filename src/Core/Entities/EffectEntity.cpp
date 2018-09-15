@@ -3,7 +3,7 @@
 //
 
 #include "EffectEntity.h"
-#include "../Components/RenderingComponents/EffectComponent.h"
+#include "../Components/EffectComponent.h"
 
 void EffectEntity::RenderEffect(RenderingEngine* engine) const
 {

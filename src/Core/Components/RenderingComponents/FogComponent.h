@@ -5,7 +5,7 @@
 #ifndef MORDEROPENGLUDEMYTUTORIAL_FOGCOMPONENT_H
 #define MORDEROPENGLUDEMYTUTORIAL_FOGCOMPONENT_H
 
-#include "EffectComponent.h"
+#include "../EffectComponent.h"
 #include "../../../Rendering/Shaders/FogShader.h"
 #include "../../../Rendering/RenderingEngine.h"
 

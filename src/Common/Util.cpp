@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+#include <iostream>
 #include "GLFW/glfw3.h"
 #include "Util.h"
-#include <SDL2/SDL.h>
 
 void Util::Sleep(unsigned int seconds)
 {
@@ -55,4 +55,20 @@ float Util::barryCentric(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec2 pos
     float l2 = ((p3.z - p1.z) * (pos.x - p3.x) + (p1.x - p3.x) * (pos.y - p3.z)) / det;
     float l3 = 1.0f - l1 - l2;
     return l1 * p1.y + l2 * p2.y + l3 * p3.y;
+}
+
+int Util::getDirFiles (std::string dir, std::vector<std::string> &files)
+{
+    DIR *dp;
+    struct dirent *dirp;
+    if((dp  = opendir(dir.c_str())) == NULL) {
+        std::cout << "Error(" << errno << ") opening " << dir << std::endl;
+        return errno;
+    }
+
+    while ((dirp = readdir(dp)) != NULL) {
+        files.push_back(std::string(dirp->d_name));
+    }
+    closedir(dp);
+    return 0;
 }

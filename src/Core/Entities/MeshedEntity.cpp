@@ -2,7 +2,7 @@
 // Created by erick on 9/10/18.
 //
 
-#include "../Components/RenderingComponents/MeshedComponent.h"
+#include "../Components/MeshedComponent.h"
 #include "MeshedEntity.h"
 
 MeshedEntity::MeshedEntity(Mesh &mesh, Transform &transform, Material &material) :

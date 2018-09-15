@@ -73,10 +73,9 @@ public:
      * Send the data to be drawn through the pipelines in
      * the gpu.
      * */
-    void Draw();
+    virtual void Draw();
 protected:
-private:
-    void InitMesh(const IndexedModel& model);
+    virtual void InitMesh(const IndexedModel& model);
 
     /**
      * Buffers
@@ -100,7 +99,7 @@ private:
      * Tells OpenGL how much of the vertexArrayObject we want
      * to draw.
      * */
-    unsigned int m_drawCount;
+    unsigned int m_drawCount = 0;
 };
 
 

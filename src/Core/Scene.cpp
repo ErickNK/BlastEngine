@@ -5,6 +5,7 @@
 #include "Scene.h"
 #include "Game.h"
 #include "CoreEngine.h"
+#include "Entities/GUIEntity.h"
 
 Scene::Scene(Game* game) : m_game(game){}
 
@@ -67,4 +68,20 @@ void Scene::SetCurrentCamera(int position) {
 
 void Scene::SetCurrentSkyBox(int position) {
     m_current_skybox = m_skyboxes[position];
+}
+
+void Scene::AddGUI(GUIEntity *gui) {
+    m_guis.push_back(gui);
+}
+
+const std::vector<GUIEntity *> Scene::getGUIs() const {
+    return m_guis;
+}
+
+GUIEntity *Scene::getCurrentGUI() {
+    return m_current_gui;
+}
+
+void Scene::SetCurrentGUI(int position) {
+    m_current_gui = m_guis[position];
 }

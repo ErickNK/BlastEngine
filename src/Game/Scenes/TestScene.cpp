@@ -16,15 +16,18 @@
 #include "../../Rendering/Camera/FPSCamera.h"
 #include "../../Core/Components/Behaviours/PlayerMovement.h"
 #include "../../Rendering/Camera/TPSCamera.h"
+#include "../../Core/Entities/GUIEntity.h"
+#include "../../Core/Components/RenderingComponents/GUIRendererComponent.h"
 
 void TestScene::Init() {
     m_meshed_loader = new MeshedLoader();
-
+    m_gui_loader = new GUILoader();
     SetupSkyBox();
     SetupCamera();
     CreateLighting();
     CreateTerrain();
     CreateCharacters();
+    CreateGUI();
 }
 
 void TestScene::SetupSkyBox() {
@@ -66,7 +69,7 @@ void TestScene::SetupCamera(){
     this->SetCurrentCamera(0);
 }
 
-void  TestScene::CreateTerrain(){
+void TestScene::CreateTerrain(){
     bool options[Num_Options];
 
     //Create Terrain
@@ -219,3 +222,19 @@ void TestScene::CreateLighting() {
 //    this->AddLightToScene(spotLight);
 }
 
+void TestScene::CreateGUI(){
+    std::map<GUITexture*,Transform*> textures;
+    GUITexture * healthTexture = new GUITexture("../res/textures/gui/health.png",GUI_TEXTURE);
+    Transform* healthTransform = new Transform(glm::vec3(-0.75f,-0.9f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f));
+
+    textures.emplace(healthTexture,healthTransform);
+
+    auto * guiEntity = new GUIEntity();
+    guiEntity->InitMesh();
+    m_gui_loader->LoadGUI(textures,guiEntity);
+
+    guiEntity->AddComponent(new GUIRendererComponent());
+
+    this->AddGUI(guiEntity);
+    this->SetCurrentGUI(0);
+}
