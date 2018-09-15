@@ -64,6 +64,8 @@ uniform SpotLight spotLight;
 uniform Material material;
 uniform vec3 cameraPosition;
 uniform vec3 cameraDirection;
+uniform bool allowCellShading;
+uniform int cellShadingLevels;
 
 // -----------------------------------------------------------
 
@@ -99,12 +101,23 @@ void CalcTotalSpecularTexture(){
 vec4 CalcLightByDirection(Light light, vec3 lightDirection, float shadowFactor){
     vec3 normalizedNormal = normalize(vNormal);
 
+    //CellShading
+    float actualDiffuseIntensity = light.diffuseIntensity;
+    float actualSpecularIntensity = material.specularIntensity;
+    if(allowCellShading){
+        float level = floor(light.diffuseIntensity * cellShadingLevels);
+        actualDiffuseIntensity = level / cellShadingLevels;
+
+        level = floor(material.specularIntensity * cellShadingLevels);
+        actualSpecularIntensity = level / cellShadingLevels;
+    }
+
     /**
      * Calculate Diffuse light
      * */
     float diffuseFactor = max(dot(normalizedNormal, -lightDirection), 0.0f);
 
-    vec4 diffuse = (vec4(light.colour, 1.0f) * light.diffuseIntensity) * (diffuseFactor * totalDiffuseTexture * vCol);
+    vec4 diffuse = (vec4(light.colour, 1.0f) * actualDiffuseIntensity) * (diffuseFactor * totalDiffuseTexture * vCol);
 
     /**
      * Calculate Specular lighting
@@ -121,7 +134,7 @@ vec4 CalcLightByDirection(Light light, vec3 lightDirection, float shadowFactor){
         if(specularFactor > 0.0f){
             specularFactor = pow(specularFactor, material.shininess);
 
-            specular = (vec4(light.colour, 1.0f) * material.specularIntensity) * (specularFactor * totalSpecularTexture * vCol);
+            specular = (vec4(light.colour, 1.0f) * actualSpecularIntensity) * (specularFactor * totalSpecularTexture * vCol);
         }
     }
 

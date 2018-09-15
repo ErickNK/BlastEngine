@@ -31,6 +31,10 @@ public:
 
     LightType getType() const;
 
+    bool isCellShadingOn() const;
+
+    void setAllowCellShading(bool m_allow_cell_shading);
+
 protected:
 
     glm::vec3 color;
@@ -46,6 +50,11 @@ protected:
 	ShadowMap* shadowMap;
 
 	LightType m_type;
+
+	//TODO improve cell shading
+	bool m_allow_cell_shading = false;
+
+	int m_cell_shading_level = 2;
 };
 
 

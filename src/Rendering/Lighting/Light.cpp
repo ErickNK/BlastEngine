@@ -39,3 +39,11 @@ GLfloat Light::getAmbientIntensity() const {
 LightType Light::getType() const {
     return m_type;
 }
+
+bool Light::isCellShadingOn() const {
+	return m_allow_cell_shading;
+}
+
+void Light::setAllowCellShading(bool m_allow_cell_shading) {
+	Light::m_allow_cell_shading = m_allow_cell_shading;
+}

@@ -50,11 +50,19 @@ void PointLight::UseLight(std::map<std::string, GLint>& m_uniforms, int shadowTe
     glUniform1f(m_uniforms["pointLight.base.diffuseIntensity"],diffuseIntensity);
 
 	glUniform1f(m_uniforms["pointLight.range"],m_range);
+
+	glUniform1i(m_uniforms["allowCellShading"],m_allow_cell_shading);
+    glUniform1i(m_uniforms["cellShadingLevels"],m_cell_shading_level);
+
 }
 
 PointLight::~PointLight() = default;
 
 void PointLight::SetupUniforms(std::map<std::string, GLint>& m_uniforms, GLuint shaderProgram) {
+
+    m_uniforms["cellShadingLevels"] = glGetUniformLocation(shaderProgram, "cellShadingLevels");
+
+	m_uniforms["allowCellShading"] = glGetUniformLocation(shaderProgram, "allowCellShading");
 
 	m_uniforms["pointLight.shadowMap"] = glGetUniformLocation(shaderProgram, "pointLight.shadowMap");
 

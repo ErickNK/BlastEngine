@@ -50,6 +50,10 @@ void DirectionalLight::UseLight(std::map<std::string, GLint>& m_uniforms,int sha
 
     //Set Diffuse Intensity
     glUniform1f(m_uniforms["directionalLight.base.diffuseIntensity"],diffuseIntensity);
+
+    //Cell shading
+    glUniform1i(m_uniforms["allowCellShading"],m_allow_cell_shading);
+    glUniform1i(m_uniforms["cellShadingLevels"],m_cell_shading_level);
 }
 
 void DirectionalLight::SetupLightSpace(std::map<std::string, GLint>& m_uniforms, GLuint shaderProgram) {
@@ -62,6 +66,12 @@ void DirectionalLight::SetupLightSpace(std::map<std::string, GLint>& m_uniforms,
 }
 
 void DirectionalLight::SetupUniforms(std::map<std::string, GLint>& m_uniforms,GLuint shaderProgram) {
+
+    m_uniforms["cellShadingLevels"] =
+            glGetUniformLocation(shaderProgram, "cellShadingLevels");
+
+    m_uniforms["allowCellShading"] =
+            glGetUniformLocation(shaderProgram, "allowCellShading");
 
     m_uniforms["directionalLightSpace"] =
 			glGetUniformLocation(shaderProgram, "directionalLightSpace");

@@ -60,6 +60,9 @@ void SpotLight::UseLight(std::map<std::string, GLint>& m_uniforms, int shadowTex
 
         glUniform1f(m_uniforms["spotLight.base.range"],m_range);
 
+        glUniform1i(m_uniforms["allowCellShading"],m_allow_cell_shading);
+        glUniform1i(m_uniforms["cellShadingLevels"],m_cell_shading_level);
+
 }
 
 void SpotLight::SetAsFlashLight(const Camera& camera) {
@@ -68,7 +71,11 @@ void SpotLight::SetAsFlashLight(const Camera& camera) {
 }
 
 void SpotLight::SetupUniforms(std::map<std::string, GLint>& m_uniforms, GLuint shaderProgram) {
-	m_uniforms["spotLight.shadowMap"] = glGetUniformLocation(shaderProgram, "spotLight.shadowMap");
+    m_uniforms["allowCellShading"] = glGetUniformLocation(shaderProgram, "allowCellShading");
+
+    m_uniforms["cellShadingLevels"] = glGetUniformLocation(shaderProgram, "cellShadingLevels");
+
+    m_uniforms["spotLight.shadowMap"] = glGetUniformLocation(shaderProgram, "spotLight.shadowMap");
 
 	m_uniforms["spotLight.base.base.colour"] = glGetUniformLocation(shaderProgram, "spotLight.base.base.colour");
 

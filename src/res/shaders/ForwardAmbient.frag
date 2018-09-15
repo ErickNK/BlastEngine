@@ -36,6 +36,8 @@ struct Material{
 
 uniform Light light;
 uniform Material material;
+uniform bool allowCellShading;
+uniform int cellShadingLevels;
 
 // -----------------------------------------------------------
 
@@ -67,10 +69,16 @@ void main(){
         discard;
     }
 
+    float actualLightIntensity = light.ambientIntensity;
+    if(allowCellShading){
+        float level = floor(light.ambientIntensity * cellShadingLevels);
+        actualLightIntensity = level / cellShadingLevels;
+    }
+
     /**
     * Calculate Ambient Light
     * */
-    vec4 ambient = (vec4(light.colour, 1.0f) * light.ambientIntensity) * (totalDiffuseTexture * vCol) ;
+    vec4 ambient = (vec4(light.colour, 1.0f) * actualLightIntensity) * (totalDiffuseTexture * vCol) ;
 
     colour = ambient;
 }
