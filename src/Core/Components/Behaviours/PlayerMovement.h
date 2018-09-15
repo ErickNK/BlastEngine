@@ -21,10 +21,10 @@ class PlayerMovement : public MeshedComponent{
         m_meshedEntity->getTransform().GetPos() += m_meshedEntity->getTransform().GetUp() * upward_speed;
 
         //Terrain Collusion detection
-        terrain_height = m_currentTerrain->getTerrainHeight(
-                    m_meshedEntity->getTransform().GetPos().x,
-                    m_meshedEntity->getTransform().GetPos().z
-                );
+//        terrain_height = m_currentTerrain->getTerrainHeight(
+//                    m_meshedEntity->getTransform().GetPos().x,
+//                    m_meshedEntity->getTransform().GetPos().z
+//                );
 
         if(m_meshedEntity->getTransform().GetPos().y < terrain_height){
             upward_speed = 0;

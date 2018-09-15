@@ -24,7 +24,7 @@ void Terrain::InitTerrain() {
     if(LoadHeightMap()) {
         std::vector<Vertex> vertices;
         std::vector<GLuint> indices;
-        std::vector<Texture> textures;
+        std::vector<Texture*> textures;
 
         int VERTEX_COUNT = height_map_height;
 
@@ -62,8 +62,7 @@ void Terrain::InitTerrain() {
 
         m_mesh = Mesh(vertices, vertices.size(), indices, indices.size());
         for (auto const &x : m_textureLocations) {
-            Texture texture = *new Texture(x.second, x.first);
-            textures.push_back(texture);
+            textures.push_back(new Texture(x.second, x.first));
         }
         m_material = Material(0.0, 0.0, textures);
         m_transform = Transform();
@@ -141,8 +140,8 @@ float Terrain::getTerrainHeight(float x, float z) {
     if(gridX >= sizeof(heights) - 1 || gridZ >= sizeof(heights) - 1 || gridX < 0 || gridZ < 0){
         return 0;
     }
-    float xCoord = (terrainX % gridSquareSize)/gridSquareSize;
-    float zCoord = (terrainZ % gridSquareSize)/gridSquareSize;
+    float xCoord = (fmod(terrainX, gridSquareSize))/gridSquareSize;
+    float zCoord = (fmod(terrainZ, gridSquareSize))/gridSquareSize;
     float answer;
     //Figure out which triangle object is standing on. Then use BarryCentric interpolation to
     //figure out height on point where object is standing.

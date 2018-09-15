@@ -34,19 +34,21 @@ public:
 
     bool LoadGameObject(std::string path, MeshedEntity* root, bool * options);
 
-    bool LoadGameObjectWithTexture(std::string path,std::map<TextureTypeEnum, std::string> textureLocations, MeshedEntity *root, bool* options);
+    bool LoadGameObject(std::string path, std::map<TextureTypeEnum, std::string> textureLocations, MeshedEntity *root, bool *options);
+
+    bool LoadGameObject(std::string path, std::map<TextureTypeEnum, std::string*> textureAtlases, MeshedEntity *root, bool *options);
 
     void processNode(aiNode *node, const aiScene *scene, MeshedEntity* root);
 
     MeshedEntity* processObject(aiMesh *mesh, const aiScene *scene);
 
-    std::vector<Texture> loadMaterialTextures(aiMaterial *material, aiTextureType type, TextureTypeEnum typeName);
+    std::vector<Texture*> loadMaterialTextures(aiMaterial *material, aiTextureType type, TextureTypeEnum typeName);
 
     void Clean();
 private:
     std::string directory;
     std::string path;
-    std::vector<Texture> textures_loaded;
+    std::vector<Texture*> textures_loaded;
     mutable bool options[Num_Options];
     bool hasTransparency = false;
     bool withTexManuallyProvided = false;

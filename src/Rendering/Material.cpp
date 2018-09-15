@@ -6,6 +6,7 @@
 
 #include "Material.h"
 #include "Loaders/MeshedLoader.h"
+#include "TextureAtlas.h"
 
 Material::Material() :
     specularIntensity(0.0f),
@@ -15,12 +16,12 @@ Material::Material(GLfloat specularIntensity, GLfloat shininess):
 	specularIntensity(specularIntensity),
 	shininess(shininess) {}
 
-Material::Material(GLfloat specularIntensity, GLfloat shininess, std::vector<Texture>& textures) :
+Material::Material(GLfloat specularIntensity, GLfloat shininess, std::vector<Texture*>& textures) :
 	textures(textures),
     specularIntensity(specularIntensity),
     shininess(shininess) {}
 
-Material::Material(float specularIntensity, float shininess, std::vector<Texture> textures,  bool* options):
+Material::Material(float specularIntensity, float shininess, std::vector<Texture*>& textures,  bool* options):
         textures(std::move(textures)),
         specularIntensity(specularIntensity),
         shininess(shininess),
@@ -37,7 +38,7 @@ void Material::UseMaterial(Shader * shader) {
     for (unsigned int i = 0; i < textures.size(); i++)
     {
         auto textureUnit = static_cast<unsigned int>(shader->getAvailableDrawingTextureUnit());
-        TextureTypeEnum type = textures[i].GetTextureType();
+        TextureTypeEnum type = textures[i]->GetTextureType();
         char locBuff[100] = { '\0' };
 
         if (type == DIFFUSE_TEXTURE) {
@@ -49,6 +50,10 @@ void Material::UseMaterial(Shader * shader) {
             glUniform1i(shader->getUniforms()[locBuff], textureUnit);
             diffuseNr++;
             glUniform1i(shader->getUniforms()["material.diffuseTextureCount"], diffuseNr);
+
+            //DEFAULTS
+            glUniform1i(shader->getUniforms()["textureAtlasNumOfRows"],1);
+            glUniform2f(shader->getUniforms()["textureAtlasOffset"],0.0f,0.0f);
         }
         else if (type == SPECULAR_TEXTURE)
         {
@@ -60,10 +65,47 @@ void Material::UseMaterial(Shader * shader) {
             glUniform1i(shader->getUniforms()[locBuff], textureUnit);
             specularNr++;
             glUniform1i(shader->getUniforms()["material.specularTextureCount"], specularNr);
+
+            //DEFAULTS
+            glUniform1i(shader->getUniforms()["textureAtlasNumOfRows"],1);
+            glUniform2f(shader->getUniforms()["textureAtlasOffset"],0.0f,0.0f);
+
+        }else if (type == DIFFUSE_TEXTURE_ATLAS){
+
+            if (diffuseNr == MAX_MATERIALS_TEXTURES) return;
+
+            //Set Diffuse texture texture-unit
+            snprintf(locBuff, sizeof(locBuff), "material.diffuse_texture[%d]", i);
+
+            glUniform1i(shader->getUniforms()[locBuff], textureUnit);
+            diffuseNr++;
+            glUniform1i(shader->getUniforms()["material.diffuseTextureCount"], diffuseNr);
+
+            glUniform1i(shader->getUniforms()["textureAtlasNumOfRows"],
+                    ((TextureAtlas*)(textures[i]))->getNumberOfRows());
+            glUniform2f(shader->getUniforms()["textureAtlasOffset"],
+                    ((TextureAtlas*)(textures[i]))->getTextureXOffset(),
+                    ((TextureAtlas*)(textures[i]))->getTextureYOffset());
+        }else if (type == SPECULAR_TEXTURE_ATLAS){
+
+            if (specularNr == MAX_MATERIALS_TEXTURES) return;
+
+            //Set Diffuse texture texture-unit
+            snprintf(locBuff, sizeof(locBuff), "material.specular_texture[%d]", i);
+
+            glUniform1i(shader->getUniforms()[locBuff], textureUnit);
+            specularNr++;
+            glUniform1i(shader->getUniforms()["material.specularTextureCount"], specularNr);
+
+            glUniform1i(shader->getUniforms()["textureAtlasNumOfRows"],
+                        ((TextureAtlas*)(textures[i]))->getNumberOfRows());
+            glUniform2f(shader->getUniforms()["textureAtlasOffset"],
+                        ((TextureAtlas*)(textures[i]))->getTextureXOffset(),
+                        ((TextureAtlas*)(textures[i]))->getTextureYOffset());
         }
 
         //Bind texture to texture-unit i
-        textures[i].Bind(textureUnit);
+        textures[i]->Bind(textureUnit);
     }
 
     //Set Specular Intensity
@@ -76,7 +118,6 @@ void Material::UseMaterial(Shader * shader) {
     if(hasTransparency){
         glDisable(GL_CULL_FACE);
     }
-
     glUniform1i(shader->getUniforms()["material.hasTransparency"],hasTransparency);
 
     glUniform1i(shader->getUniforms()["hasFakeLighting"],hasFakeLighting);
@@ -109,7 +150,14 @@ void Material::SetupUniforms(std::map<std::string, GLint>& m_uniforms,GLuint sha
 	//Create transparency check
 	m_uniforms["material.hasTransparency"] = glGetUniformLocation(shaderProgram, "material.hasTransparency");
 
+    //Create fakeLighting check
 	m_uniforms["hasFakeLighting"] = glGetUniformLocation(shaderProgram, "hasFakeLighting");
+
+    //Create Atlas support
+    m_uniforms["textureAtlasNumOfRows"] = glGetUniformLocation(shaderProgram, "textureAtlasNumOfRows");
+
+    //Create Atlas support
+    m_uniforms["textureAtlasOffset"] = glGetUniformLocation(shaderProgram, "textureAtlasOffset");
 }
 
 void Material::setSpecularIntensity(GLfloat s) {
@@ -120,7 +168,7 @@ void Material::setShininess(GLfloat s) {
     shininess = s;
 }
 
-std::vector<Texture> &Material::getTextures() {
+std::vector<Texture*> &Material::getTextures() {
     return textures;
 }
 

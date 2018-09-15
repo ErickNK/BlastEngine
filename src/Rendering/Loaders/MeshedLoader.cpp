@@ -7,6 +7,7 @@
 #include "MeshedLoader.h"
 #include "../../Core/Entities/MeshedEntity.h"
 #include "../../Core/Components/RenderingComponents/MeshedRendererComponent.h"
+#include "../TextureAtlas.h"
 
 
 MeshedLoader::MeshedLoader() = default;
@@ -23,17 +24,34 @@ void MeshedLoader::Clean(){
     }
 }
 
-bool MeshedLoader::LoadGameObjectWithTexture(std::string path,std::map<TextureTypeEnum, std::string> textureLocations, MeshedEntity *root, bool* options) {
+bool MeshedLoader::LoadGameObject(std::string path,
+        std::map<TextureTypeEnum, std::string> textureLocations,
+        MeshedEntity *root, bool *options) {
     withTexManuallyProvided = true;
     std::copy(options, options + Num_Options, MeshedLoader::options);
 
     for (auto const& x : textureLocations) {
-        Texture texture = *new Texture(x.second, x.first);
-        this->textures_loaded.push_back(texture); //Keep so we don't reload it.
+        this->textures_loaded.push_back( new Texture(x.second, x.first)); //Keep so we don't reload it.
     }
 
     return LoadGameObject(std::move(path),root,MeshedLoader::options);
 }
+
+bool MeshedLoader::LoadGameObject(std::string path,
+        std::map<TextureTypeEnum, std::string*> textureAtlases,
+        MeshedEntity *root, bool *options) {
+    withTexManuallyProvided = true;
+    std::copy(options, options + Num_Options, MeshedLoader::options);
+
+    for (auto const& x : textureAtlases) {
+        int index = stoi(std::string(x.second[1]));
+        int numberOfRows = stoi(std::string(x.second[2]));
+        this->textures_loaded.push_back( new TextureAtlas(x.second[0], x.first,index,numberOfRows)); //Keep so we don't reload it.
+    }
+
+    return LoadGameObject(std::move(path),root,MeshedLoader::options);
+}
+
 
 bool MeshedLoader::LoadGameObject(std::string path, MeshedEntity* root, bool* options) {
     MeshedLoader::path = path;
@@ -87,7 +105,7 @@ MeshedEntity* MeshedLoader::processObject(aiMesh *mesh, const aiScene *scene) {
 
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
-    std::vector<Texture> textures;
+    std::vector<Texture*> textures;
     glm::vec4 color = glm::vec4(1,1,1,1);
 
     //Process the indices
@@ -115,14 +133,14 @@ MeshedEntity* MeshedLoader::processObject(aiMesh *mesh, const aiScene *scene) {
 //            colors.push_back(color);
 //        }
 
-        std::vector<Texture> diffuseMaps = this->loadMaterialTextures(
+        std::vector<Texture*> diffuseMaps = this->loadMaterialTextures(
                 material,
                 aiTextureType_DIFFUSE,
                 DIFFUSE_TEXTURE
         );
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 
-        std::vector<Texture> specularMaps = this->loadMaterialTextures(
+        std::vector<Texture*> specularMaps = this->loadMaterialTextures(
                 material,
                 aiTextureType_SPECULAR,
                 SPECULAR_TEXTURE
@@ -179,8 +197,8 @@ MeshedEntity* MeshedLoader::processObject(aiMesh *mesh, const aiScene *scene) {
     );
 }
 
-std::vector<Texture> MeshedLoader::loadMaterialTextures(aiMaterial * material, aiTextureType type, TextureTypeEnum typeName) {
-    std::vector<Texture> textures;
+std::vector<Texture*> MeshedLoader::loadMaterialTextures(aiMaterial * material, aiTextureType type, TextureTypeEnum typeName) {
+    std::vector<Texture*> textures;
 
     for (GLuint i = 0; i < material->GetTextureCount(type); i++) {
 
@@ -192,7 +210,7 @@ std::vector<Texture> MeshedLoader::loadMaterialTextures(aiMaterial * material, a
 
         //Search for already loaded textures.
         for (GLuint j = 0; j < this->textures_loaded.size(); j++) {
-            if (this->textures_loaded[j].GetFileLocation() == std::string(str.C_Str())) { //if already loaded
+            if (this->textures_loaded[j]->GetFileLocation() == std::string(str.C_Str())) { //if already loaded
                 textures.push_back(this->textures_loaded[j]);
                 skip = true;
                 break;
@@ -201,7 +219,7 @@ std::vector<Texture> MeshedLoader::loadMaterialTextures(aiMaterial * material, a
 
         //TODO: configure Texture class
         if (!skip) { //If not loaded
-            Texture texture = *new Texture(std::string(str.C_Str()), directory, typeName);
+            Texture* texture = new Texture(std::string(str.C_Str()), directory, typeName);
             textures.push_back(texture);
 
             this->textures_loaded.push_back(texture); //Keep so we don't reload it.

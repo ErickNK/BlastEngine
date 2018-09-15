@@ -15,9 +15,9 @@ public:
 
 	Material(GLfloat specularIntensity, GLfloat shininess);
 	
-	Material(GLfloat specularIntensity, GLfloat shininess, std::vector<Texture>& textures);
+	Material(GLfloat specularIntensity, GLfloat shininess, std::vector<Texture*>& textures);
 
-    Material(float specularIntensity, float shininess, std::vector<Texture> textures, bool* options);
+    Material(float specularIntensity, float shininess, std::vector<Texture*>& textures, bool* options);
 
     virtual ~Material();
 
@@ -29,14 +29,14 @@ public:
 
 	void setShininess(GLfloat shininess);
 
-	std::vector<Texture> &getTextures();
+	std::vector<Texture*> &getTextures();
 
 	void setHasTransparency(bool hasTransparency);
 
     bool& isHasTransparency();
 
 private:
-	std::vector<Texture> textures;
+	std::vector<Texture*> textures;
     GLfloat specularIntensity;
     GLfloat shininess;
     bool hasTransparency = false;

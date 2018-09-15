@@ -79,7 +79,7 @@ set(SOURCE_FILES
         Core/Entities/MeshedEntity.cpp Core/Entities/MeshedEntity.h
         Core/Components/RenderingComponents/MeshedRendererComponent.h
         Core/Scene.cpp Core/Scene.h
-        Game/Scenes/TestScene.cpp Game/Scenes/TestScene.h Core/Entities/EffectEntity.cpp Core/Entities/EffectEntity.h Core/Components/RenderingComponents/EffectComponent.h Rendering/Camera/FPSCamera.cpp Rendering/Camera/FPSCamera.h Core/Components/RenderingComponents/TerrainRendererComponent.h Core/Components/Behaviours/PlayerMovement.h Rendering/Transform.cpp Core/Components/Attachment/TPSCameraAttachment.h Rendering/Camera/TPSCamera.cpp Rendering/Camera/TPSCamera.h Core/Components/Attachment/TPSCameraAttachment.cpp Core/Components/CollusionDetection/TerrainCollusionDetection.h) # which files should be compiled
+        Game/Scenes/TestScene.cpp Game/Scenes/TestScene.h Core/Entities/EffectEntity.cpp Core/Entities/EffectEntity.h Core/Components/RenderingComponents/EffectComponent.h Rendering/Camera/FPSCamera.cpp Rendering/Camera/FPSCamera.h Core/Components/RenderingComponents/TerrainRendererComponent.h Core/Components/Behaviours/PlayerMovement.h Rendering/Transform.cpp Core/Components/Attachment/TPSCameraAttachment.h Rendering/Camera/TPSCamera.cpp Rendering/Camera/TPSCamera.h Core/Components/Attachment/TPSCameraAttachment.cpp Core/Components/CollusionDetection/TerrainCollusionDetection.h Rendering/TextureAtlas.cpp Rendering/TextureAtlas.h) # which files should be compiled
 
 add_executable(MorderOpenGLUdemyTutorial ${SOURCE_FILES}) # which files should produce executables
 

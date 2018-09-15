@@ -18,6 +18,7 @@ void TerrainShader::CreateUniforms() {
     m_uniforms["blendMap"] = glGetUniformLocation(m_program, "blendMap");
 }
 
+//TODO: move material stuff to material class
 void TerrainShader::setTerrain(Terrain * terrain) {
     glUniform1i(m_uniforms["backgroundTexture"], 0);
     glUniform1i(m_uniforms["rTexture"], 0);
@@ -27,7 +28,7 @@ void TerrainShader::setTerrain(Terrain * terrain) {
 
     for (auto &i : terrain->getMaterial().getTextures()) {
         auto textureUnit = static_cast<unsigned int>(getAvailableDrawingTextureUnit());
-        TextureTypeEnum type = i.GetTextureType();
+        TextureTypeEnum type = i->GetTextureType();
 
         if (type == R_TEXTURE) {
             glUniform1i(m_uniforms["rTexture"], textureUnit);
@@ -41,6 +42,6 @@ void TerrainShader::setTerrain(Terrain * terrain) {
             glUniform1i(m_uniforms["blendMap"], textureUnit);
         }
 
-        i.Bind(textureUnit);
+        i->Bind(textureUnit);
     }
 }

@@ -100,7 +100,7 @@ void  TestScene::CreateTerrain(){
         options[Transparency] = false;
         options[FakeLighting] = false;
 
-        m_meshed_loader->LoadGameObjectWithTexture("../res/textures/terrain/tree.obj",treeTextures, tree, options);
+        m_meshed_loader->LoadGameObject("../res/textures/terrain/tree.obj", treeTextures, tree, options);
 
         std::mt19937 rng;
         rng.seed(std::random_device()());
@@ -125,7 +125,7 @@ void  TestScene::CreateTerrain(){
         options[Transparency] = true;
         options[FakeLighting] = true;
 
-        m_meshed_loader->LoadGameObjectWithTexture("../res/textures/terrain/grass.obj",grassTextures, grass,options);
+        m_meshed_loader->LoadGameObject("../res/textures/terrain/grass.obj", grassTextures, grass, options);
 
         std::mt19937 rng;
         rng.seed(std::random_device()());
@@ -141,24 +141,28 @@ void  TestScene::CreateTerrain(){
     //fern
     int spice3 = 1;
     for(int i = 0; i < 50; i++) {
-        auto *grass = new MeshedEntity();
+        auto *fern = new MeshedEntity();
 
-        std::map<TextureTypeEnum, std::string> grassTextures;
-        grassTextures[DIFFUSE_TEXTURE] = "../res/textures/terrain/fern.png";
+        std::mt19937 rng;
+        rng.seed(std::random_device()());
+
+        std::uniform_int_distribution<std::mt19937::result_type> dist4(0, 4); // distribution in range [1, 100]
+
+        std::map<TextureTypeEnum, std::string*> grassTextures;
+        std::string atlasDetails[3] = {"../res/textures/terrain/fern.png",std::to_string(dist4(rng)),"2"};
+        grassTextures[DIFFUSE_TEXTURE_ATLAS] = atlasDetails;
 
         options[Transparency] = true;
         options[FakeLighting] = true;
 
-        m_meshed_loader->LoadGameObjectWithTexture("../res/textures/terrain/fern.obj",grassTextures, grass,options);
+        m_meshed_loader->LoadGameObject("../res/textures/terrain/fern.obj", grassTextures, fern, options);
 
-        std::mt19937 rng;
-        rng.seed(std::random_device()());
         std::uniform_int_distribution<std::mt19937::result_type> dist6(5, 500); // distribution in range [1, 100]
 
-        grass->getTransform().GetPos().z = spice3 * dist6(rng);
-        grass->getTransform().GetPos().x = spice3 * dist6(rng);
+        fern->getTransform().GetPos().z = spice3 * dist6(rng);
+        fern->getTransform().GetPos().x = spice3 * dist6(rng);
 
-        this->AddMeshedToScene(grass);
+        this->AddMeshedToScene(fern);
         spice3 *= -1;
     }
 

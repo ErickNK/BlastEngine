@@ -35,6 +35,8 @@ uniform mat4 projection;
 uniform mat3 normalMatrix;
 
 uniform bool hasFakeLighting;
+uniform int textureAtlasNumOfRows;
+uniform vec2 textureAtlasOffset;
 //---------------------------------------------------------
 
 void main(){
@@ -50,10 +52,15 @@ void main(){
     if(hasFakeLighting){
         actualNormal = vec3(0.0,1.0,0.0);
     }
+
     /**
-     * Directly pass the texture coordinates
+     * Calculate for texture Atlas
      * */
-    vTexCoord = texCoord;
+    vTexCoord = (texCoord/textureAtlasNumOfRows) + textureAtlasOffset;
+
+    /**
+     * Directly pass the diffuse color of each vertex
+     * */
     vCol = color;
 
     /**
