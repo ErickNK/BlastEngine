@@ -17,7 +17,7 @@ public:
 	SkyBox(std::vector<std::string> faceLocations);
 
 	
-	void Draw(Camera camera, const glm::mat4& projectionMatrix);
+	void Draw(Camera camera);
 
 	~SkyBox();
 

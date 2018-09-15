@@ -64,10 +64,9 @@ private:
     ProfileTimer m_renderProfileTimer;
 //    ProfileTimer m_windowSyncProfileTimer;
 
-    glm::mat4 m_projection;
     Window* m_window;
-    Camera* m_camera;
 
+    void RenderShadows();
     void CreateShaders();
     void SetupPerspective();
     void StartBlendColor();

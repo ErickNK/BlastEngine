@@ -62,11 +62,6 @@ public:
      * */
     void UpdateView(const Camera& camera);
 
-    /**
-    * Update some uniform data on GPU
-    * */
-    void UpdateProjection(const glm::mat4& projection);
-
 	/**
 	* Update the normal Matrix
 	* */

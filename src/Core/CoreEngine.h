@@ -32,6 +32,7 @@ public:
     inline RenderingEngine* GetRenderingEngine() { return m_renderingEngine; }
     inline Game* GetGame() { return m_game; }
     inline PhysicsEngine* GetPhysicsEngine() { return m_physicsEngine; }
+    inline Window* GetWindow(){return m_window;}
 private:
     bool m_shouldRender;    //Whether or not the scene should be rendered
     bool m_isRunning;       //Whether or not the engine is running

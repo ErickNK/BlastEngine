@@ -17,9 +17,26 @@ Camera::Camera(glm::vec3 startPosition, glm::vec3 startUp, GLfloat startYaw, GLf
         m_movementSpeed(startMovementSpeed), m_turnSpeed(startTurningSpeed){
     m_transform.SetPos(startPosition);
     m_forward = glm::vec3(0.0f,0.0f,0.0f);
-//    m_projection = glm::perspective(field_of_view, aspect, near_clip, far_clip);
+    m_projection = glm::perspective(field_of_view, aspect, near_clip, far_clip);
     UpdateView();
 }
+
+Camera::Camera(glm::vec3 startPosition, glm::vec3 startUp, GLfloat startYaw, GLfloat startPitch,
+               GLfloat startMovementSpeed, GLfloat startTurningSpeed, float field_of_view, float aspect,
+               float near_clip, float far_clip) :
+           m_worldUp(startUp), m_yaw(startYaw), m_pitch(startPitch),
+           m_movementSpeed(startMovementSpeed), m_turnSpeed(startTurningSpeed),
+           field_of_view(field_of_view),aspect(aspect),
+           near_clip(near_clip),far_clip(far_clip)
+{
+
+    m_transform.SetPos(startPosition);
+    m_forward = glm::vec3(0.0f,0.0f,0.0f);
+    m_projection = glm::perspective(field_of_view, aspect, near_clip, far_clip);
+    UpdateView();
+
+};
+
 
 Camera::~Camera() {
 
@@ -155,5 +172,12 @@ void Camera::setAllowTurn(bool turn) {
     Camera::allow_turn = turn;
 }
 
+void Camera::setProjection(float field_of_view, float aspect, float near_clip, float far_clip) {
+    m_projection = glm::perspective(field_of_view, aspect, near_clip, far_clip);
+}
+
+void Camera::setProjection(glm::mat4 projection) {
+    m_projection = projection;
+}
 
 

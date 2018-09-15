@@ -117,7 +117,7 @@ void SkyBox::LoadTextures() {
 
 }
 
-void SkyBox::Draw(Camera camera,const glm::mat4& projectionMatrix)
+void SkyBox::Draw(Camera camera)
 {
 
 	camera.setViewMatrix(glm::mat4(glm::mat3(camera.getViewMatrix())));
@@ -126,8 +126,6 @@ void SkyBox::Draw(Camera camera,const glm::mat4& projectionMatrix)
 		m_skyShader->Bind();
 			
 			m_skyShader->UpdateView(camera);
-
-			m_skyShader->UpdateProjection(projectionMatrix);
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture);

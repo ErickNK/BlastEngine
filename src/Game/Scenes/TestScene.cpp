@@ -45,7 +45,19 @@ void TestScene::SetupSkyBox() {
 }
 
 void TestScene::SetupCamera(){
-    auto * tpsCamera = new TPSCamera(
+//    auto * tpsCamera = new TPSCamera(
+//            glm::vec3(0.0f,10.0f,5.0f),
+//            glm::vec3(0.0f,1.0f,0.0f),
+//            0.0f,
+//            0.0f,
+//            0.0f,
+//            15.0f,
+//            0.005f
+//    );
+
+//    this->AddCamera(tpsCamera);
+
+    auto * fpsCam = new FPSCamera(
             glm::vec3(0.0f,10.0f,5.0f),
             glm::vec3(0.0f,1.0f,0.0f),
             0.0f,
@@ -54,18 +66,14 @@ void TestScene::SetupCamera(){
             15.0f,
             0.005f
     );
-
-//    this->AddCamera(tpsCamera);
-
-    this->AddCamera(new FPSCamera(
-            glm::vec3(0.0f,10.0f,5.0f),
-            glm::vec3(0.0f,1.0f,0.0f),
-            0.0f,
-            0.0f,
-            0.0f,
-            15.0f,
-            0.005f
-    ));
+    fpsCam->setProjection(
+            45.0f,
+            (GLfloat)m_game->getCoreEngine()->GetWindow()->getBufferWidth() /
+            (GLfloat)m_game->getCoreEngine()->GetWindow()->getBufferHeight(),
+            1.0f,
+            1000.0f
+    );
+    this->AddCamera(fpsCam);
     this->SetCurrentCamera(0);
 }
 

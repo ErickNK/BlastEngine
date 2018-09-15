@@ -29,7 +29,6 @@
 
 RenderingEngine::RenderingEngine(Window* window): m_window(window) {
     CreateShaders();
-    SetupPerspective();
 }
 
 void RenderingEngine::CreateShaders(){
@@ -65,18 +64,6 @@ void RenderingEngine::CreateShaders(){
     auto  * guiShader = new GUIShader();
     guiShader->Init();
     m_shaders[GUI_SHADER] = guiShader;
-}
-
-
-
-void RenderingEngine::SetupPerspective(){
-    //Setup projection
-    m_projection = glm::perspective(
-            45.0f,
-            (GLfloat)m_window->getBufferWidth()/(GLfloat)m_window->getBufferHeight(),
-            0.1f,
-            1000.0f
-    );
 }
 
 void RenderingEngine::StartBlendColor(){
@@ -134,9 +121,7 @@ void RenderingEngine::RenderEffects() {
 void RenderingEngine::RenderAllMeshed(){
     for (auto m_meshed : m_current_scene->getMeshedEntities()) {
 
-        m_shaders[m_current_shader]->UpdateView(*m_camera);
-
-        m_shaders[m_current_shader]->UpdateProjection(m_projection);
+        m_shaders[m_current_shader]->UpdateView(*m_current_scene->getCurrentCamera());
 
         m_meshed->RenderAll(m_shaders[m_current_shader]);
     }
@@ -160,19 +145,24 @@ void RenderingEngine::RenderGUI() {
     if(entity != nullptr) entity->RenderGUI(this);
 }
 
+void RenderingEngine::RenderShadows() {
+    for (auto m_light : m_current_scene->getLights()) {
+        m_light->RenderShadow(this);
+    }
+    m_window->ResetViewPort();
+}
 
 void RenderingEngine::RenderScene() {
-    this->EnableCulling();
-
-    m_camera = m_current_scene->getCurrentCamera();
-
-    m_window->ResetViewPort();
-
     m_renderProfileTimer.StartInvocation();
 
-        m_current_scene->getCurrentSkybox()->Draw(*m_camera, m_projection);
+        this->EnableCulling();
 
-        RenderAmbientLight();
+        //TODO: Fix Shadow
+//        RenderShadows();
+
+        m_current_scene->getCurrentSkybox()->Draw(*m_current_scene->getCurrentCamera());
+
+        RenderAmbientLight(); //Default render
 
         StartBlendColor();
 
@@ -205,10 +195,6 @@ void RenderingEngine::SetCurrentScene(Scene * scene) {
 
 Scene *RenderingEngine::getCurrentScene() const {
     return m_current_scene;
-}
-
-const glm::mat4 &RenderingEngine::getProjection() const {
-    return m_projection;
 }
 
 void RenderingEngine::EnableCulling() {

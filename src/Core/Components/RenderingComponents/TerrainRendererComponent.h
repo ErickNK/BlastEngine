@@ -23,8 +23,6 @@ public:
 
             shader->UpdateView(*engine->getCurrentScene()->getCurrentCamera());
 
-            shader->UpdateProjection(engine->getProjection());
-
             m_meshedEntity->RenderAll(shader);
 
         shader->UnBind();

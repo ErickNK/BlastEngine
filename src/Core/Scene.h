@@ -70,7 +70,7 @@ public:
 
     GUIEntity *getCurrentGUI();
 
-private:
+protected:
 
     /**
      * Reference to the game;

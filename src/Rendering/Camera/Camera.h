@@ -20,6 +20,9 @@ public:
     Camera(glm::vec3 startPosition, glm::vec3 startUp, GLfloat startYaw, GLfloat startPitch,
            GLfloat startMovementSpeed, GLfloat startTurningSpeed);
 
+    Camera(glm::vec3 startPosition, glm::vec3 startUp, GLfloat startYaw, GLfloat startPitch,
+           GLfloat startMovementSpeed, GLfloat startTurningSpeed,float field_of_view, float aspect, float near_clip, float far_clip);
+
     virtual ~Camera();
 
 	virtual void ProcessInput(Input* input, float delta);
@@ -39,6 +42,10 @@ public:
     glm::vec3 getDirection() const;
 
     Transform getTransform() const;
+
+    void setProjection(float field_of_view, float aspect, float near_clip, float far_clip);
+
+    void setProjection(glm::mat4 projection);
 
     glm::mat4 getProjection() const;
 
@@ -70,10 +77,10 @@ protected:
 	bool allow_turn = true;
 
     glm::mat4 m_projection;
-    int viewport_x;
-    int viewport_y;
-    int window_width;
-    int window_height;
+	float field_of_view =  45.0f;
+	float aspect = 1366.0f/786.0f;
+    float near_clip = 0.1f;
+	float far_clip = 1000.0f;
 
 	virtual void UpdateView();
 

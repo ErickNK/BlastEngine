@@ -73,17 +73,13 @@ void Shader::UpdateModel(const Transform& transform){
     glUniformMatrix4fv(m_uniforms["model"],1,GL_FALSE, glm::value_ptr(transform.GetModel()));
 }
 
-void Shader::UpdateProjection(const glm::mat4& projection) {
-    glUniformMatrix4fv(m_uniforms["projection"],1,GL_FALSE, glm::value_ptr(projection));
-}
-
 void Shader::UpdateNormalMatrix(const glm::mat3& normalMatrix){
 	glUniformMatrix3fv(m_uniforms["normalMatrix"], 1, GL_FALSE, glm::value_ptr(normalMatrix));
 }
 
 void Shader::UpdateView(const Camera& camera) {
     glUniformMatrix4fv(m_uniforms["view"],1,GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
-//    glUniformMatrix4fv(m_uniforms["projection"],1,GL_FALSE, glm::value_ptr(camera.getProjection()));
+    glUniformMatrix4fv(m_uniforms["projection"],1,GL_FALSE, glm::value_ptr(camera.getProjection()));
 
     //Update position
     glUniform3f(m_uniforms["cameraPosition"],camera.getTransform().GetPos().x,camera.getTransform().GetPos().y,camera.getTransform().GetPos().z);
