@@ -26,6 +26,7 @@
 //TODO: avoid including entities in here
 #include "../Core/Entities/GUIEntity.h"
 #include "Shaders/GUIShader.h"
+#include "Shaders/SkyBoxShader.h"
 
 RenderingEngine::RenderingEngine(Window* window): m_window(window) {
     CreateShaders();
@@ -64,6 +65,10 @@ void RenderingEngine::CreateShaders(){
     auto  * guiShader = new GUIShader();
     guiShader->Init();
     m_shaders[GUI_SHADER] = guiShader;
+
+    auto  * skyboxShader = new SkyBoxShader();
+    skyboxShader->Init();
+    m_shaders[SKY_BOX_SHADER] = skyboxShader;
 }
 
 void RenderingEngine::StartBlendColor(){
@@ -93,25 +98,6 @@ void RenderingEngine::RenderAmbientLight(){
     ambient_light_shader->UnBind();
 }
 
-//void RenderingEngine::RenderDirectionalLightShadowMap(DirectionalLight* dlight,GameObject &object) {
-//    m_directional_light_shadow_map_shader.Bind();
-//
-//        glClear(GL_DEPTH_BUFFER_BIT);
-//
-//        //Set view port same size as our shadow-map framebuffer
-//        glViewport(0, 0, dlight->GetShadowMap()->GetShadowWidth(), dlight->GetShadowMap()->GetShadowHeight());
-//
-//        dlight->GetShadowMap()->BindFrameBuffer(); //Begin writing
-//
-//            m_directional_light_shadow_map_shader.SetDirectionalLight(dlight);
-//
-//            object.RenderAll(&m_directional_light_shadow_map_shader);
-//
-//        dlight->GetShadowMap()->UnBindFrameBuffer(); //stop writing
-//
-//    m_directional_light_shadow_map_shader.UnBind();
-//}
-//
 void RenderingEngine::RenderEffects() {
     for (auto m_light : m_current_scene->getEffectEntities()) {
             m_light->RenderEffect(this);
@@ -121,7 +107,7 @@ void RenderingEngine::RenderEffects() {
 void RenderingEngine::RenderAllMeshed(){
     for (auto m_meshed : m_current_scene->getMeshedEntities()) {
 
-        m_shaders[m_current_shader]->UpdateView(*m_current_scene->getCurrentCamera());
+        m_shaders[m_current_shader]->UpdateCamera(*getCurrentScene()->getCurrentCamera());
 
         m_meshed->RenderAll(m_shaders[m_current_shader]);
     }
@@ -145,24 +131,28 @@ void RenderingEngine::RenderGUI() {
     if(entity != nullptr) entity->RenderGUI(this);
 }
 
+void RenderingEngine::RenderSkybox() {
+    m_current_scene->getCurrentSkybox()->Render(this);
+}
+
 void RenderingEngine::RenderShadows() {
     for (auto m_light : m_current_scene->getLights()) {
         m_light->RenderShadow(this);
     }
-    m_window->ResetViewPort();
 }
 
 void RenderingEngine::RenderScene() {
+    this->EnableCulling();
+
     m_renderProfileTimer.StartInvocation();
 
-        this->EnableCulling();
+        RenderShadows();
 
-        //TODO: Fix Shadow
-//        RenderShadows();
+        m_window->ResetViewPort();
 
-        m_current_scene->getCurrentSkybox()->Draw(*m_current_scene->getCurrentCamera());
+        RenderSkybox();
 
-        RenderAmbientLight(); //Default render
+        RenderAmbientLight();
 
         StartBlendColor();
 

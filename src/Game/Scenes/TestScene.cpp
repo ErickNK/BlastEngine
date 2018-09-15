@@ -18,6 +18,8 @@
 #include "../../Rendering/Camera/TPSCamera.h"
 #include "../../Core/Entities/GUIEntity.h"
 #include "../../Core/Components/RenderingComponents/GUIRendererComponent.h"
+#include "../../Core/Components/RenderingComponents/ShadowRendererComponent.h"
+#include "../../Core/Components/RenderingComponents/SkyBoxRendererComponent.h"
 
 void TestScene::Init() {
     m_meshed_loader = new MeshedLoader();
@@ -40,7 +42,9 @@ void TestScene::SetupSkyBox() {
     faceLocations.emplace_back("../res/textures/skybox/cloudtop_ft.tga");
     faceLocations.emplace_back("../res/textures/skybox/cloudtop_bk.tga");
 
-    this->AddSkyBox(new SkyBox(faceLocations));
+    auto * skybox = new SkyBox(faceLocations);
+    skybox->AddComponent(new SkyBoxRendererComponent());
+    this->AddSkyBox(skybox);
     this->SetCurrentSkyBox(0);
 }
 
@@ -207,6 +211,7 @@ void TestScene::CreateLighting() {
             glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 1000.0f));
 
     directionalLight->AddComponent(new LightComponent());
+    directionalLight->AddShadowComponent(new ShadowRendererComponent());
     this->AddLightToScene(directionalLight);
 
 //    PointLight* pointLight = new PointLight(

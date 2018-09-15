@@ -47,7 +47,7 @@ public:
 
     void setProjection(glm::mat4 projection);
 
-    glm::mat4 getProjection() const;
+    const glm::mat4& getProjection() const;
 
     void setAllowMovement(bool allow);
 
@@ -77,12 +77,14 @@ protected:
 	bool allow_turn = true;
 
     glm::mat4 m_projection;
-	float field_of_view =  45.0f;
-	float aspect = 1366.0f/786.0f;
-    float near_clip = 0.1f;
-	float far_clip = 1000.0f;
 
 	virtual void UpdateView();
+
+public:
+	float field_of_view =  45.0f;
+	float aspect = 1366.0f/786.0f;
+	float near_clip = 0.1f;
+	float far_clip = 1000.0f;
 
 };
 

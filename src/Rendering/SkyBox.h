@@ -11,21 +11,32 @@
 #include "Shaders/Shader.h"
 #include "Mesh.h"
 
+class RenderingEngine;
+class SkyBoxRendererComponent;
+
 class SkyBox {
 public:
 	SkyBox();
 	SkyBox(std::vector<std::string> faceLocations);
 
 	
-	void Draw(Camera camera);
+//	void Draw(Camera camera, const glm::mat4& projectionMatrix);
+
+	Mesh *getSkyMesh() const;
+
+	GLuint getTexture() const;
 
 	~SkyBox();
 
+    SkyBox* AddComponent(SkyBoxRendererComponent* component);
+
+	void Render(RenderingEngine *engine);
+
 private:
 	std::vector<std::string> m_faceLocations;
+	std::vector<SkyBoxRendererComponent*> m_components;
 
 	Mesh * m_skyMesh;
-	Shader * m_skyShader;
 
 	GLuint m_texture;
 

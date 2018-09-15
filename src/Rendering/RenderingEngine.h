@@ -67,8 +67,8 @@ private:
     Window* m_window;
 
     void RenderShadows();
+    void RenderSkybox();
     void CreateShaders();
-    void SetupPerspective();
     void StartBlendColor();
     void EndBlendColor();
     void StartAlphaBlending();

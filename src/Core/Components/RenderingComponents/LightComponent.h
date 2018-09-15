@@ -39,10 +39,10 @@ public:
 
     virtual void SetParent(Light* parent) { m_light = parent; }
 
-private:
+protected:
     Light* m_light{};
 
-    void RenderDirectionalLight(RenderingEngine* engine) const{
+    virtual void RenderDirectionalLight(RenderingEngine* engine) const{
         auto * directional_light_shader = (ForwardDirectionalLightShader*) engine->GetShader(FORWARD_DIRECTIONAL_LIGHT_SHADER);
 
         engine->SetCurrentShader(FORWARD_DIRECTIONAL_LIGHT_SHADER);
@@ -56,7 +56,7 @@ private:
         directional_light_shader->UnBind();
     }
 
-    void RenderPointLight(RenderingEngine* engine) const {
+    virtual void RenderPointLight(RenderingEngine* engine) const {
         auto * point_light_shader = (ForwardPointLightShader*) engine->GetShader(FORWARD_POINT_LIGHT_SHADER);
 
         engine->SetCurrentShader(FORWARD_POINT_LIGHT_SHADER);
@@ -70,7 +70,7 @@ private:
         point_light_shader->UnBind();
     }
 
-    void RenderSpotLight(RenderingEngine* engine) const {
+    virtual void RenderSpotLight(RenderingEngine* engine) const {
         auto * spot_light_shader = (ForwardSpotLightShader*) engine->GetShader(FORWARD_SPOT_LIGHT_SHADER);
 
         engine->SetCurrentShader(FORWARD_SPOT_LIGHT_SHADER);

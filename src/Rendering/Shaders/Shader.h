@@ -60,7 +60,17 @@ public:
     /**
      * Update some uniform data on GPU
      * */
-    void UpdateView(const Camera& camera);
+    void UpdateView(const glm::mat4& view);
+
+    /**
+     * Update some uniform data on GPU
+     * */
+    void UpdateCamera(const Camera &camera);
+
+    /**
+    * Update some uniform data on GPU
+    * */
+    void UpdateProjection(const glm::mat4& projection);
 
 	/**
 	* Update the normal Matrix

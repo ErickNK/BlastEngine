@@ -160,7 +160,7 @@ Transform Camera::getTransform()  const{
     return m_transform;
 }
 
-glm::mat4 Camera::getProjection() const{
+const glm::mat4& Camera::getProjection() const{
     return m_projection;
 }
 

@@ -9,6 +9,7 @@
 #include "../Input.h"
 #include "../../Rendering/Shaders/Shader.h"
 
+class ShadowRendererComponent;
 class CoreEngine;
 class RenderingEngine;
 class LightComponent;
@@ -23,10 +24,16 @@ public:
 
     void RenderLight(RenderingEngine* engine) const;
 
+    void RenderShadow(RenderingEngine* engine) const;
+
     LightEntity* AddComponent(LightComponent* component);
 
+    LightEntity* AddShadowComponent(ShadowRendererComponent* component);
+
 protected:
-    std::vector<LightComponent*> m_components;
+    std::vector<LightComponent*> m_light_components;
+
+    std::vector<ShadowRendererComponent*> m_shadow_components;
 
     Transform m_transform;
 };

@@ -21,7 +21,7 @@ public:
 
             shader->setTerrain((Terrain *)(m_meshedEntity));
 
-            shader->UpdateView(*engine->getCurrentScene()->getCurrentCamera());
+        shader->UpdateCamera(*engine->getCurrentScene()->getCurrentCamera());
 
             m_meshedEntity->RenderAll(shader);
 

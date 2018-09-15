@@ -2,21 +2,15 @@
 #include <cassert>
 #include <iostream>
 #include <fstream>
+#include "../Core/Components/RenderingComponents/SkyBoxRendererComponent.h"
+#include "RenderingEngine.h"
 
 SkyBox::SkyBox(){}
 
 SkyBox::SkyBox(std::vector<std::string> faceLocations):
 	m_faceLocations(faceLocations)
 {
-	std::map<int, std::string> shaderFiles;
-
-	shaderFiles[GL_VERTEX_SHADER] = "../res/shaders/SkyBox.vert";
-	shaderFiles[GL_FRAGMENT_SHADER] = "../res/shaders/SkyBox.frag";
-	m_skyShader = new Shader(shaderFiles,SKY_BOX_SHADER);
-	m_skyShader->Init();
-
 	LoadTextures();
-	
 	SetupMesh();
 }
 
@@ -116,25 +110,47 @@ void SkyBox::LoadTextures() {
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
 }
-
-void SkyBox::Draw(Camera camera)
-{
-
-	camera.setViewMatrix(glm::mat4(glm::mat3(camera.getViewMatrix())));
-
-	glDepthMask(GL_FALSE);
-		m_skyShader->Bind();
-			
-			m_skyShader->UpdateView(camera);
-
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture);
-
-			m_skyMesh->Draw();
-
-		m_skyShader->UnBind();
-	glDepthMask(GL_TRUE);
-
-}
+//
+//void SkyBox::Draw(Camera camera,const glm::mat4& projectionMatrix)
+//{
+//
+//	camera.setViewMatrix(glm::mat4(glm::mat3(camera.getViewMatrix())));
+//
+//	glDepthMask(GL_FALSE);
+//		m_skyShader->Bind();
+//
+//			m_skyShader->UpdateCamera(camera);
+//
+//			m_skyShader->UpdateProjection(projectionMatrix);
+//
+//			glActiveTexture(GL_TEXTURE0);
+//			glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture);
+//
+//			m_skyMesh->Draw();
+//
+//		m_skyShader->UnBind();
+//	glDepthMask(GL_TRUE);
+//
+//}
 
 SkyBox::~SkyBox(){}
+
+Mesh *SkyBox::getSkyMesh() const {
+    return m_skyMesh;
+}
+
+GLuint SkyBox::getTexture() const {
+    return m_texture;
+}
+
+void SkyBox::Render(RenderingEngine *engine) {
+    for (auto m_component : m_components) {
+        m_component->Render(engine);
+    }
+}
+
+SkyBox* SkyBox::AddComponent(SkyBoxRendererComponent* component) {
+    m_components.push_back(component);
+    component->SetParent(this);
+    return this;
+}
