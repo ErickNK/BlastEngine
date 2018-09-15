@@ -83,8 +83,7 @@ void MeshedLoader::processNode(aiNode * node, const aiScene * scene, MeshedEntit
         MeshedEntity * child = this->processObject(mesh, scene);
 
         //Add Components
-        auto * renderer = new MeshedRendererComponent(child);
-        child->AddComponent(renderer);
+        child->AddComponent(new MeshedRendererComponent());
 
         //Add children
         root->AddChild(child);

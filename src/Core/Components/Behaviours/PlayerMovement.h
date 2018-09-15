@@ -6,10 +6,10 @@
 #define MORDEROPENGLUDEMYTUTORIAL_PLAYERMOVEMENT_H
 
 #include <GLFW/glfw3.h>
-#include "../MeshedComponent.h"
+#include "../EntityComponent.h"
 #include "../../../Rendering/Terrain/Terrain.h"
 
-class PlayerMovement : public MeshedComponent{
+class PlayerMovement : public EntityComponent<MeshedEntity>{
 
     virtual void ProcessInput(Input* input, float delta) {
 //        this->handleKeys(input->getKeys(),delta);
@@ -18,18 +18,18 @@ class PlayerMovement : public MeshedComponent{
     virtual void Update(float delta) {
         //Deal with falling
         upward_speed += gravity * delta;
-        m_meshedEntity->getTransform().GetPos() += m_meshedEntity->getTransform().GetUp() * upward_speed;
+        m_entity->getTransform().GetPos() += m_entity->getTransform().GetUp() * upward_speed;
 
         //Terrain Collusion detection
 //        terrain_height = m_currentTerrain->getTerrainHeight(
-//                    m_meshedEntity->getTransform().GetPos().x,
-//                    m_meshedEntity->getTransform().GetPos().z
+//                    m_entity->getTransform().GetPos().x,
+//                    m_entity->getTransform().GetPos().z
 //                );
 
-        if(m_meshedEntity->getTransform().GetPos().y < terrain_height){
+        if(m_entity->getTransform().GetPos().y < terrain_height){
             upward_speed = 0;
             is_in_air = false;
-            m_meshedEntity->getTransform().GetPos().y = terrain_height;
+            m_entity->getTransform().GetPos().y = terrain_height;
         }
     }
 
@@ -39,23 +39,23 @@ class PlayerMovement : public MeshedComponent{
         GLfloat jump_velocity = jump_power * deltaTime;
 
         if(keys[GLFW_KEY_W]){
-            m_meshedEntity->getTransform().GetPos() += m_meshedEntity->getTransform().GetForward() * movement_velocity;
+            m_entity->getTransform().GetPos() += m_entity->getTransform().GetForward() * movement_velocity;
         }
 
         if(keys[GLFW_KEY_D]){
-            m_meshedEntity->getTransform().GetPos() -= m_meshedEntity->getTransform().GetRight() * movement_velocity;
+            m_entity->getTransform().GetPos() -= m_entity->getTransform().GetRight() * movement_velocity;
         }
 
         if(keys[GLFW_KEY_S]){
-            m_meshedEntity->getTransform().GetPos() -= m_meshedEntity->getTransform().GetForward() * movement_velocity;
+            m_entity->getTransform().GetPos() -= m_entity->getTransform().GetForward() * movement_velocity;
         }
 
         if(keys[GLFW_KEY_A]){
-            m_meshedEntity->getTransform().GetPos() += m_meshedEntity->getTransform().GetRight() * movement_velocity;
+            m_entity->getTransform().GetPos() += m_entity->getTransform().GetRight() * movement_velocity;
         }
 
         if(keys[GLFW_KEY_SPACE]){
-//            m_meshedEntity->getTransform().GetPos() += m_meshedEntity->getTransform().GetUp() * jump_velocity;
+//            m_entity->getTransform().GetPos() += m_entity->getTransform().GetUp() * jump_velocity;
 
             if(!is_in_air){
                 upward_speed = jump_velocity;
@@ -69,7 +69,7 @@ class PlayerMovement : public MeshedComponent{
         xChange *= m_turn_speed;
         yChange *= m_turn_speed;
 
-        m_meshedEntity->getTransform().Rotate(xChange,glm::vec3(0,1,0));
+        m_entity->getTransform().Rotate(xChange,glm::vec3(0,1,0));
     }
 
 private:

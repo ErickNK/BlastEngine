@@ -36,6 +36,7 @@
 
 #ifdef OS_LINUX
 #include <sys/time.h>
+#include <time.h>
 static const long NANOSECONDS_PER_SECOND = 1000000000L;
 #endif
 
@@ -81,4 +82,17 @@ double Time::GetTime()
 #ifdef OS_OTHER
     return (double)SDL_GetTicks()/1000.0;
 #endif
+}
+
+double Time::GetGameWorldTime() {
+    tm* tm_struct;
+
+    // current date/time based on current system
+    time_t now = time(0);
+
+    //Get clock
+    tm_struct = localtime(&now);
+
+    //Covert to 1 hr == 1 day.
+    return (double)tm_struct->tm_hour / (double)24.0;
 }

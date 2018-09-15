@@ -149,7 +149,7 @@ void Window::createCallbacks() {
 
 void Window::setupSettings(){
 	//Input Modes
-    glfwSetInputMode(mainWindow,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
+//    glfwSetInputMode(mainWindow,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
 
 	//Enable Gamma Correction
 	glEnable(GL_FRAMEBUFFER_SRGB);

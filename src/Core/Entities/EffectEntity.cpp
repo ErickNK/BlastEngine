@@ -3,16 +3,16 @@
 //
 
 #include "EffectEntity.h"
-#include "../Components/EffectComponent.h"
+#include "../Components/EntityComponent.h"
 
-void EffectEntity::RenderEffect(RenderingEngine* engine) const
+void EffectEntity::Render(RenderingEngine *engine) const
 {
     for (auto m_component : m_components) {
-        m_component->RenderEffect(engine);
+        m_component->Render(engine);
     }
 }
 
-EffectEntity* EffectEntity::AddComponent(EffectComponent *component) {
+EffectEntity* EffectEntity::AddComponent(EntityComponent<EffectEntity,RenderingEngine> *component) {
     m_components.push_back(component);
     component->SetParent(this);
     return this;

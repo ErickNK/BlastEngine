@@ -7,20 +7,21 @@
 
 #include "../Input.h"
 #include "../../Rendering/Shaders/Shader.h"
+#include "../Components/EntityComponent.h"
+
 class CoreEngine;
 class RenderingEngine;
-class EffectComponent;
 class Scene;
 
 class EffectEntity {
 public:
 
-    void RenderEffect(RenderingEngine* engine) const;
+    void Render(RenderingEngine *engine) const;
 
-    EffectEntity* AddComponent(EffectComponent* component);
+    EffectEntity* AddComponent(EntityComponent<EffectEntity,RenderingEngine>* component);
 
 private:
-    std::vector<EffectComponent*> m_components;
+    std::vector<EntityComponent<EffectEntity,RenderingEngine>*> m_components;
 };
 
 

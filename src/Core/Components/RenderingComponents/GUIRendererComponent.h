@@ -9,10 +9,10 @@
 #include "../../Entities/GUIEntity.h"
 #include "../../Input.h"
 #include "../../../Rendering/Shaders/Shader.h"
-#include "../GUIComponent.h"
+#include "../EntityComponent.h"
 #include "../../../Rendering/Shaders/GUIShader.h"
 
-class GUIRendererComponent : public GUIComponent{
+class GUIRendererComponent : public EntityComponent<GUIEntity,RenderingEngine>{
 public:
     virtual void Render(RenderingEngine* engine) const {
         auto * shader = (GUIShader*) engine->GetShader(GUI_SHADER);
@@ -24,15 +24,15 @@ public:
 //            shader->UpdateProjection(glm::ortho(-1.0f,1.0f,-1.0f,1.0f));
 
             //Draw one by one.
-            m_GUI_Entity->getGUIMesh().Bind();
+            m_entity->getGUIMesh().Bind();
 
-                for(GUIEntity* child: m_GUI_Entity->getChildren()) {
+                for(GUIEntity* child: m_entity->getChildren()) {
                     shader->UpdateModel(child->getTransform());
                     child->getMaterial().UseMaterial(shader);
-                    m_GUI_Entity->getGUIMesh().Draw();
+                    m_entity->getGUIMesh().Draw();
                 }
 
-            m_GUI_Entity->getGUIMesh().UnBind();
+            m_entity->getGUIMesh().UnBind();
 
 
         shader->UnBind();

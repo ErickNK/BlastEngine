@@ -56,4 +56,11 @@ enum TextureTypeEnum {
 	HEIGHT_MAP_TEXTURE,
 	GUI_TEXTURE
 };
+
+enum SkyBoxTypes: unsigned int{
+	DAY_SKYBOX,
+	NIGHT_SKYBOX,
+
+	NUM_SKYBOX_TYPES
+};
 #endif //MORDEROPENGLUDEMYTUTORIAL_COMMONVALUES_H

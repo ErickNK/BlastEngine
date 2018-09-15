@@ -8,6 +8,8 @@
 
 namespace Time {
     double GetTime();
+
+    double GetGameWorldTime();
 };
 
 

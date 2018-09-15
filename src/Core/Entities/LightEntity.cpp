@@ -3,10 +3,10 @@
 //
 
 #include "LightEntity.h"
-#include "../Components/RenderingComponents/LightComponent.h"
+#include "../../Rendering/Lighting/Light.h"
 #include "../Components/RenderingComponents/ShadowRendererComponent.h"
 
-void LightEntity::ProcessInput(const Input* input, float delta)
+void LightEntity::ProcessInput(Input* input, float delta)
 {
 //    m_transform.Update();
 
@@ -37,7 +37,7 @@ void LightEntity::RenderShadow(RenderingEngine* engine) const
 }
 
 
-LightEntity *LightEntity::AddComponent(LightComponent *component) {
+LightEntity *LightEntity::AddComponent(EntityComponent<Light,RenderingEngine> *component) {
     m_light_components.push_back(component);
     component->SetParent((Light *)(this));
     return this;

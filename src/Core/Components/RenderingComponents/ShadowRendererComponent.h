@@ -21,15 +21,15 @@ class ShadowRendererComponent : public LightComponent{
             glClear(GL_DEPTH_BUFFER_BIT);
 
             //Set view port same size as our shadow-map framebuffer
-            glViewport(0, 0, m_light->GetShadowMap()->GetShadowWidth(), m_light->GetShadowMap()->GetShadowHeight());
+            glViewport(0, 0, m_entity->GetShadowMap()->GetShadowWidth(), m_entity->GetShadowMap()->GetShadowHeight());
 
-            m_light->GetShadowMap()->BindFrameBuffer(); //Begin writing
+            m_entity->GetShadowMap()->BindFrameBuffer(); //Begin writing
 
-                shader->SetDirectionalLight(dynamic_cast<DirectionalLight *>(m_light));
+                shader->SetDirectionalLight(dynamic_cast<DirectionalLight *>(m_entity));
 
                 engine->RenderAllMeshed();
 
-            m_light->GetShadowMap()->UnBindFrameBuffer(); //stop writing
+            m_entity->GetShadowMap()->UnBindFrameBuffer(); //stop writing
 
         shader->UnBind();
     }

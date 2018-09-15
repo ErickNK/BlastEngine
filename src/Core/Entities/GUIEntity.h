@@ -10,8 +10,6 @@
 #include "../../Rendering/GUI/GUIMaterial.h"
 #include "../../Rendering/RenderingEngine.h"
 
-class GUIComponent;
-
 class GUIEntity {
 public:
     GUIEntity();
@@ -26,11 +24,11 @@ public:
 
     void Update(float delta);
 
-    void RenderGUI(RenderingEngine* engine) const;
+    void Render(RenderingEngine *engine) const;
 
     GUIEntity* AddChild(GUIEntity* child);
 
-    GUIEntity* AddComponent(GUIComponent* component);
+    GUIEntity* AddComponent(EntityComponent<GUIEntity,RenderingEngine>* component);
 
     GUIMesh& getGUIMesh() { return m_GUI_mesh; }
 
@@ -48,7 +46,7 @@ public:
 
 protected:
     std::vector<GUIEntity*> m_children;
-    std::vector<GUIComponent*> m_components;
+    std::vector<EntityComponent<GUIEntity,RenderingEngine>*> m_components;
 
     GUIMesh m_GUI_mesh;
     GUIMaterial m_material;

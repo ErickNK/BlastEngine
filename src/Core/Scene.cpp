@@ -22,6 +22,7 @@ void Scene::Update(float delta) {
     for(MeshedEntity* m_meshed_Entity: m_meshed_Entities){
         m_meshed_Entity->UpdateAll(delta);
     }
+    m_current_skybox->Update(delta);
 }
 
 void Scene::AddLightToScene(LightEntity* light) { m_lights.push_back(light); }

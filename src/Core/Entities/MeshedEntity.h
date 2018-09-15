@@ -22,8 +22,7 @@
 #include "../../Rendering/Camera/Camera.h"
 #include "../../Rendering/Mesh.h"
 #include "../../Rendering/Material.h"
-
-class MeshedComponent;
+#include "../Components/EntityComponent.h"
 
 class MeshedEntity {
 public:
@@ -41,7 +40,7 @@ public:
 
     MeshedEntity* AddChild(MeshedEntity* child);
 
-    MeshedEntity* AddComponent(MeshedComponent* component);
+    MeshedEntity* AddComponent(EntityComponent<MeshedEntity>* component);
 
 //    std::vector<MeshedEntity*> GetAllAttached();
 
@@ -59,7 +58,7 @@ public:
 
 protected:
     std::vector<MeshedEntity*> m_children;
-    std::vector<MeshedComponent*> m_components;
+    std::vector<EntityComponent<MeshedEntity>*> m_components;
 
     Mesh m_mesh;
     Material m_material;

@@ -9,10 +9,9 @@
 #include "../../../Rendering/RenderingEngine.h"
 #include "../../../Rendering/Shaders/SkyBoxShader.h"
 
-class SkyBoxRendererComponent {
+class SkyBoxRendererComponent : public EntityComponent<SkyBox,RenderingEngine>{
 public:
-    void Render(RenderingEngine* engine)
-    {
+    void Render(RenderingEngine* engine) const override {
 
         auto * shader = (SkyBoxShader*) engine->GetShader(SKY_BOX_SHADER);
 
@@ -33,24 +32,25 @@ public:
                     engine->getCurrentScene()->getCurrentCamera()->near_clip,
                     engine->getCurrentScene()->getCurrentCamera()->far_clip
                     ));
+
             shader->UpdateView(view);
 
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyBox->getTexture());
+            shader->UpdateModel(m_entity->getTransform());
 
-            m_skyBox->getSkyMesh()->Draw();
+            shader->SetSkyBox(m_entity);
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, m_entity->getTextures()[DAY_SKYBOX]);
+
+            glActiveTexture(GL_TEXTURE0 + 1);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, m_entity->getTextures()[NIGHT_SKYBOX]);
+
+            m_entity->getSkyMesh()->Draw();
 
         shader->UnBind();
         glDepthMask(GL_TRUE);
 
     }
-
-    void SetParent(SkyBox *parent) {
-        m_skyBox = parent;
-    }
-
-private:
-    SkyBox* m_skyBox;
 };
 
 

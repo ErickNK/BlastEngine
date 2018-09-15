@@ -1,14 +1,16 @@
+#include <utility>
+
 #include "SkyBox.h"
 #include <cassert>
 #include <iostream>
 #include <fstream>
-#include "../Core/Components/RenderingComponents/SkyBoxRendererComponent.h"
 #include "RenderingEngine.h"
 
 SkyBox::SkyBox(){}
 
-SkyBox::SkyBox(std::vector<std::string> faceLocations):
-	m_faceLocations(faceLocations)
+SkyBox::SkyBox(float size,std::map<SkyBoxTypes, std::vector<std::string>> faceLocations):
+    SIZE(size),
+	m_faceLocations(std::move(faceLocations))
 {
 	LoadTextures();
 	SetupMesh();
@@ -37,15 +39,15 @@ void SkyBox::SetupMesh() {
 	};
 
 	Vertex skyboxVertices[] = {
-		Vertex(glm::vec3(-1.0f, 1.0f, -1.0f)),
-		Vertex(glm::vec3(-1.0f, -1.0f, -1.0f)),
-		Vertex(glm::vec3(1.0f, 1.0f, -1.0f)),
-		Vertex(glm::vec3(1.0f, -1.0f, -1.0f)),
+		Vertex(glm::vec3(-SIZE, SIZE, -SIZE)),
+		Vertex(glm::vec3(-SIZE, -SIZE, -SIZE)),
+		Vertex(glm::vec3(SIZE, SIZE, -SIZE)),
+		Vertex(glm::vec3(SIZE, -SIZE, -SIZE)),
 
-		Vertex(glm::vec3(-1.0f, 1.0f, 1.0f)),
-		Vertex(glm::vec3(1.0f, 1.0f, 1.0f)),
-		Vertex(glm::vec3(-1.0f, -1.0f, 1.0f)),
-		Vertex(glm::vec3(1.0f, -1.0f, 1.0f))
+		Vertex(glm::vec3(-SIZE, SIZE, SIZE)),
+		Vertex(glm::vec3(SIZE, SIZE, SIZE)),
+		Vertex(glm::vec3(-SIZE, -SIZE, SIZE)),
+		Vertex(glm::vec3(SIZE, -SIZE, SIZE))
 	};
 
 	m_skyMesh = new Mesh(skyboxVertices, sizeof(skyboxVertices) / sizeof(skyboxVertices[0]), skyboxIndices, sizeof(skyboxIndices) / sizeof(skyboxIndices[0]));
@@ -53,17 +55,19 @@ void SkyBox::SetupMesh() {
 
 void SkyBox::LoadTextures() {
 
-	glGenTextures(1, &m_texture); 
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture);
+    int count = 0;
+	for(auto &x : m_faceLocations) {
+		glGenTextures(1, &m_textures[count]);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_textures[count]);
 
 		int width, height, bitDepth;
 
 		for (size_t i = 0; i < 6; i++) {
 
-			unsigned char* texture_data = stbi_load(m_faceLocations[i].c_str(), &width, &height, &bitDepth, 0);
+			unsigned char *texture_data = stbi_load(x.second[i].c_str(), &width, &height, &bitDepth, 0);
 
 			if (texture_data == nullptr) {
-				std::cerr << "Error: Texture loading failed for:" << m_faceLocations[i] << std::endl;
+				std::cerr << "Error: Texture loading failed for:" << x.second[i] << std::endl;
 				return;
 			}
 
@@ -77,14 +81,14 @@ void SkyBox::LoadTextures() {
 
 
 			glTexImage2D(
-				GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, //Texture target
-				0, // Mipmap Level
-				format, // Format of how it will be stored
-				width, height, // Width and height of the image/data being loaded
-				0, // Should always be 0, Legacy option that defines whether to add borders to the texture.
-				format, // Format of the data being loaded
-				GL_UNSIGNED_BYTE, // Data type of the values
-				texture_data // Data itself
+					GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, //Texture target
+					0, // Mipmap Level
+					format, // Format of how it will be stored
+					width, height, // Width and height of the image/data being loaded
+					0, // Should always be 0, Legacy option that defines whether to add borders to the texture.
+					format, // Format of the data being loaded
+					GL_UNSIGNED_BYTE, // Data type of the values
+					texture_data // Data itself
 			);
 
 			stbi_image_free(texture_data);
@@ -97,41 +101,21 @@ void SkyBox::LoadTextures() {
 
 		//Overlap filter
 		glTexParameterf(
-			GL_TEXTURE_CUBE_MAP,
-			GL_TEXTURE_MIN_FILTER, // Applied when texture is further away/smaller
-			GL_LINEAR
+				GL_TEXTURE_CUBE_MAP,
+				GL_TEXTURE_MIN_FILTER, // Applied when texture is further away/smaller
+				GL_LINEAR
 		);
 		glTexParameterf(
-			GL_TEXTURE_CUBE_MAP,
-			GL_TEXTURE_MAG_FILTER, // Applied when texture is closer/bigger
-			GL_LINEAR
+				GL_TEXTURE_CUBE_MAP,
+				GL_TEXTURE_MAG_FILTER, // Applied when texture is closer/bigger
+				GL_LINEAR
 		);
 
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+		count++;
+	}
 
 }
-//
-//void SkyBox::Draw(Camera camera,const glm::mat4& projectionMatrix)
-//{
-//
-//	camera.setViewMatrix(glm::mat4(glm::mat3(camera.getViewMatrix())));
-//
-//	glDepthMask(GL_FALSE);
-//		m_skyShader->Bind();
-//
-//			m_skyShader->UpdateCamera(camera);
-//
-//			m_skyShader->UpdateProjection(projectionMatrix);
-//
-//			glActiveTexture(GL_TEXTURE0);
-//			glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture);
-//
-//			m_skyMesh->Draw();
-//
-//		m_skyShader->UnBind();
-//	glDepthMask(GL_TRUE);
-//
-//}
 
 SkyBox::~SkyBox(){}
 
@@ -139,8 +123,14 @@ Mesh *SkyBox::getSkyMesh() const {
     return m_skyMesh;
 }
 
-GLuint SkyBox::getTexture() const {
-    return m_texture;
+GLuint* SkyBox::getTextures() {
+    return m_textures;
+}
+
+void SkyBox::Update(float delta) {
+	for (auto m_component : m_components) {
+		m_component->Update(delta);
+	}
 }
 
 void SkyBox::Render(RenderingEngine *engine) {
@@ -149,8 +139,55 @@ void SkyBox::Render(RenderingEngine *engine) {
     }
 }
 
-SkyBox* SkyBox::AddComponent(SkyBoxRendererComponent* component) {
+SkyBox* SkyBox::AddComponent(EntityComponent<SkyBox,RenderingEngine>* component) {
     m_components.push_back(component);
     component->SetParent(this);
     return this;
 }
+
+Fog *SkyBox::getFog() {
+    return m_fog;
+}
+
+float SkyBox::getFogLowerLimit() {
+    return fog_lower_limit;
+}
+
+float SkyBox::getFogUpperLimit() {
+    return fog_upper_limit;
+}
+
+void SkyBox::setFog(Fog *fog) {
+	m_fog = fog;
+}
+
+void SkyBox::setFogLowerLimit(float fog_lower_limit) {
+	SkyBox::fog_lower_limit = fog_lower_limit;
+}
+
+void SkyBox::setFogUpperLimit(float fog_upper_limit) {
+	SkyBox::fog_upper_limit = fog_upper_limit;
+}
+
+void SkyBox::setRotationSpeed(float rotationSpeed) {
+	SkyBox::rotationSpeed = rotationSpeed;
+}
+
+float SkyBox::getRotationSpeed() {
+	return rotationSpeed;
+}
+
+Transform &SkyBox::getTransform() {
+	return m_transform;
+}
+
+void SkyBox::setBlendFactor(float blend_factor) {
+    SkyBox::blend_factor = blend_factor;
+}
+
+float SkyBox::getBlendFactor() const {
+    return blend_factor;
+}
+
+
+

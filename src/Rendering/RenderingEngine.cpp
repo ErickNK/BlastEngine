@@ -100,7 +100,7 @@ void RenderingEngine::RenderAmbientLight(){
 
 void RenderingEngine::RenderEffects() {
     for (auto m_light : m_current_scene->getEffectEntities()) {
-            m_light->RenderEffect(this);
+        m_light->Render(this);
     }
 }
 
@@ -110,6 +110,8 @@ void RenderingEngine::RenderAllMeshed(){
         m_shaders[m_current_shader]->UpdateCamera(*getCurrentScene()->getCurrentCamera());
 
         m_meshed->RenderAll(m_shaders[m_current_shader]);
+
+        EnableCulling();
     }
 }
 
@@ -128,7 +130,7 @@ void RenderingEngine::RenderTerrain() {
 
 void RenderingEngine::RenderGUI() {
     auto * entity = m_current_scene->getCurrentGUI();
-    if(entity != nullptr) entity->RenderGUI(this);
+    if(entity != nullptr) entity->Render(this);
 }
 
 void RenderingEngine::RenderSkybox() {
@@ -157,8 +159,8 @@ void RenderingEngine::RenderScene() {
         StartBlendColor();
 
             RenderLights();
-            RenderEffects();
             RenderTerrain();
+            RenderEffects();
 
         EndBlendColor();
 

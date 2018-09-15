@@ -15,6 +15,7 @@ out vec3 vTexCoord;
 //Uniform variables ---------------------------------------
 
 uniform mat4 view;
+uniform mat4 model;
 uniform mat4 projection;
 
 //---------------------------------------------------------
@@ -25,7 +26,7 @@ void main(){
      * MAIN processing of our point/vertex from worldSpace -> viewSpace -> clipSpace
      * then display it.
      * */
-    gl_Position = projection * view * vec4(position, 1.0);
+    gl_Position = projection * view * model * vec4(position, 1.0);
 
 	vTexCoord = position;
 }

@@ -10,16 +10,10 @@
 #include "../../../Rendering/Shaders/ForwardDirectionalLightShader.h"
 #include "../../CoreEngine.h"
 
-class LightComponent {
+class LightComponent:public EntityComponent<Light,RenderingEngine>{
 public:
-    LightComponent() = default;
-    explicit LightComponent(Light* light) : m_light(light) {}
-    virtual ~LightComponent() = default;
-
-    virtual void ProcessInput(const Input* input, float delta) {}
-    virtual void Update(float delta) {}
     virtual void Render(RenderingEngine* engine) const {
-        switch(m_light->getType()){
+        switch(m_entity->getType()){
             case DIRECTIONAL_LIGHT:
                 RenderDirectionalLight(engine);
             break;
@@ -37,11 +31,9 @@ public:
         }
     }
 
-    virtual void SetParent(Light* parent) { m_light = parent; }
+    virtual void SetParent(Light* parent) { m_entity = parent; }
 
 protected:
-    Light* m_light{};
-
     virtual void RenderDirectionalLight(RenderingEngine* engine) const{
         auto * directional_light_shader = (ForwardDirectionalLightShader*) engine->GetShader(FORWARD_DIRECTIONAL_LIGHT_SHADER);
 
@@ -49,7 +41,7 @@ protected:
 
         directional_light_shader->Bind();
 
-            directional_light_shader->setLight(dynamic_cast<DirectionalLight *>(m_light));
+            directional_light_shader->setLight(dynamic_cast<DirectionalLight *>(m_entity));
 
             engine->RenderAllMeshed();
 
@@ -63,7 +55,7 @@ protected:
 
         point_light_shader->Bind();
 
-            point_light_shader->setLight(dynamic_cast<PointLight *>(m_light));
+            point_light_shader->setLight(dynamic_cast<PointLight *>(m_entity));
 
             engine->RenderAllMeshed();
 
@@ -77,7 +69,7 @@ protected:
 
         spot_light_shader->Bind();
 
-            spot_light_shader->setLight(dynamic_cast<SpotLight *>(m_light));
+            spot_light_shader->setLight(dynamic_cast<SpotLight *>(m_entity));
 
             engine->RenderAllMeshed();
 

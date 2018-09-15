@@ -12,6 +12,10 @@
 class SkyBoxShader: public Shader {
 public:
     SkyBoxShader();
+
+    void CreateUniforms() override;
+
+    void SetSkyBox(SkyBox * skyBox);
 };
 
 

@@ -8,17 +8,18 @@
 
 #include "../Input.h"
 #include "../../Rendering/Shaders/Shader.h"
+#include "../Components/EntityComponent.h"
 
 class ShadowRendererComponent;
 class CoreEngine;
 class RenderingEngine;
-class LightComponent;
 class Scene;
+class Light;
 
 class LightEntity {
 public:
 
-    void ProcessInput(const Input* input, float delta);
+    void ProcessInput(Input* input, float delta);
 
     void Update(float delta);
 
@@ -26,12 +27,12 @@ public:
 
     void RenderShadow(RenderingEngine* engine) const;
 
-    LightEntity* AddComponent(LightComponent* component);
+    LightEntity* AddComponent(EntityComponent<Light,RenderingEngine>* component);
 
     LightEntity* AddShadowComponent(ShadowRendererComponent* component);
 
 protected:
-    std::vector<LightComponent*> m_light_components;
+    std::vector<EntityComponent<Light,RenderingEngine>*> m_light_components;
 
     std::vector<ShadowRendererComponent*> m_shadow_components;
 

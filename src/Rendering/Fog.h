@@ -13,7 +13,8 @@
 class Fog : public EffectEntity{
 public:
     Fog(glm::vec4 color, float fogDensity, float fogGradient):
-    EffectEntity(), m_color(color),m_fogDensity(fogDensity),m_fogGradient(fogGradient){
+    EffectEntity(), m_color(color),m_fogDensity(fogDensity),m_fogGradient(fogGradient)
+    {
         auto * fogComponent = new FogComponent();
         this->AddComponent(fogComponent);
     };

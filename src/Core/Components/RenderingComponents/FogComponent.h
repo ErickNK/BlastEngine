@@ -5,20 +5,20 @@
 #ifndef MORDEROPENGLUDEMYTUTORIAL_FOGCOMPONENT_H
 #define MORDEROPENGLUDEMYTUTORIAL_FOGCOMPONENT_H
 
-#include "../EffectComponent.h"
 #include "../../../Rendering/Shaders/FogShader.h"
 #include "../../../Rendering/RenderingEngine.h"
+#include "../EntityComponent.h"
 
-class FogComponent : public EffectComponent {
+class FogComponent : public EntityComponent<EffectEntity,RenderingEngine> {
 
-    void RenderEffect(RenderingEngine* engine) const override {
+    void Render(RenderingEngine *engine) const override {
         auto * shader = (FogShader*) engine->GetShader(FOG_SHADER);
 
         engine->SetCurrentShader(FOG_SHADER);
 
         shader->Bind();
 
-            shader->SetFog((Fog *)(m_parent));
+            shader->SetFog(reinterpret_cast<Fog *>(m_entity));
 
             engine->RenderAllMeshed();
 

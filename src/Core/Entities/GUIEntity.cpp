@@ -3,7 +3,7 @@
 //
 
 #include "GUIEntity.h"
-#include "../Components/GUIComponent.h"
+#include "../Components/EntityComponent.h"
 #include "../../Rendering/GUI/GUITexture.h"
 
 GUIEntity::GUIEntity() = default;
@@ -27,7 +27,7 @@ GUIEntity::~GUIEntity()
     }
 }
 
-void GUIEntity::RenderGUI(RenderingEngine* engine) const
+void GUIEntity::Render(RenderingEngine *engine) const
 {
     for (auto m_component : m_components) {
         m_component->Render(engine);
@@ -57,7 +57,7 @@ GUIEntity* GUIEntity::AddChild(GUIEntity* child)
     return this;
 }
 
-GUIEntity *GUIEntity::AddComponent(GUIComponent *component) {
+GUIEntity *GUIEntity::AddComponent(EntityComponent<GUIEntity,RenderingEngine> *component) {
     m_components.push_back(component);
     component->SetParent(this);
     return this;

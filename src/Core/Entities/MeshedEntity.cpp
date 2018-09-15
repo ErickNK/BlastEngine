@@ -2,7 +2,6 @@
 // Created by erick on 9/10/18.
 //
 
-#include "../Components/MeshedComponent.h"
 #include "MeshedEntity.h"
 
 MeshedEntity::MeshedEntity(Mesh &mesh, Transform &transform, Material &material) :
@@ -26,7 +25,7 @@ MeshedEntity* MeshedEntity::AddChild(MeshedEntity* child)
     return this;
 }
 
-MeshedEntity* MeshedEntity::AddComponent(MeshedComponent* component)
+MeshedEntity* MeshedEntity::AddComponent(EntityComponent<MeshedEntity>* component)
 {
     m_components.push_back(component);
     component->SetParent(this);

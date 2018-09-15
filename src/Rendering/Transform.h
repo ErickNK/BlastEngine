@@ -71,6 +71,14 @@ public:
         return up;
     }
 
+    inline glm::quat GetProperUp(){
+        glm::quat temp = m_rot;
+        glm::quat key_quat = glm::quat(glm::vec3(0,1,0));
+
+        return key_quat;
+    }
+
+
     inline glm::vec3 GetRight(){
         glm::vec3 right;
 

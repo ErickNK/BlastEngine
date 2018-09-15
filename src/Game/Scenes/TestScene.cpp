@@ -20,6 +20,7 @@
 #include "../../Core/Components/RenderingComponents/GUIRendererComponent.h"
 #include "../../Core/Components/RenderingComponents/ShadowRendererComponent.h"
 #include "../../Core/Components/RenderingComponents/SkyBoxRendererComponent.h"
+#include "../../Core/Components/Behaviours/SkyBoxEffectsComponent.h"
 
 void TestScene::Init() {
     m_meshed_loader = new MeshedLoader();
@@ -33,17 +34,31 @@ void TestScene::Init() {
 }
 
 void TestScene::SetupSkyBox() {
-    std::vector<std::string> faceLocations;
+    std::map<SkyBoxTypes, std::vector<std::string>> faceLocations;
 
-    faceLocations.emplace_back("../res/textures/skybox/cloudtop_lf.tga");
-    faceLocations.emplace_back("../res/textures/skybox/cloudtop_rt.tga");
-    faceLocations.emplace_back("../res/textures/skybox/cloudtop_up.tga");
-    faceLocations.emplace_back("../res/textures/skybox/cloudtop_dn.tga");
-    faceLocations.emplace_back("../res/textures/skybox/cloudtop_ft.tga");
-    faceLocations.emplace_back("../res/textures/skybox/cloudtop_bk.tga");
+    faceLocations[DAY_SKYBOX].emplace_back("../res/textures/skybox/cloudtop_lf.tga");
+    faceLocations[DAY_SKYBOX].emplace_back("../res/textures/skybox/cloudtop_rt.tga");
+    faceLocations[DAY_SKYBOX].emplace_back("../res/textures/skybox/cloudtop_up.tga");
+    faceLocations[DAY_SKYBOX].emplace_back("../res/textures/skybox/cloudtop_dn.tga");
+    faceLocations[DAY_SKYBOX].emplace_back("../res/textures/skybox/cloudtop_ft.tga");
+    faceLocations[DAY_SKYBOX].emplace_back("../res/textures/skybox/cloudtop_bk.tga");
 
-    auto * skybox = new SkyBox(faceLocations);
-    skybox->AddComponent(new SkyBoxRendererComponent());
+    faceLocations[NIGHT_SKYBOX].emplace_back("../res/textures/skybox/night_lf.png");
+    faceLocations[NIGHT_SKYBOX].emplace_back("../res/textures/skybox/night_rt.png");
+    faceLocations[NIGHT_SKYBOX].emplace_back("../res/textures/skybox/night_up.png");
+    faceLocations[NIGHT_SKYBOX].emplace_back("../res/textures/skybox/night_dn.png");
+    faceLocations[NIGHT_SKYBOX].emplace_back("../res/textures/skybox/night_ft.png");
+    faceLocations[NIGHT_SKYBOX].emplace_back("../res/textures/skybox/night_bk.png");
+
+    auto * skybox = new SkyBox(100.f,faceLocations);
+    skybox->AddComponent(new SkyBoxRendererComponent())
+    ->AddComponent(new SkyBoxEffectsComponent());
+
+//    Fog* fog = new Fog(glm::vec4(0.2,0.2,0.2,1.0),0.007f,10.5f);
+//    skybox->setFog(fog);
+//    skybox->setFogUpperLimit(70.0f);
+//    this->AddEffectToScene(fog);
+
     this->AddSkyBox(skybox);
     this->SetCurrentSkyBox(0);
 }
@@ -180,9 +195,6 @@ void TestScene::CreateTerrain(){
         this->AddMeshedToScene(fern);
         spice3 *= -1;
     }
-
-    Fog* fog = new Fog(glm::vec4(0.5,0.5,0.5,1.0),0.007f,2.5f);
-    this->AddEffectToScene(fog);
 }
 
 void TestScene::CreateCharacters() {

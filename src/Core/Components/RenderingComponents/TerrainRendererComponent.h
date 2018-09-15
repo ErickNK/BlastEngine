@@ -8,9 +8,9 @@
 
 #include "../../../Rendering/RenderingEngine.h"
 #include "../../../Rendering/Shaders/TerrainShader.h"
-#include "../MeshedComponent.h"
+#include "../EntityComponent.h"
 
-class TerrainRendererComponent: public MeshedComponent {
+class TerrainRendererComponent: public EntityComponent<Terrain,RenderingEngine> {
 public:
     void RenderTerrain(RenderingEngine* engine) const {
         auto * shader = (TerrainShader*) engine->GetShader(TERRAIN_SHADER);
@@ -19,11 +19,11 @@ public:
 
         shader->Bind();
 
-            shader->setTerrain((Terrain *)(m_meshedEntity));
+            shader->setTerrain(m_entity);
 
-        shader->UpdateCamera(*engine->getCurrentScene()->getCurrentCamera());
+            shader->UpdateCamera(*engine->getCurrentScene()->getCurrentCamera());
 
-            m_meshedEntity->RenderAll(shader);
+            m_entity->RenderAll(shader);
 
         shader->UnBind();
     }
