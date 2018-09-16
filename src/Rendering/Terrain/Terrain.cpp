@@ -130,7 +130,7 @@ Terrain::~Terrain() {
 //    delete[] heights;
 }
 
-float Terrain::getTerrainHeight(float x, float z) {
+float Terrain::getTerrainHeight(float x, float z) const{
     float terrainX = x - this->x;
     float terrainZ = z - this->z;
     float gridSquareSize = SIZE/((float) sizeof(heights) - 1);

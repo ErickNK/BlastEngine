@@ -1,0 +1,14 @@
+//
+// Created by erick on 9/16/18.
+//
+
+#ifndef MORDEROPENGLUDEMYTUTORIAL_ENTITY_H
+#define MORDEROPENGLUDEMYTUTORIAL_ENTITY_H
+
+
+class Entity {
+
+};
+
+
+#endif //MORDEROPENGLUDEMYTUTORIAL_ENTITY_H

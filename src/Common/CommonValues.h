@@ -63,4 +63,15 @@ enum SkyBoxTypes: unsigned int{
 
 	NUM_SKYBOX_TYPES
 };
+
+enum ColliderType{
+    TYPE_BOUNDINGSPHERE,
+    TYPE_AABB,
+    TYPE_PLANE,
+    TYPE_TERRAIN,
+    TYPE_POINT,
+    TYPE_LINE,
+
+    NUM_TYPES
+};
 #endif //MORDEROPENGLUDEMYTUTORIAL_COMMONVALUES_H

@@ -5,21 +5,43 @@
 #include "IntersectData.h"
 #include "Collider.h"
 
-class BoundingSphere : public Collider
+template <class Parent> class AxisAlignedBoundingBox;
+template <class Parent> class Plane;
+class TerrainCollider;
+class Point;
+
+template <class Parent>
+class BoundingSphere : public Collider<Parent>
 {
 public:
 	BoundingSphere(const Vector3f& center, float radius) :
-		Collider(Collider::TYPE_BOUNDINGSPHERE),
+		Collider<Parent>(TYPE_BOUNDINGSPHERE),
 		m_center(center),
 		m_radius(radius) {};
 
 	/**
-	* Computes information about if this sphere intersects another aphere.
+	* Computes information about if this sphere intersects another collider.
 	*
 	* @param other The sphere that's being tested for intersection with this
 	*                sphere.
 	*/
-	IntersectData IntersectBoundingSphere(const BoundingSphere& other) const;
+    template <class OtherParent>
+	IntersectData IntersectBoundingSphere(const BoundingSphere<OtherParent>& other) const;
+
+    template <class OtherParent>
+	IntersectData IntersectAABB(const AxisAlignedBoundingBox<OtherParent>& other) const;
+
+    template <class OtherParent>
+	IntersectData IntersectPlane(const Plane<OtherParent>& other) const;
+
+    IntersectData IntersectTerrain(const TerrainCollider& other) const;
+
+    IntersectData IntersectPoint(Point &point) const;
+
+    template <class OtherParent>
+    IntersectData Intersect(const Collider<OtherParent>& other) const;
+
+    Point ClosestPoint(Point point);
 
 	/*
 	* Move the sphere accordingly when a collision is detected.

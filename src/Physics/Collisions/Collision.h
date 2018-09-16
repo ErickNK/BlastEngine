@@ -1,0 +1,14 @@
+//
+// Created by erick on 9/16/18.
+//
+
+#ifndef MORDEROPENGLUDEMYTUTORIAL_COLLISION_H
+#define MORDEROPENGLUDEMYTUTORIAL_COLLISION_H
+
+
+class Collision {
+
+};
+
+
+#endif //MORDEROPENGLUDEMYTUTORIAL_COLLISION_H

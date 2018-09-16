@@ -4,6 +4,7 @@
 
 #include "PhysicsObject.h"
 #include "Colliders/IntersectData.h"
+#include "../Core/Entities/Entity.h"
 #include <vector>
 
 class PhysicsEngine {

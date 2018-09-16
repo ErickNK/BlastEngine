@@ -4,6 +4,7 @@
 #include "../Common/math3d.h"
 #include "Colliders/BoundingSphere.h"
 #include "Colliders/Collider.h"
+#include "../Core/Entities/Entity.h"
 
 /**
 * The PhysicsObject class represents an object that can be used in a physics
@@ -19,7 +20,7 @@ public:
 	*                   object. Should be in allocated memory.
 	* @param velocity How fast this object is moving and in what direction.
 	*/
-	PhysicsObject(Collider* collider, const Vector3f& velocity) :
+	PhysicsObject(Collider<Entity>* collider, const Vector3f& velocity) :
 		m_position(collider->GetCenter()),
 		m_oldPosition(collider->GetCenter()),
 		m_velocity(velocity),
@@ -43,7 +44,7 @@ public:
 	* Returns a collider in the position of this object, updating the
 	* collider's position if necessary.
 	*/
-	inline const Collider& GetCollider()
+	inline const Collider<Entity>& GetCollider()
 	{
 		//Find distance between current and old position
 		Vector3f translation = m_position - m_oldPosition;
@@ -73,7 +74,7 @@ private:
 	Vector3f m_oldPosition;
 
 	/** The collider representing the shape and position of this object. */
-	Collider* m_collider;
+	Collider<Entity>* m_collider;
 };
 
 #endif

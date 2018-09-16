@@ -1,21 +1,51 @@
 #ifndef INTERSECTDATA_INCLUDED_H
 #define INTERSECTDATA_INCLUDED_H
 
+#include <cstring>
 #include "../../Common/math3d.h"
 
 class IntersectData
 {
 public:
-	IntersectData(const bool doesIntersect, const Vector3f& direction) : 
+	IntersectData() = default;
+
+    IntersectData(const bool doesIntersect, const Vector3f& direction) :
 		m_doesIntersect(doesIntersect), 
 		m_direction(direction) {}
+
+//    IntersectData& operator=(IntersectData&& other){
+////		char* temp[sizeof(IntersectData) / sizeof(char)];
+////		memcpy(temp, this, sizeof(IntersectData));
+////		memcpy(this, &other, sizeof(IntersectData));
+////		memcpy(&other, temp, sizeof(IntersectData));
+//        return other;
+//	}
 
 	inline bool GetDoesIntersect() const { return m_doesIntersect; }
 	inline float GetDistance() const { return m_direction.Length(); }
 	inline const Vector3f& GetDirection() const { return m_direction; }
+
+	const bool getInsideCollider() const {
+		return m_inside_collider;
+	}
+
+	const bool getBehindCollider() const {
+		return m_behind_collider;
+	}
+
+	void setInsideCollider(bool m_inside_collider) {
+		IntersectData::m_inside_collider = m_inside_collider;
+	}
+
+	void setBehindCollider(bool m_behind_collider) {
+		IntersectData::m_behind_collider = m_behind_collider;
+	}
+
 private:
-	const bool m_doesIntersect;
-	const Vector3f m_direction;
+	bool m_doesIntersect = false;
+	Vector3f m_direction;
+	bool m_inside_collider = false;
+	bool m_behind_collider = false;
 };
 
 #endif

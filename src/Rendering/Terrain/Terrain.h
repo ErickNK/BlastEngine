@@ -22,7 +22,7 @@ public:
 
     void RenderTerrain(RenderingEngine* engine);
 
-    float getTerrainHeight(float x, float z);
+    float getTerrainHeight(float x, float z) const;
 private:
     std::map<TextureTypeEnum, std::string> m_textureLocations;
 
