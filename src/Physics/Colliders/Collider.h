@@ -18,14 +18,12 @@ public:
 		m_type(type) {}
 
 	virtual IntersectData Intersect(const Collider& other) const {};
-	virtual void Transform(const glm::vec3 translation) {};
+	virtual void Update(){}
 
 	inline ColliderType GetType() const { return m_type;}
     inline void SetType(ColliderType type){ m_type = type;}
-    inline void SetParent(PhysicsObject* parent){ m_parent = parent;}
-    inline PhysicsObject* GetParent() const { return m_parent;}
-
-	virtual glm::vec3 GetCenter() const { return glm::vec3(0,0,0); }
+	inline PhysicsObject* GetParent() const { return m_parent;}
+	inline void SetParent(PhysicsObject* parent){ m_parent = parent;}
 
 protected:
 	ColliderType m_type;

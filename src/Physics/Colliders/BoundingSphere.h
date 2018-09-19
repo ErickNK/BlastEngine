@@ -40,14 +40,10 @@ public:
 
     Point ClosestPoint(Point point);
 
-	/*
-	* Move the sphere accordingly when a collision is detected.
-	*
-	*/
-	void Transform(glm::vec3 translate) override;
+    void Update() override;
 
-	//GETTERS AND SETTERS
-    glm::vec3 GetCenter() const override { return m_center; }
+    //GETTERS AND SETTERS
+    glm::vec3 GetCenter() const { return m_center; }
 	inline float GetRadius() const { return m_radius; }
 private:
 	glm::vec3 m_center;

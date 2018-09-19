@@ -15,15 +15,15 @@ void Scene::ProcessInput(Input* input, float delta) {
     for(MeshedEntity* m_meshed_Entity: m_meshed_Entities){
         m_meshed_Entity->ProcessInputAll(input,delta);
     }
-    m_current_camera->ProcessInput(input,delta);
-    m_current_mouse->ProcessInput(input,delta);
+    if(m_current_camera != nullptr) m_current_camera->ProcessInput(input,delta);
+    if(m_current_mouse != nullptr) m_current_mouse->ProcessInput(input,delta);
 }
 
 void Scene::Update(float delta) {
     for(MeshedEntity* m_meshed_Entity: m_meshed_Entities){
         m_meshed_Entity->UpdateAll(delta);
     }
-    m_current_skybox->Update(delta);
+    if(m_current_skybox != nullptr) m_current_skybox->Update(delta);
 }
 
 void Scene::AddLightToScene(LightEntity* light) { m_lights.push_back(light); }

@@ -87,7 +87,7 @@ void TestScene::SetupCamera(){
             0.0f,
             0.0f,
             15.0f,
-            0.0005f
+            0.005f
     );
     fpsCam->setProjection(
             45.0f,
@@ -99,8 +99,8 @@ void TestScene::SetupCamera(){
     this->AddCamera(fpsCam);
     this->SetCurrentCamera(0);
 
-    auto * mousePicker = new MousePicker(this->getCurrentCamera(),this->getGame()->getCoreEngine()->GetWindow());
-    this->AddMousePicker(mousePicker);
+//    auto * mousePicker = new MousePicker(this->getCurrentCamera(),this->getGame()->getCoreEngine()->GetWindow());
+//    this->AddMousePicker(mousePicker);
 
 }
 
@@ -115,29 +115,12 @@ void TestScene::CreateTerrain(){
     terrainTextures[B_TEXTURE] = "../res/textures/terrain/path.png";
     terrainTextures[BLEND_MAP_TEXTURE] = "../res/textures/terrain/blendMap.png";
     terrainTextures[HEIGHT_MAP_TEXTURE] = "../res/textures/terrain/heightmap.png";
+
     Terrain* terrain = new Terrain(0,0,terrainTextures);
     auto * terrainBody = new TerrainBody();
     terrain->AddComponent(reinterpret_cast<EntityComponent<MeshedEntity> *>(terrainBody));
     this->AddPhysicsObject(terrainBody);
     this->AddTerrain(terrain);
-
-    Terrain* terrain1 = new Terrain(0,-1.0f,terrainTextures);
-    auto * terrainBody1 = new TerrainBody();
-    terrain->AddComponent(reinterpret_cast<EntityComponent<MeshedEntity> *>(terrainBody1));
-    this->AddPhysicsObject(terrainBody1);
-    this->AddTerrain(terrain1);
-
-    Terrain* terrain2 = new Terrain(-1.0,0,terrainTextures);
-    auto * terrainBody2 = new TerrainBody();
-    terrain->AddComponent(reinterpret_cast<EntityComponent<MeshedEntity> *>(terrainBody2));
-    this->AddPhysicsObject(terrainBody2);
-    this->AddTerrain(terrain2);
-
-    Terrain* terrain3 = new Terrain(-1.0,-1.0f,terrainTextures);
-    auto * terrainBody3 = new TerrainBody();
-    terrain->AddComponent(reinterpret_cast<EntityComponent<MeshedEntity> *>(terrainBody3));
-    this->AddPhysicsObject(terrainBody3);
-    this->AddTerrain(terrain3);
 
     //Trees
     int spice = 1;
@@ -160,32 +143,11 @@ void TestScene::CreateTerrain(){
         tree->getTransform().GetPos().x = spice * dist6(rng);
         tree->getTransform().SetScale(glm::vec3(10,10,10));
 
+        auto * rigidBody = new RigidBody(new Point(),glm::vec3(0,0,0),100.0f);
+        tree->AddComponent(reinterpret_cast<EntityComponent<MeshedEntity> *>(rigidBody));
+        this->AddPhysicsObject(rigidBody);
         this->AddMeshedToScene(tree);
         spice *= -1;
-    }
-
-    //grass
-    int spice2 = 1;
-    for(int i = 0; i < 80; i++) {
-        auto *grass = new MeshedEntity();
-
-        std::map<TextureTypeEnum, std::string> grassTextures;
-        grassTextures[DIFFUSE_TEXTURE] = "../res/textures/terrain/grassTexture.png";
-
-        options[Transparency] = true;
-        options[FakeLighting] = true;
-
-        m_meshed_loader->LoadGameObject("../res/textures/terrain/grass.obj", grassTextures, grass, options);
-
-        std::mt19937 rng;
-        rng.seed(std::random_device()());
-        std::uniform_int_distribution<std::mt19937::result_type> dist6(5, 500); // distribution in range [1, 100]
-
-        grass->getTransform().GetPos().z = spice2 * dist6(rng);
-        grass->getTransform().GetPos().x = spice2 * dist6(rng);
-
-        this->AddMeshedToScene(grass);
-        spice2 *= -1;
     }
 
     //fern
@@ -212,6 +174,9 @@ void TestScene::CreateTerrain(){
         fern->getTransform().GetPos().z = spice3 * dist6(rng);
         fern->getTransform().GetPos().x = spice3 * dist6(rng);
 
+        auto * rigidBody = new RigidBody(new Point(),glm::vec3(0,0,0),100.0f);
+        fern->AddComponent(reinterpret_cast<EntityComponent<MeshedEntity> *>(rigidBody));
+        this->AddPhysicsObject(rigidBody);
         this->AddMeshedToScene(fern);
         spice3 *= -1;
     }
@@ -229,7 +194,6 @@ void TestScene::CreateCharacters() {
     auto * rigidBody = new RigidBody(new Point(),glm::vec3(0,0,0),100.0f);
     nanosuit->AddComponent(reinterpret_cast<EntityComponent<MeshedEntity> *>(rigidBody))
             ->AddComponent(new PlayerMovement());
-
 
     this->AddPhysicsObject(rigidBody);
     this->AddMeshedToScene(nanosuit);

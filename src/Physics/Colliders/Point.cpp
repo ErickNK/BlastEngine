@@ -6,24 +6,21 @@
 #include "../Objects/PhysicsObject.h"
 
 IntersectData Point::IntersectBoundingSphere(const BoundingSphere& other) const {
-//    return other.IntersectPoint(*this);
-    return {false,glm::vec3()};
+    return other.IntersectPoint(*this);
 }
 
 IntersectData Point::IntersectAABB(const AxisAlignedBoundingBox& other) const {
-//    return other.IntersectPoint(*this);
-    return {false,glm::vec3()};
+    return other.IntersectPoint(*this);
 }
 
 IntersectData Point::IntersectPlane(const Plane& other) const {
-//    return other.IntersectPoint(*this);
-    return {false,glm::vec3()};
+    return other.IntersectPoint(*this);
 }
 
 IntersectData Point::IntersectTerrain(const TerrainCollider &other) const {
     IntersectData result;
 
-    float terrainHeight = ((Terrain*)other.GetParent()->getParent())->getTerrainHeight(this->m_point.x,this->m_point.y);
+    float terrainHeight = ((Terrain*)other.GetParent()->getParent())->getTerrainHeight(this->m_point.x,this->m_point.z);
 
     bool interaction = this->m_point.y < terrainHeight; // Lower than terrain
 
@@ -72,3 +69,6 @@ IntersectData Point::Intersect(const Collider& other) const
     }
 }
 
+void Point::Update() {
+    this->m_point = m_parent->getParent()->getTransform().GetPos();
+}

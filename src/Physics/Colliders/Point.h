@@ -22,9 +22,11 @@ public:
         m_point = glm::vec3(x,y,z);
     }
 
-    Point(glm::vec3 vec): Collider(TYPE_POINT){
+    explicit Point(glm::vec3 vec): Collider(TYPE_POINT){
         m_point = vec;
     }
+
+    void Update() override;
 
     IntersectData IntersectBoundingSphere(const BoundingSphere& other) const;
 

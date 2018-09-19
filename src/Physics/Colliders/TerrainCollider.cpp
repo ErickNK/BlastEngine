@@ -6,6 +6,7 @@
 #include "TerrainCollider.h"
 #include "BoundingSphere.h"
 #include "Plane.h"
+#include "Point.h"
 #include "../../Rendering/Terrain/Terrain.h"
 #include "../Objects/PhysicsObject.h"
 
@@ -29,6 +30,10 @@ IntersectData TerrainCollider::IntersectTerrain(const TerrainCollider &other) co
     return IntersectData(false, glm::vec3());
 }
 
+IntersectData TerrainCollider::IntersectPoint(Point &point) const {
+    return point.IntersectTerrain(*this);
+}
+
 IntersectData TerrainCollider::Intersect(const Collider& other) const
 {
 
@@ -45,12 +50,19 @@ IntersectData TerrainCollider::Intersect(const Collider& other) const
         case TYPE_TERRAIN:{
             return this->IntersectTerrain((TerrainCollider&)other);
         }
+        case TYPE_POINT:{
+            return this->IntersectPoint((Point&)other);
+        }
         case NUM_TYPES:break;
         default:{
             std::cerr << "Error: Collisions not implemented between specified colliders" << std::endl;
             return {false,glm::vec3()};
         }
     }
+}
+
+float TerrainCollider::getClosestPoint(float x, float z) const {
+    return ((Terrain*) GetParent()->getParent())->getTerrainHeight(x,z);;
 }
 
 

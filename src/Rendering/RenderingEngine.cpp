@@ -134,7 +134,7 @@ void RenderingEngine::RenderGUI() {
 }
 
 void RenderingEngine::RenderSkybox() {
-    m_current_scene->getCurrentSkybox()->Render(this);
+    if(m_current_scene != nullptr) m_current_scene->getCurrentSkybox()->Render(this);
 }
 
 void RenderingEngine::RenderShadows() {

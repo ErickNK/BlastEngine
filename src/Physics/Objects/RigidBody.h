@@ -76,6 +76,7 @@ public:
 	* @param delta How much time to simulate.
 	*/
     void Integrate(double time, float delta) override;
+    void React(PhysicsObject* otherObject, IntersectData intersectData) override;
 
 //    Derivative evaluate(const State& initial, double t, float dt, const Derivative & d ) ;
 //    glm::vec3  acceleration(const State & state,double t );

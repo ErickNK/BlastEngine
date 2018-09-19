@@ -133,11 +133,11 @@ Terrain::~Terrain() {
 float Terrain::getTerrainHeight(float x, float z) const{
     float terrainX = x - this->x;
     float terrainZ = z - this->z;
-    float gridSquareSize = SIZE/((float) sizeof(heights) - 1);
+    float gridSquareSize = SIZE/((float) height_map_height - 1);
     int gridX = (int) floor(terrainX / gridSquareSize);
     int gridZ = (int) floor(terrainZ / gridSquareSize);
 
-    if(gridX >= sizeof(heights) - 1 || gridZ >= sizeof(heights) - 1 || gridX < 0 || gridZ < 0){
+    if(gridX >= height_map_height - 1 || gridZ >= height_map_height - 1 || gridX < 0 || gridZ < 0){
         return 0;
     }
     float xCoord = (fmod(terrainX, gridSquareSize))/gridSquareSize;
@@ -160,7 +160,7 @@ float Terrain::getTerrainHeight(float x, float z) const{
                    glm::vec2(xCoord, zCoord)
                );
     }
-    return  answer;
+    return answer;
 }
 
 

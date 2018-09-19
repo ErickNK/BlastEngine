@@ -5,10 +5,10 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(SOURCE_FILES
         Common/math3d.cpp
-#        Physics/Colliders/AxisAlignedBoundingBox.cpp
-#        Physics/Colliders/BoundingSphere.cpp
+        Physics/Colliders/AxisAlignedBoundingBox.cpp
+        Physics/Colliders/BoundingSphere.cpp
         Physics/Colliders/Collider.cpp
-#        Physics/Colliders/Plane.cpp
+        Physics/Colliders/Plane.cpp
         Physics/Objects/PhysicsObject.cpp
         Physics/PhysicsEngine.cpp
         Rendering/Lighting/ShadowMap.cpp
@@ -29,11 +29,11 @@ set(SOURCE_FILES
         Common/referenceCounter.h
         Physics/Objects/PhysicsObject.h
         Physics/PhysicsEngine.h
-#        Physics/Colliders/AxisAlignedBoundingBox.h
-#        Physics/Colliders/BoundingSphere.h
+        Physics/Colliders/AxisAlignedBoundingBox.h
+        Physics/Colliders/BoundingSphere.h
         Physics/Colliders/Collider.h
         Physics/Colliders/IntersectData.h
-#        Physics/Colliders/Plane.h
+        Physics/Colliders/Plane.h
         Rendering/Lighting/ShadowMap.h
         Rendering/SkyBox.h
         Rendering/stb_image.h
@@ -104,7 +104,7 @@ set(SOURCE_FILES
         Physics/Colliders/TerrainCollider.cpp
         Physics/Collisions/Collision.cpp Physics/Collisions/Collision.h
         Physics/Colliders/Point.cpp Physics/Colliders/Point.h
-#        Physics/Colliders/Line.cpp Physics/Colliders/Line.h
+        Physics/Colliders/Line.cpp Physics/Colliders/Line.h
         Core/Entities/Entity.cpp Core/Entities/Entity.h
         Physics/Forces/Force.cpp Physics/Forces/Force.h
         Physics/Objects/RigidBody.cpp Physics/Objects/RigidBody.h

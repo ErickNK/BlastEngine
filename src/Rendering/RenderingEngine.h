@@ -56,13 +56,13 @@ private:
     //Shaders
     Shader* m_shaders[NUM_SHADER_TYPES];
     ShaderType m_current_shader;
-    Scene * m_current_scene;
+    Scene * m_current_scene = nullptr;
 
     //Profilers
     ProfileTimer m_renderProfileTimer;
 //    ProfileTimer m_windowSyncProfileTimer;
 
-    Window* m_window;
+    Window* m_window = nullptr;
 
     void RenderShadows();
     void RenderSkybox();

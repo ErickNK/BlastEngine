@@ -5,11 +5,9 @@
 #include "Point.h"
 #include <limits>
 
-Plane::Plane(Point a, Point b, Point c) : Collider(TYPE_PLANE)
-{
-    m_normal = glm::normalize(glm::cross((b.m_point - a.m_point),( c.m_point - a.m_point)));
-    m_distance = glm::dot(m_normal,a.m_point);
-}
+Plane::Plane(Point a, Point b, Point c) : Collider(TYPE_PLANE),
+m_normal(glm::normalize(glm::cross((b.m_point - a.m_point),( c.m_point - a.m_point)))),
+m_distance(glm::dot(m_normal,a.m_point)){}
 
 Plane Plane::Normalized() const
 {
@@ -64,7 +62,7 @@ Point Plane::ClosestPoint(Point &point) {
     float distance = glm::dot(this->m_normal,((point.m_point) - this->m_distance));
     // If the plane normal wasn't normalized, we'd need this:
     // distance = distance / DOT(plane.Normal, plane.Normal);
-    return point.m_point -  (m_normal * distance);
+    return Point(point.m_point -  (m_normal * distance));
 }
 
 IntersectData Plane::Intersect(const Collider& other) const
@@ -94,10 +92,10 @@ IntersectData Plane::Intersect(const Collider& other) const
 }
 
 Point Plane::IntersectAt(Plane p1, Plane p2, Plane p3) {
-    Vector3f m1 = Vector3f(p1.m_normal.GetX(), p2.m_normal.GetX(), p3.m_normal.GetX());
-    Vector3f m2 = Vector3f(p1.m_normal.GetY(), p2.m_normal.GetY(), p3.m_normal.GetY());
-    Vector3f m3 = Vector3f(p1.m_normal.GetZ(), p2.m_normal.GetZ(), p3.m_normal.GetZ());
-    Vector3f d = Vector3f(p1.Distance, p2.Distance, p3.Distance);
+    Vector3f m1 = Vector3f(p1.m_normal.x, p2.m_normal.x, p3.m_normal.x);
+    Vector3f m2 = Vector3f(p1.m_normal.y, p2.m_normal.y, p3.m_normal.y);
+    Vector3f m3 = Vector3f(p1.m_normal.z, p2.m_normal.z, p3.m_normal.z);
+    Vector3f d = Vector3f(p1.m_distance, p2.m_distance, p3.m_distance);
     Vector3f u = m2.Cross(m3);
     Vector3f v = m1.Cross(d);
     float denom = m1.Dot(u);

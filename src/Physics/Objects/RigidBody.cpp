@@ -3,16 +3,17 @@
 //
 
 #include "RigidBody.h"
+#include "../Colliders/TerrainCollider.h"
 
 
 RigidBody::RigidBody(Collider *collider, const glm::vec3 &initVelocity, float mass)  :
         PhysicsObject(mass,initVelocity,collider){
     this->m_type = RIGID_BODY_COMPONENT;
     //Add gravity
-//    auto * force = new Force;
-//    force->setAcceleration(glm::vec3(0,-9180,0));
-//    force->computeForce(mass);
-//    ApplyForce(force);
+    auto * force = new Force;
+    force->setAcceleration(glm::vec3(0,-9180,0));
+    force->computeForce(mass);
+    ApplyForce(force);
 }
 
 void RigidBody::Integrate(double time, float delta) {
@@ -45,6 +46,19 @@ void RigidBody::ApplyForce(glm::vec3 force) {
 }
 
 void RigidBody::ApplyAcceleration(glm::vec3 acceleretion) {
+
+}
+
+void RigidBody::React(PhysicsObject *otherObject, IntersectData intersectData) {
+
+    //If terrain. Stop falling.
+    if(otherObject->getType() == TERRAIN_BODY_COMPONENT){
+        this->m_entity->getTransform().GetPos().y =
+                ((TerrainCollider*) otherObject->getCollider())->getClosestPoint(
+                            this->m_entity->getTransform().GetPos().x,
+                            this->m_entity->getTransform().GetPos().z
+                        );
+    }
 
 }
 

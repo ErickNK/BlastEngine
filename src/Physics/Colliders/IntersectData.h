@@ -42,6 +42,11 @@ public:
 		IntersectData::m_behind_collider = m_behind_collider;
 	}
 
+    IntersectData inverse() {
+    	m_direction = -m_direction;
+        return *this;
+    }
+
 private:
 	bool m_doesIntersect = false;
 	glm::vec3 m_direction;

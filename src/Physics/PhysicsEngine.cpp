@@ -16,13 +16,13 @@ void PhysicsEngine::HandleCollisions(Scene* scene)
 		for (unsigned int j = i + 1 /*Not checking the upper loop with itself*/; 
 			j < scene->getPhysicsObjects().size(); j++) {
 			//Check if intersecting
-			IntersectData intersectData = scene->getPhysicsObjects()[i]->GetCollider().Intersect(scene->getPhysicsObjects()[j]->GetCollider());
+			IntersectData intersectData = scene->getPhysicsObjects()[i]->getCollider()->Intersect(*scene->getPhysicsObjects()[j]->getCollider());
 
 			if (intersectData.GetDoesIntersect()) {
 				//React to collision.
 
-				scene->getPhysicsObjects()[i]->SetVelocity(glm::vec3(0,0,0));
-				scene->getPhysicsObjects()[j]->SetVelocity(glm::vec3(0,0,0));
+				scene->getPhysicsObjects()[i]->React(scene->getPhysicsObjects()[j],intersectData);
+				scene->getPhysicsObjects()[j]->React(scene->getPhysicsObjects()[i],intersectData.inverse());
 				//Reflect against the collision direction
 //				Vector3f direction = intersectData.GetDirection().Normalized();
 //				Vector3f otherDirection = Vector3f(direction.Reflect(m_objects[i].GetVelocity().Normalized()));

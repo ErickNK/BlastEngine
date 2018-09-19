@@ -43,27 +43,36 @@ public:
 	* @param delta How much time to simulate.
 	*/
 	virtual void Integrate(double time, float delta) {};
+	virtual void React(PhysicsObject* otherObject, IntersectData intersectData) {}
 
-
-	/**
-	* Returns a collider in the position of this object, updating the
-	* collider's position if necessary.
-	*/
-	inline const Collider& GetCollider()
-	{
-//		Find distance between current and old position
-		glm::vec3 translation = m_entity->getTransform().GetPos() - m_oldPosition;
-//		Update old position back to current position.
-		m_oldPosition = m_entity->getTransform().GetPos();
-//		Move collider by distance moved.
+//	/**
+//	* Returns a collider in the position of this object, updating the
+//	* collider's position if necessary.
+//	*/
+//	inline const Collider& GetCollider()
+//	{
+////		Find distance between current and old position
+//		glm::vec3 translation = m_entity->getTransform().GetPos() - m_oldPosition;
+////		Update old position back to current position.
+//		m_oldPosition = m_entity->getTransform().GetPos();
+////		Move collider by distance moved.
 //        collider->Transform(translation);
-
-		return *collider;
-	}
+//
+//		return *collider;
+//	}
 
 	// Getter and Setters
 	inline const glm::vec3& getVelocity() const { return velocity; }
     inline void SetVelocity(const glm::vec3& v) { velocity = v; }
+	inline Collider *getCollider() {
+		collider->Update();
+		return collider;
+	}
+
+	void SetParent(Entity *entity) override {
+		EntityComponent::SetParent(entity);
+		collider->Update();
+	}
 
 protected:
     /** Mass of the object */

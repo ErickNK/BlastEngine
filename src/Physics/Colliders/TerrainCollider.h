@@ -11,6 +11,7 @@
 class AxisAlignedBoundingBox;
 class BoundingSphere;
 class Plane;
+class Point;
 
 class TerrainCollider : public Collider {
 public:
@@ -24,7 +25,11 @@ public:
 
     IntersectData IntersectTerrain(const TerrainCollider& other) const;
 
-    IntersectData Intersect(const Collider& other) const;
+    IntersectData Intersect(const Collider& other) const override;
+
+    float getClosestPoint(float x, float y) const;
+
+    IntersectData IntersectPoint(Point &point) const;
 };
 
 

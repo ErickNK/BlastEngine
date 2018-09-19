@@ -30,6 +30,7 @@ private:
 
     float SIZE = 800, x , z ;
 
+    //TODO:: use vectors to get correct size of heights on one edge
     float** heights;
 
     int height_map_width,height_map_height,height_map_bitDepth;

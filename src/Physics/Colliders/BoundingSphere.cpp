@@ -20,11 +20,6 @@ IntersectData BoundingSphere::IntersectBoundingSphere(const BoundingSphere& othe
 	return IntersectData(distanceApart < 0, directionToOther * distanceApart);	
 }
 
-void BoundingSphere::Transform(glm::vec3 translation)
-{
-	m_center += translation;
-}
-
 IntersectData BoundingSphere::IntersectAABB(const AxisAlignedBoundingBox &other) const {
     return IntersectData(false, glm::vec3());
 }
@@ -81,6 +76,10 @@ Point BoundingSphere::ClosestPoint(Point point) {
     glm::vec3 worldPoint = this->m_center + sphereToPoint;
     // Return new point
     return {worldPoint.x, worldPoint.y, worldPoint.z};
+}
+
+void BoundingSphere::Update() {
+    this->m_center = m_parent->getParent()->getTransform().GetPos();
 }
 
 

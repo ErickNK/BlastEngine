@@ -84,10 +84,10 @@ protected:
      * */
     Game* m_game;
 
-    Camera* m_current_camera;
-    SkyBox* m_current_skybox;
-    GUIEntity* m_current_gui;
-    MousePicker* m_current_mouse;
+    Camera* m_current_camera = nullptr;
+    SkyBox* m_current_skybox = nullptr;
+    GUIEntity* m_current_gui = nullptr;
+    MousePicker* m_current_mouse = nullptr;
 
     /**
     * Objects contained in the scene
