@@ -89,3 +89,11 @@ GUIEntity *Scene::getCurrentGUI() {
 void Scene::SetCurrentGUI(int position) {
     m_current_gui = m_guis[position];
 }
+
+void Scene::AddPhysicsObject(PhysicsObject *object) {
+    m_physics_object.push_back(object);
+}
+
+std::vector<PhysicsObject *> &Scene::getPhysicsObjects() {
+    return m_physics_object;
+}

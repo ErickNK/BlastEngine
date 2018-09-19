@@ -2,99 +2,90 @@
 #include "TerrainCollider.h"
 #include "BoundingSphere.h"
 #include "Plane.h"
+#include <glm/gtx/component_wise.hpp>
 
-template <class Parent>
-bool AxisAlignedBoundingBox<Parent>::IsValid() {
-    return m_minExtents.GetX() < m_maxExtents.GetX() && m_minExtents.GetY() < m_maxExtents.GetY() && m_minExtents.GetZ() < m_maxExtents.GetZ();
-}
-template <class Parent>
-void AxisAlignedBoundingBox<Parent>::Fix() {
-    if (m_minExtents.GetX() > m_maxExtents.GetX()) {
-        Vector3f temp = m_maxExtents;
-        m_maxExtents = m_minExtents;
-        m_minExtents = temp;
-    }
-    if (m_minExtents.GetY() > m_maxExtents.GetY()) {
-        Vector3f temp = m_maxExtents;
-        m_maxExtents = m_minExtents;
-        m_minExtents = temp;
-    }
-    if (m_minExtents.GetZ() > m_maxExtents.GetZ()){
-        Vector3f temp = m_maxExtents;
-        m_maxExtents = m_minExtents;
-        m_minExtents = temp;
-    }
+bool AxisAlignedBoundingBox::IsValid() {
+    return m_minExtents.m_point.x < m_maxExtents.m_point.x && m_minExtents.m_point.y < m_maxExtents.m_point.y && m_minExtents.m_point.z < m_maxExtents.m_point.z;
 }
 
-template <class Parent>  template <class OtherParent>
-IntersectData AxisAlignedBoundingBox<Parent>::IntersectAABB(const AxisAlignedBoundingBox<OtherParent> & other) const
+void AxisAlignedBoundingBox::Fix() {
+    if (m_minExtents.m_point.x > m_maxExtents.m_point.x) {
+        Point temp = m_maxExtents;
+        m_maxExtents = m_minExtents;
+        m_minExtents = temp;
+    }
+    if (m_minExtents.m_point.y > m_maxExtents.m_point.y) {
+        Point temp = m_maxExtents;
+        m_maxExtents = m_minExtents;
+        m_minExtents = temp;
+    }
+    if (m_minExtents.m_point.z > m_maxExtents.m_point.z){
+        Point temp = m_maxExtents;
+        m_maxExtents = m_minExtents;
+        m_minExtents = temp;
+    }
+}
+
+IntersectData AxisAlignedBoundingBox::IntersectAABB(const AxisAlignedBoundingBox & other) const
 {
 	/**
 	* We try all extents and find the max. The wrongly facing extents will return
 	* a negative.
 	*/
-	Vector3f distance1 = other.GetMinExtents() - m_maxExtents;
-	Vector3f distance2 = m_minExtents - other.GetMaxExtents();
-	Vector3f distances = Vector3f(distance1.Max(distance2));
+	glm::vec3 distance1 = other.GetMinExtents().m_point - m_maxExtents.m_point;
+    glm::vec3 distance2 = m_minExtents.m_point - other.GetMaxExtents().m_point;
+    glm::vec3 distances = glm::max(distance1,(distance2));
 
-	float maxDistance = distances.Max();
+	float maxDistance = glm::compMax(distances);
 
 	return IntersectData(maxDistance < 0, distances);
 }
 
-template<class Parent> template <class OtherParent>
-IntersectData AxisAlignedBoundingBox<Parent>::IntersectBoundingSphere(const BoundingSphere<OtherParent> &other) const {
+IntersectData AxisAlignedBoundingBox::IntersectBoundingSphere(const BoundingSphere &other) const {
 
 	//Find closest point
-
-
-
-	return IntersectData(0, Vector3f());
+	return IntersectData(0, glm::vec3());
 }
 
-template<class Parent> template <class OtherParent>
-IntersectData AxisAlignedBoundingBox<Parent>::IntersectPlane(const Plane<OtherParent> &other) const {
-	return IntersectData(0, Vector3f());
+IntersectData AxisAlignedBoundingBox::IntersectPlane(const Plane &other) const {
+	return IntersectData(0, glm::vec3());
 }
 
-template<class Parent>
-IntersectData AxisAlignedBoundingBox<Parent>::IntersectTerrain(const TerrainCollider &other) const {
+IntersectData AxisAlignedBoundingBox::IntersectTerrain(const TerrainCollider &other) const {
 
-	return IntersectData(0, Vector3f());
+	return IntersectData(0, glm::vec3());
 }
 
-template<class Parent>
-IntersectData AxisAlignedBoundingBox<Parent>::IntersectPoint(const Point &point) const {
+IntersectData AxisAlignedBoundingBox::IntersectPoint(const Point &point) const {
 
 	return {
 	(
 		(
-			point.m_parent.GetX() > m_minExtents.GetX()
-		 && point.m_parent.GetY() > m_minExtents.GetY()
-		 && point.m_parent.GetZ() > m_minExtents.GetZ()
+			point.m_point.x > m_minExtents.m_point.x
+		 && point.m_point.y > m_minExtents.m_point.y
+		 && point.m_point.z > m_minExtents.m_point.z
 		)
 				 &&
 		(
-			point.m_parent.GetX() < m_maxExtents.GetX()
-		 && point.m_parent.GetY() < m_maxExtents.GetY()
-		 && point.m_parent.GetZ() < m_maxExtents.GetZ()
+			point.m_point.x < m_maxExtents.m_point.x
+		 && point.m_point.y < m_maxExtents.m_point.y
+		 && point.m_point.z < m_maxExtents.m_point.z
 		)
-	), Vector3f()};
+	), glm::vec3()};
 
 }
 
-template<class Parent> template <class OtherParent>
-IntersectData AxisAlignedBoundingBox<Parent>::Intersect(const Collider<OtherParent> &other) const {
+IntersectData AxisAlignedBoundingBox::Intersect(const Collider &other) const {
 
-	switch (other.m_type){
+	switch (other.GetType()){
 		case TYPE_BOUNDINGSPHERE:{
-			return this->IntersectBoundingSphere((BoundingSphere<OtherParent>&)other);
+			return this->IntersectBoundingSphere((BoundingSphere&)other);
 		}
 		case TYPE_AABB:{
-			return this->IntersectAABB((AxisAlignedBoundingBox<OtherParent>&)other);
+			return this->IntersectAABB((AxisAlignedBoundingBox&)other);
 		}
 		case TYPE_PLANE:{
-			return this->IntersectPlane((Plane<OtherParent>&)other);
+			return this->IntersectPlane((Plane&)other);
 		}
 		case TYPE_TERRAIN:{
 			return this->IntersectTerrain((TerrainCollider&)other);
@@ -105,21 +96,20 @@ IntersectData AxisAlignedBoundingBox<Parent>::Intersect(const Collider<OtherPare
 		case NUM_TYPES:break;
 		default:{
 			std::cerr << "Error: Collisions not implemented between specified colliders" << std::endl;
-			return {false,0};
+			return {false,glm::vec3()};
 		}
 	}
 }
 
-template<class Parent>
-Point AxisAlignedBoundingBox<Parent>::ClosestPoint(Point &point) {
+Point AxisAlignedBoundingBox::ClosestPoint(Point &point) {
 	Point result;
 	for(int i = 0; i < 3; i++){ //For all axis
-		if(point.m_parent[i] > m_maxExtents[i]){
-			result.m_parent[i] = m_maxExtents[i];
-		}else if(point.m_parent[i] < m_minExtents[i]){
-			result.m_parent[i] = m_minExtents[i];
+		if((point.m_point)[i] > m_maxExtents.m_point[i]){
+			(result.m_point)[i] = m_maxExtents.m_point[i];
+		}else if((point.m_point)[i] < m_minExtents.m_point[i]){
+			(result.m_point)[i] = m_minExtents.m_point[i];
 		}else{
-			result.m_parent[i] = point.m_parent[i];
+			(result.m_point)[i] = (point.m_point)[i];
 		}
 	}
 	return result;

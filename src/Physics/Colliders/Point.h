@@ -9,43 +9,40 @@
 #include "Collider.h"
 
 
-template <class Parent> class AxisAlignedBoundingBox;
-template <class Parent> class BoundingSphere;
-template <class Parent> class Plane;
+class AxisAlignedBoundingBox;
+class BoundingSphere;
+class Plane;
 class TerrainCollider;
 
-class Point : public Collider<Vector3f>{
+class Point : public Collider{
 public:
-    Point(): Collider<Vector3f>(TYPE_POINT){};
+    Point(): Collider(TYPE_POINT){};
 
-    Point(float x, float y, float z): Collider<Vector3f>(TYPE_POINT){
-        m_parent = Vector3f(x,y,z);
+    Point(float x, float y, float z): Collider(TYPE_POINT){
+        m_point = glm::vec3(x,y,z);
     }
 
-    Point(Vector3f vec): Collider<Vector3f>(TYPE_POINT){
-        m_parent = vec;
+    Point(glm::vec3 vec): Collider(TYPE_POINT){
+        m_point = vec;
     }
 
-    template <class OtherParent>
-    IntersectData IntersectBoundingSphere(const BoundingSphere<OtherParent>& other) const;
+    IntersectData IntersectBoundingSphere(const BoundingSphere& other) const;
 
-    template <class OtherParent>
-    IntersectData IntersectAABB(const AxisAlignedBoundingBox<OtherParent>& other) const;
+    IntersectData IntersectAABB(const AxisAlignedBoundingBox& other) const;
 
-    template <class OtherParent>
-    IntersectData IntersectPlane(const Plane<OtherParent>& other) const;
+    IntersectData IntersectPlane(const Plane &other) const;
+
+    IntersectData IntersectPoint(const Point& point) const;
 
     IntersectData IntersectTerrain(const TerrainCollider& other) const;
 
-    template <class OtherParent>
-    IntersectData Intersect(const Collider<OtherParent>& other) const;
+    IntersectData Intersect(const Collider& other) const override;
 
-    IntersectData IntersectPoint(const Point &point) const;
-
-private:
     bool operator==(Point &point){
         return this->m_parent == point.m_parent;
     }
+
+    glm::vec3 m_point = glm::vec3();
 };
 
 

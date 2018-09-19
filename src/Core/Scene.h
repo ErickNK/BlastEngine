@@ -12,6 +12,7 @@
 #include "../Rendering/SkyBox.h"
 #include "../Rendering/Terrain/Terrain.h"
 #include "MousePicker.h"
+#include "../Physics/Objects/RigidBody.h"
 
 class GUIEntity;
 class LightEntity;
@@ -49,6 +50,7 @@ public:
     void AddTerrain(Terrain *terrain);
     void AddGUI(GUIEntity *gui);
     void AddMousePicker(MousePicker *picker);
+    void AddPhysicsObject(PhysicsObject* object);
 
     void SetCurrentCamera(int position);
     void SetCurrentSkyBox(int position);
@@ -65,6 +67,8 @@ public:
     const std::vector<MeshedEntity *> &getMeshedEntities() const;
 
     const std::vector<EffectEntity *> &getEffectEntities() const;
+
+    std::vector<PhysicsObject *> &getPhysicsObjects();
 
     Camera *getCurrentCamera() const;
 
@@ -95,6 +99,7 @@ protected:
     std::vector<Terrain*> m_terrains;
     std::vector<MeshedEntity*> m_meshed_Entities;
     std::vector<EffectEntity*> m_effect_Entities;
+    std::vector<PhysicsObject*> m_physics_object;
 
 };
 

@@ -5,17 +5,16 @@
 #include "BoundingSphere.h"
 #include "IntersectData.h"
 
-template <class Parent>
-class Plane : public Collider<Parent>
+class Plane : public Collider
 {
 public:
 	Plane():
-		Collider<Parent>(TYPE_PLANE),
-		m_normal(Vector3f(0,0,1)),
+		Collider(TYPE_PLANE),
+		m_normal(glm::vec3(0,0,1)),
 		m_distance(0){}
 
-	Plane(const Vector3f& normal, const float distance) :
-		Collider<Parent>(TYPE_PLANE),
+	Plane(const glm::vec3& normal, const float distance) :
+		Collider(TYPE_PLANE),
 		m_normal(normal),
 		m_distance(distance) {};
 
@@ -23,34 +22,30 @@ public:
 
 	Plane Normalized() const;
 
-	template <class OtherParent>
-	IntersectData IntersectBoundingSphere(const BoundingSphere<OtherParent>& other) const;
+	IntersectData IntersectBoundingSphere(const BoundingSphere& other) const;
 
-	template <class OtherParent>
-	IntersectData IntersectAABB(const AxisAlignedBoundingBox<OtherParent>& other) const;
+	IntersectData IntersectAABB(const AxisAlignedBoundingBox& other) const;
 
-	template <class OtherParent>
-	IntersectData IntersectPlane(const Plane<OtherParent>& other) const;
+	IntersectData IntersectPlane(const Plane& other) const;
 
 	IntersectData IntersectTerrain(const TerrainCollider& other) const;
 
 	IntersectData IntersectPoint(const Point& point) const;
 
-	template <class OtherParent>
-	IntersectData Intersect(const Collider<OtherParent>& other) const;
+	IntersectData Intersect(const Collider& other) const override;
 
 	Point ClosestPoint(Point& point);
 
 	Point IntersectAt(Plane a, Plane b, Plane c);
 
-	inline const Vector3f& GetNormal() const { return m_normal; }
+	inline const glm::vec3& GetNormal() const { return m_normal; }
 	inline float GetDistance() const { return m_distance; }
 
 private:
 	/**
 	 * Normal from plane
 	 * */
-	const Vector3f m_normal;
+	const glm::vec3 m_normal;
 	/**
 	 * Distance from origin in world space
 	 * */

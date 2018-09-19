@@ -6,8 +6,24 @@
 #define MORDEROPENGLUDEMYTUTORIAL_ENTITY_H
 
 
-class Entity {
+#include "../../Rendering/Transform.h"
+#include "../Input.h"
 
+class Entity {
+public:
+
+    Entity() = default;
+
+    virtual void ProcessInput(Input* input, float delta) {}
+
+    virtual void Update(float delta) {}
+
+    Transform& getTransform() { return m_transform; }
+
+    void setTransform(Transform& transform) { m_transform = transform; }
+
+protected:
+    Transform m_transform;
 };
 
 

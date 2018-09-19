@@ -10,17 +10,21 @@
 #include "Game/SlickDriveGame.h"
 
 int main() {
-
-    SlickDriveGame game;
-
-	Window window = Window(1366,768);
+    Window window = Window(1366,768);
     window.Initialize();
 
-	RenderingEngine renderer(&window);
+    CoreEngine engine;
+    RenderingEngine renderer(&window);
+    PhysicsEngine physicsEngine;
+    SlickDriveGame game;
 
-	CoreEngine engine(&window, &renderer, &game, 1000);
+    engine.setWindow(&window);
+    engine.setPhysicsEngine(&physicsEngine);
+    engine.setRenderingEngine(&renderer);
+    engine.setGame(&game);
+	engine.setFrameTimeLimit(1.0/1000.0);
+
+	engine.Init();
 	engine.Start();
-
-
     return 0;
 }

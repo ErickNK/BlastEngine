@@ -36,7 +36,7 @@ public:
     /**
      * Update the state of our objects
      * */
-    void Update(float delta);
+    void Update(double time, float delta);
 
     /**
      * Draw the objects to the screen

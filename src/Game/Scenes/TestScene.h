@@ -9,6 +9,7 @@
 #include "../../Rendering/Loaders/MeshedLoader.h"
 #include "../../Rendering/Loaders/GUILoader.h"
 #include "../../Core/MousePicker.h"
+#include "../../Physics/Objects/RigidBody.h"
 
 class TestScene : public Scene{
 public:

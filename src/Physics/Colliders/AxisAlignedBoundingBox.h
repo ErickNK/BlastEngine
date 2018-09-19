@@ -1,3 +1,5 @@
+#include <utility>
+
 #ifndef AXISALIGNEDBOUNDINGBOX_INCLUDED_H
 #define AXISALIGNEDBOUNDINGBOX_INCLUDED_H
 
@@ -6,16 +8,15 @@
 #include "Collider.h"
 #include "Point.h"
 
-template <class Parent> class BoundingSphere;
-template <class Parent> class Plane;
+class BoundingSphere;
+class Plane;
 class TerrainCollider;
 
-template <class Parent>
-class AxisAlignedBoundingBox: public Collider<Parent>
+class AxisAlignedBoundingBox: public Collider
 {
 public:
-	AxisAlignedBoundingBox(const Vector3f& minExtents, const Vector3f& maxExtents) :
-		Collider<Parent>(Collider<Parent>::TYPE_AABB),
+	AxisAlignedBoundingBox(const glm::vec3& minExtents, const glm::vec3& maxExtents) :
+		Collider(TYPE_AABB),
 		m_maxExtents(maxExtents),
 		m_minExtents(minExtents)
     {
@@ -25,36 +26,32 @@ public:
 	    //TODO: figure out center and extents
 	}
 
-    AxisAlignedBoundingBox(const Point& center, const Vector3f& extents) :
-            Collider<Parent>(Collider<Parent>::TYPE_AABB),
-            m_center(center),
+    AxisAlignedBoundingBox(Point center, const glm::vec3& extents) :
+            Collider(TYPE_AABB),
+            m_center(std::move(center)),
             m_extents_vec(extents) {}
 
-    template <class OtherParent>
-    IntersectData IntersectBoundingSphere(const BoundingSphere<OtherParent>& other) const;
-    template <class OtherParent>
-    IntersectData IntersectAABB(const AxisAlignedBoundingBox<OtherParent>& other) const;
-    template <class OtherParent>
-    IntersectData IntersectPlane(const Plane<OtherParent>& other) const;
+    IntersectData IntersectBoundingSphere(const BoundingSphere& other) const;
+    IntersectData IntersectAABB(const AxisAlignedBoundingBox& other) const;
+    IntersectData IntersectPlane(const Plane& other) const;
     IntersectData IntersectTerrain(const TerrainCollider& other) const;
     IntersectData IntersectPoint(const Point& point) const;
-    template <class OtherParent>
-    IntersectData Intersect(const Collider<OtherParent>& other) const;
+    IntersectData Intersect(const Collider& other) const;
 
     Point ClosestPoint(Point& point);
 
     bool IsValid();
     void Fix();
 
-	inline const Vector3f GetMinExtents() const { return m_minExtents; }
-	inline const Vector3f GetMaxExtents() const { return m_maxExtents; }
+	inline const Point GetMinExtents() const { return m_minExtents; }
+	inline const Point GetMaxExtents() const { return m_maxExtents; }
 
 private:
 	//This are two extreme corners of the box
-	const Vector3f m_minExtents;
-	const Vector3f m_maxExtents;
-	const Point m_center;
-	const Vector3f m_extents_vec;
+	Point m_minExtents;
+	Point m_maxExtents;
+	Point m_center;
+	glm::vec3 m_extents_vec;
 };
 
 #endif

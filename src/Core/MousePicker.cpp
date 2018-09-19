@@ -37,6 +37,7 @@ glm::vec2 MousePicker::getNormalizedDeviceCoords(double mouseX, double mouseY){
     return glm::vec2(x, -y);
 }
 
+//TODO: get current camera and window from scene
 glm::vec4 MousePicker::getEyeSpaceCoords(glm::vec4 clipSpaceCoords){
     glm::vec4 coords = glm::inverse(m_camera->getProjection()) * clipSpaceCoords;
     return glm::vec4(coords.x,coords.y,-1.0f,0);

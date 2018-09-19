@@ -1,17 +1,17 @@
+#include "Point.h"
 #include "AxisAlignedBoundingBox.h"
 #include "TerrainCollider.h"
 #include "BoundingSphere.h"
 #include "Plane.h"
-#include "Point.h"
+#include "../Objects/PhysicsObject.h"
 
-template <class Parent> template <class OtherParent>
-IntersectData BoundingSphere<Parent>::IntersectBoundingSphere(const BoundingSphere<OtherParent>& other) const
+IntersectData BoundingSphere::IntersectBoundingSphere(const BoundingSphere& other) const
 {
 	float radiusDistance = m_radius + other.m_radius;
 	
-	Vector3f directionToOther = (other.m_center - m_center);
+	glm::vec3 directionToOther = (other.m_center - m_center);
 
-	float centerDistance = directionToOther.Length();
+	float centerDistance = glm::length(directionToOther);
 
 	directionToOther / centerDistance; //Normalize
 
@@ -20,46 +20,40 @@ IntersectData BoundingSphere<Parent>::IntersectBoundingSphere(const BoundingSphe
 	return IntersectData(distanceApart < 0, directionToOther * distanceApart);	
 }
 
-template <class Parent>
-void BoundingSphere<Parent>::Transform(const Vector3f translation)
+void BoundingSphere::Transform(glm::vec3 translation)
 {
 	m_center += translation;
 }
 
-template <class Parent> template <class OtherParent>
-IntersectData BoundingSphere<Parent>::IntersectAABB(const AxisAlignedBoundingBox<OtherParent> &other) const {
-    return IntersectData(false, Vector3f());
+IntersectData BoundingSphere::IntersectAABB(const AxisAlignedBoundingBox &other) const {
+    return IntersectData(false, glm::vec3());
 }
 
-template <class Parent> template <class OtherParent>
-IntersectData BoundingSphere<Parent>::IntersectPlane(const Plane<OtherParent> &other) const {
-    return IntersectData(false, Vector3f());
+IntersectData BoundingSphere::IntersectPlane(const Plane &other) const {
+    return other.IntersectBoundingSphere(*this);
 }
 
-template<class Parent>
-IntersectData BoundingSphere<Parent>::IntersectTerrain(const TerrainCollider &other) const {
-    return IntersectData(false, Vector3f());
+IntersectData BoundingSphere::IntersectTerrain(const TerrainCollider &other) const {
+    return IntersectData(false, glm::vec3());
 }
 
-template <class Parent>
-IntersectData BoundingSphere<Parent>::IntersectPoint(Point &point) const {
-    Vector3f distanceToPoint = point.m_parent - this->m_center;
-    return {distanceToPoint.LengthSq() < (this->m_radius * this->m_radius) , distanceToPoint};
+IntersectData BoundingSphere::IntersectPoint(const Point &point) const {
+    glm::vec3 distanceToPoint = point.m_point - this->m_center;
+    return {glm::length2(distanceToPoint) < (this->m_radius * this->m_radius) , distanceToPoint};
 }
 
-template <class Parent> template <class OtherParent>
-IntersectData BoundingSphere<Parent>::Intersect(const Collider<OtherParent>& other) const
+IntersectData BoundingSphere::Intersect(const Collider& other) const
 {
 
-    switch (other.m_type){
+    switch (other.GetType()){
         case TYPE_BOUNDINGSPHERE:{
-            return this->IntersectBoundingSphere((BoundingSphere<OtherParent>&)other);
+            return this->IntersectBoundingSphere((BoundingSphere&)other);
         }
         case TYPE_AABB:{
-            return this->IntersectAABB((AxisAlignedBoundingBox<OtherParent>&)other);
+            return this->IntersectAABB((AxisAlignedBoundingBox&)other);
         }
         case TYPE_PLANE:{
-            return this->IntersectPlane((Plane<OtherParent>&)other);
+            return this->IntersectPlane((Plane&)other);
         }
         case TYPE_TERRAIN:{
             return this->IntersectTerrain((TerrainCollider&)other);
@@ -70,24 +64,23 @@ IntersectData BoundingSphere<Parent>::Intersect(const Collider<OtherParent>& oth
         case NUM_TYPES:break;
         default:{
             std::cerr << "Error: Collisions not implemented between specified colliders" << std::endl;
-            return {false,0};
+            return {false,glm::vec3()};
         }
     }
 }
 
-template<class Parent>
-Point BoundingSphere<Parent>::ClosestPoint(Point point) {
+Point BoundingSphere::ClosestPoint(Point point) {
 
     // First, get a vetor from the sphere to the point
-    Vector3f sphereToPoint = point.m_parent - this->m_center;
+    glm::vec3 sphereToPoint = point.m_point - this->m_center;
     // Normalize that vector
-    sphereToPoint = sphereToPoint.Normalized();
+    sphereToPoint = glm::normalize(sphereToPoint);
     // Adjust it's length to point to edge of sphere
     sphereToPoint *= this->m_radius;
     // Translate into world space
-    Vector3f worldPoint = this->m_center + sphereToPoint;
+    glm::vec3 worldPoint = this->m_center + sphereToPoint;
     // Return new point
-    return Point(worldPoint.GetX(), worldPoint.GetY(), worldPoint.GetZ());
+    return {worldPoint.x, worldPoint.y, worldPoint.z};
 }
 
 

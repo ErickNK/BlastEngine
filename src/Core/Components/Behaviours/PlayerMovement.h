@@ -5,20 +5,21 @@
 #ifndef MORDEROPENGLUDEMYTUTORIAL_PLAYERMOVEMENT_H
 #define MORDEROPENGLUDEMYTUTORIAL_PLAYERMOVEMENT_H
 
+#include <typeinfo>
 #include <GLFW/glfw3.h>
 #include "../EntityComponent.h"
-#include "../../../Rendering/Terrain/Terrain.h"
+#include "../../../Physics/Objects/RigidBody.h"
 
 class PlayerMovement : public EntityComponent<MeshedEntity>{
-
-    virtual void ProcessInput(Input* input, float delta) {
-//        this->handleKeys(input->getKeys(),delta);
+public:
+    void ProcessInput(Input* input, float delta) override {
+        mainForce->setAmount(glm::vec3(0,0,0));
+        this->handleKeys(input->getKeys(),delta);
 //        this->handleMouse(input->getXChange(),input->getYChange());
     }
-    virtual void Update(float delta) {
+
+    void Update(float delta) override {
         //Deal with falling
-        upward_speed += gravity * delta;
-        m_entity->getTransform().GetPos() += m_entity->getTransform().GetUp() * upward_speed;
 
         //Terrain Collusion detection
 //        terrain_height = m_currentTerrain->getTerrainHeight(
@@ -26,11 +27,11 @@ class PlayerMovement : public EntityComponent<MeshedEntity>{
 //                    m_entity->getTransform().GetPos().z
 //                );
 
-        if(m_entity->getTransform().GetPos().y < terrain_height){
-            upward_speed = 0;
-            is_in_air = false;
-            m_entity->getTransform().GetPos().y = terrain_height;
-        }
+//        if(m_entity->getTransform().GetPos().y < terrain_height){
+//            upward_speed = 0;
+//            is_in_air = false;
+//            m_entity->getTransform().GetPos().y = terrain_height;
+//        }
     }
 
     virtual void handleKeys(const bool *keys, GLfloat deltaTime) {
@@ -39,28 +40,26 @@ class PlayerMovement : public EntityComponent<MeshedEntity>{
         GLfloat jump_velocity = jump_power * deltaTime;
 
         if(keys[GLFW_KEY_W]){
-            m_entity->getTransform().GetPos() += m_entity->getTransform().GetForward() * movement_velocity;
+            mainForce->setAmount(m_entity->getTransform().GetForward() * m_movement_speed);
         }
 
         if(keys[GLFW_KEY_D]){
-            m_entity->getTransform().GetPos() -= m_entity->getTransform().GetRight() * movement_velocity;
+            mainForce->setAmount(-(m_entity->getTransform().GetRight() * m_movement_speed));
         }
 
         if(keys[GLFW_KEY_S]){
-            m_entity->getTransform().GetPos() -= m_entity->getTransform().GetForward() * movement_velocity;
+            mainForce->setAmount(-(m_entity->getTransform().GetForward() * m_movement_speed));
         }
 
         if(keys[GLFW_KEY_A]){
-            m_entity->getTransform().GetPos() += m_entity->getTransform().GetRight() * movement_velocity;
+            mainForce->setAmount(m_entity->getTransform().GetRight() * m_movement_speed);
         }
 
         if(keys[GLFW_KEY_SPACE]){
-//            m_entity->getTransform().GetPos() += m_entity->getTransform().GetUp() * jump_velocity;
-
-            if(!is_in_air){
-                upward_speed = jump_velocity;
-                is_in_air = true;
-            }
+//            if(!is_in_air){
+                mainForce->setAmount(m_entity->getTransform().GetUp() * jump_power);
+//                is_in_air = true;
+//            }
         }
     }
 
@@ -72,16 +71,28 @@ class PlayerMovement : public EntityComponent<MeshedEntity>{
         m_entity->getTransform().Rotate(xChange,glm::vec3(0,1,0));
     }
 
+    void SetParent(MeshedEntity *entity) override {
+        EntityComponent::SetParent(entity);
+        getRigidBody();
+    }
+
+    //TODO: Better coordination of components
+    void getRigidBody() {
+        for (EntityComponent<MeshedEntity>* component: m_entity->getComponents()) {
+            if(component->getType() == RIGID_BODY_COMPONENT){
+                m_parent_body = reinterpret_cast<RigidBody *>(component);
+                m_parent_body->ApplyForce(mainForce);
+            }
+        }
+    }
+
 private:
-    float m_movement_speed = 20;
+    float m_movement_speed = 100;
     float m_turn_speed = 160;
     float jump_power = 50;
-    bool is_in_air;
-    float upward_speed = 0;
-    float gravity = -0.2;
-
-    float terrain_height = 0;
-    Terrain* m_currentTerrain;
+    bool is_in_air = false;
+    RigidBody* m_parent_body = nullptr;
+    Force* mainForce = new Force();
 };
 
 

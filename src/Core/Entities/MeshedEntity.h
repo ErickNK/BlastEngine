@@ -23,8 +23,9 @@
 #include "../../Rendering/Mesh.h"
 #include "../../Rendering/Material.h"
 #include "../Components/EntityComponent.h"
+#include "Entity.h"
 
-class MeshedEntity {
+class MeshedEntity : public Entity {
 public:
     MeshedEntity() = default;
 
@@ -42,15 +43,13 @@ public:
 
     MeshedEntity* AddComponent(EntityComponent<MeshedEntity>* component);
 
+    std::vector<EntityComponent<MeshedEntity> *> &getComponents();
+
 //    std::vector<MeshedEntity*> GetAllAttached();
 
     Mesh& getMesh() { return m_mesh; }
 
     void setMesh(Mesh& m_mesh) { MeshedEntity::m_mesh = m_mesh; }
-
-    Transform& getTransform() { return m_transform; }
-
-    void setTransform(Transform& m_transform) { MeshedEntity::m_transform = m_transform; }
 
     Material& getMaterial() { return m_material; }
 
@@ -62,11 +61,10 @@ protected:
 
     Mesh m_mesh;
     Material m_material;
-    Transform m_transform;
 
-    void ProcessInput(Input* input, float delta);
+    void ProcessInput(Input* input, float delta) override;
 
-    void Update(float delta);
+    void Update(float delta) override;
 
     void Render(Shader* shader) const;
 };

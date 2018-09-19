@@ -5,11 +5,11 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(SOURCE_FILES
         Common/math3d.cpp
-        Physics/Colliders/AxisAlignedBoundingBox.cpp
-        Physics/Colliders/BoundingSphere.cpp
+#        Physics/Colliders/AxisAlignedBoundingBox.cpp
+#        Physics/Colliders/BoundingSphere.cpp
         Physics/Colliders/Collider.cpp
-        Physics/Colliders/Plane.cpp
-        Physics/PhysicsObject.cpp
+#        Physics/Colliders/Plane.cpp
+        Physics/Objects/PhysicsObject.cpp
         Physics/PhysicsEngine.cpp
         Rendering/Lighting/ShadowMap.cpp
         Rendering/SkyBox.cpp
@@ -27,13 +27,13 @@ set(SOURCE_FILES
         Core/Window.cpp
         Common/math3d.h
         Common/referenceCounter.h
-        Physics/PhysicsObject.h
+        Physics/Objects/PhysicsObject.h
         Physics/PhysicsEngine.h
-        Physics/Colliders/AxisAlignedBoundingBox.h
-        Physics/Colliders/BoundingSphere.h
+#        Physics/Colliders/AxisAlignedBoundingBox.h
+#        Physics/Colliders/BoundingSphere.h
         Physics/Colliders/Collider.h
         Physics/Colliders/IntersectData.h
-        Physics/Colliders/Plane.h
+#        Physics/Colliders/Plane.h
         Rendering/Lighting/ShadowMap.h
         Rendering/SkyBox.h
         Rendering/stb_image.h
@@ -78,7 +78,38 @@ set(SOURCE_FILES
         Core/Entities/MeshedEntity.cpp Core/Entities/MeshedEntity.h
         Core/Components/RenderingComponents/MeshedRendererComponent.h
         Core/Scene.cpp Core/Scene.h
-        Game/Scenes/TestScene.cpp Game/Scenes/TestScene.h Core/Entities/EffectEntity.cpp Core/Entities/EffectEntity.h Rendering/Camera/FPSCamera.cpp Rendering/Camera/FPSCamera.h Core/Components/RenderingComponents/TerrainRendererComponent.h Core/Components/Behaviours/PlayerMovement.h Rendering/Transform.cpp Core/Components/Attachment/TPSCameraAttachment.h Rendering/Camera/TPSCamera.cpp Rendering/Camera/TPSCamera.h Core/Components/Attachment/TPSCameraAttachment.cpp Physics/Colliders/TerrainCollider.h Rendering/TextureAtlas.cpp Rendering/TextureAtlas.h Rendering/GUI/GUITexture.cpp Rendering/GUI/GUITexture.h Rendering/GUI/GUIMesh.cpp Rendering/GUI/GUIMesh.h Core/Components/RenderingComponents/GUIRendererComponent.h Core/Entities/GUIEntity.cpp Core/Entities/GUIEntity.h Rendering/GUI/GUIMaterial.cpp Rendering/GUI/GUIMaterial.h Rendering/Shaders/GUIShader.cpp Rendering/Shaders/GUIShader.h Rendering/Loaders/GUILoader.cpp Rendering/Loaders/GUILoader.h Rendering/GUI/GUICamera.cpp Rendering/GUI/GUICamera.h Core/Components/RenderingComponents/ShadowRendererComponent.h Core/Components/RenderingComponents/SkyBoxRendererComponent.h Rendering/Shaders/SkyBoxShader.h Rendering/Shaders/SkyBoxShader.cpp Core/Components/Behaviours/SkyBoxEffectsComponent.h Core/Components/EntityComponent.h Core/MousePicker.cpp Core/MousePicker.h Physics/Colliders/TerrainCollider.cpp Physics/Collisions/Collision.cpp Physics/Collisions/Collision.h Physics/Colliders/Point.cpp Physics/Colliders/Point.h Physics/Colliders/Line.cpp Physics/Colliders/Line.h Core/Entities/Entity.cpp Core/Entities/Entity.h) # which files should be compiled
+        Game/Scenes/TestScene.cpp Game/Scenes/TestScene.h
+        Core/Entities/EffectEntity.cpp Core/Entities/EffectEntity.h
+        Rendering/Camera/FPSCamera.cpp Rendering/Camera/FPSCamera.h
+        Core/Components/RenderingComponents/TerrainRendererComponent.h
+        Core/Components/Behaviours/PlayerMovement.h
+        Rendering/Transform.cpp
+        Core/Components/Attachment/TPSCameraAttachment.h
+        Rendering/Camera/TPSCamera.cpp Rendering/Camera/TPSCamera.h
+        Core/Components/Attachment/TPSCameraAttachment.cpp
+        Physics/Colliders/TerrainCollider.h
+        Rendering/TextureAtlas.cpp Rendering/TextureAtlas.h
+        Rendering/GUI/GUITexture.cpp Rendering/GUI/GUITexture.h
+        Rendering/GUI/GUIMesh.cpp Rendering/GUI/GUIMesh.h
+        Core/Components/RenderingComponents/GUIRendererComponent.h
+        Core/Entities/GUIEntity.cpp Core/Entities/GUIEntity.h
+        Rendering/GUI/GUIMaterial.cpp Rendering/GUI/GUIMaterial.h
+        Rendering/Shaders/GUIShader.cpp Rendering/Shaders/GUIShader.h
+        Rendering/Loaders/GUILoader.cpp Rendering/Loaders/GUILoader.h
+        Rendering/GUI/GUICamera.cpp Rendering/GUI/GUICamera.h
+        Core/Components/RenderingComponents/ShadowRendererComponent.h Core/Components/RenderingComponents/SkyBoxRendererComponent.h
+        Rendering/Shaders/SkyBoxShader.h Rendering/Shaders/SkyBoxShader.cpp
+        Core/Components/Behaviours/SkyBoxEffectsComponent.h Core/Components/EntityComponent.h
+        Core/MousePicker.cpp Core/MousePicker.h
+        Physics/Colliders/TerrainCollider.cpp
+        Physics/Collisions/Collision.cpp Physics/Collisions/Collision.h
+        Physics/Colliders/Point.cpp Physics/Colliders/Point.h
+#        Physics/Colliders/Line.cpp Physics/Colliders/Line.h
+        Core/Entities/Entity.cpp Core/Entities/Entity.h
+        Physics/Forces/Force.cpp Physics/Forces/Force.h
+        Physics/Objects/RigidBody.cpp Physics/Objects/RigidBody.h
+        Physics/Objects/TerrainBody.cpp Physics/Objects/TerrainBody.h
+        ) # which files should be compiled
 
 add_executable(MorderOpenGLUdemyTutorial ${SOURCE_FILES}) # which files should produce executables
 

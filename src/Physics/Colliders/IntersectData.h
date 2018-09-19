@@ -1,6 +1,7 @@
 #ifndef INTERSECTDATA_INCLUDED_H
 #define INTERSECTDATA_INCLUDED_H
 
+#include <glm/glm.hpp>
 #include <cstring>
 #include "../../Common/math3d.h"
 
@@ -9,7 +10,7 @@ class IntersectData
 public:
 	IntersectData() = default;
 
-    IntersectData(const bool doesIntersect, const Vector3f& direction) :
+    IntersectData(const bool doesIntersect, const glm::vec3& direction) :
 		m_doesIntersect(doesIntersect), 
 		m_direction(direction) {}
 
@@ -22,8 +23,8 @@ public:
 //	}
 
 	inline bool GetDoesIntersect() const { return m_doesIntersect; }
-	inline float GetDistance() const { return m_direction.Length(); }
-	inline const Vector3f& GetDirection() const { return m_direction; }
+	inline float GetDistance() const { return glm::length(m_direction); }
+	inline const glm::vec3& GetDirection() const { return m_direction; }
 
 	const bool getInsideCollider() const {
 		return m_inside_collider;
@@ -43,7 +44,7 @@ public:
 
 private:
 	bool m_doesIntersect = false;
-	Vector3f m_direction;
+	glm::vec3 m_direction;
 	bool m_inside_collider = false;
 	bool m_behind_collider = false;
 };

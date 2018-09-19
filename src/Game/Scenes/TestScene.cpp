@@ -22,6 +22,9 @@
 #include "../../Core/Components/RenderingComponents/SkyBoxRendererComponent.h"
 #include "../../Core/Components/Behaviours/SkyBoxEffectsComponent.h"
 #include "../../Core/MousePicker.h"
+#include "../../Physics/Colliders/Point.h"
+#include "../../Physics/Colliders/TerrainCollider.h"
+#include "../../Physics/Objects/TerrainBody.h"
 
 void TestScene::Init() {
     m_meshed_loader = new MeshedLoader();
@@ -84,7 +87,7 @@ void TestScene::SetupCamera(){
             0.0f,
             0.0f,
             15.0f,
-            0.005f
+            0.0005f
     );
     fpsCam->setProjection(
             45.0f,
@@ -113,15 +116,27 @@ void TestScene::CreateTerrain(){
     terrainTextures[BLEND_MAP_TEXTURE] = "../res/textures/terrain/blendMap.png";
     terrainTextures[HEIGHT_MAP_TEXTURE] = "../res/textures/terrain/heightmap.png";
     Terrain* terrain = new Terrain(0,0,terrainTextures);
+    auto * terrainBody = new TerrainBody();
+    terrain->AddComponent(reinterpret_cast<EntityComponent<MeshedEntity> *>(terrainBody));
+    this->AddPhysicsObject(terrainBody);
     this->AddTerrain(terrain);
 
     Terrain* terrain1 = new Terrain(0,-1.0f,terrainTextures);
+    auto * terrainBody1 = new TerrainBody();
+    terrain->AddComponent(reinterpret_cast<EntityComponent<MeshedEntity> *>(terrainBody1));
+    this->AddPhysicsObject(terrainBody1);
     this->AddTerrain(terrain1);
 
     Terrain* terrain2 = new Terrain(-1.0,0,terrainTextures);
+    auto * terrainBody2 = new TerrainBody();
+    terrain->AddComponent(reinterpret_cast<EntityComponent<MeshedEntity> *>(terrainBody2));
+    this->AddPhysicsObject(terrainBody2);
     this->AddTerrain(terrain2);
 
     Terrain* terrain3 = new Terrain(-1.0,-1.0f,terrainTextures);
+    auto * terrainBody3 = new TerrainBody();
+    terrain->AddComponent(reinterpret_cast<EntityComponent<MeshedEntity> *>(terrainBody3));
+    this->AddPhysicsObject(terrainBody3);
     this->AddTerrain(terrain3);
 
     //Trees
@@ -210,13 +225,14 @@ void TestScene::CreateCharacters() {
     options[FakeLighting] = false;
 
     m_meshed_loader->LoadGameObject("../res/models/nanosuit/nanosuit.obj",nanosuit,options);
-    auto * playMovement = new PlayerMovement();
-    nanosuit->AddComponent(playMovement);
-//
-//    ((TPSCamera *)(this->getCurrentCamera()))->LookAt(nanosuit);
-//    ((TPSCamera *)(this->getCurrentCamera()))->SetAttachmentComponent(new TPSCameraAttachment(nanosuit));
-    this->AddMeshedToScene(nanosuit);
 
+    auto * rigidBody = new RigidBody(new Point(),glm::vec3(0,0,0),100.0f);
+    nanosuit->AddComponent(reinterpret_cast<EntityComponent<MeshedEntity> *>(rigidBody))
+            ->AddComponent(new PlayerMovement());
+
+
+    this->AddPhysicsObject(rigidBody);
+    this->AddMeshedToScene(nanosuit);
 }
 
 void TestScene::CreateLighting() {

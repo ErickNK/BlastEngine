@@ -52,8 +52,6 @@ public:
 
     Scene *getCurrentScene() const;
 
-    const glm::mat4 &getProjection() const;
-
 private:
     //Shaders
     Shader* m_shaders[NUM_SHADER_TYPES];

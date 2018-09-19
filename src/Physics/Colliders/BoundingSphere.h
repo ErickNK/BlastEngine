@@ -5,17 +5,18 @@
 #include "IntersectData.h"
 #include "Collider.h"
 
-template <class Parent> class AxisAlignedBoundingBox;
-template <class Parent> class Plane;
+class AxisAlignedBoundingBox;
+class Plane;
 class TerrainCollider;
 class Point;
 
-template <class Parent>
-class BoundingSphere : public Collider<Parent>
+class BoundingSphere : public Collider
 {
 public:
-	BoundingSphere(const Vector3f& center, float radius) :
-		Collider<Parent>(TYPE_BOUNDINGSPHERE),
+	BoundingSphere() : Collider(TYPE_BOUNDINGSPHERE) {};
+
+	BoundingSphere(const glm::vec3& center, float radius) :
+		Collider(TYPE_BOUNDINGSPHERE),
 		m_center(center),
 		m_radius(radius) {};
 
@@ -25,21 +26,17 @@ public:
 	* @param other The sphere that's being tested for intersection with this
 	*                sphere.
 	*/
-    template <class OtherParent>
-	IntersectData IntersectBoundingSphere(const BoundingSphere<OtherParent>& other) const;
+	IntersectData IntersectBoundingSphere(const BoundingSphere& other) const;
 
-    template <class OtherParent>
-	IntersectData IntersectAABB(const AxisAlignedBoundingBox<OtherParent>& other) const;
+	IntersectData IntersectAABB(const AxisAlignedBoundingBox& other) const;
 
-    template <class OtherParent>
-	IntersectData IntersectPlane(const Plane<OtherParent>& other) const;
+	IntersectData IntersectPlane(const Plane& other) const;
 
     IntersectData IntersectTerrain(const TerrainCollider& other) const;
 
-    IntersectData IntersectPoint(Point &point) const;
+    IntersectData IntersectPoint(const Point &point) const;
 
-    template <class OtherParent>
-    IntersectData Intersect(const Collider<OtherParent>& other) const;
+    IntersectData Intersect(const Collider& other) const override;
 
     Point ClosestPoint(Point point);
 
@@ -47,14 +44,14 @@ public:
 	* Move the sphere accordingly when a collision is detected.
 	*
 	*/
-	virtual void Transform(const Vector3f translate);
+	void Transform(glm::vec3 translate) override;
 
 	//GETTERS AND SETTERS
-	virtual Vector3f GetCenter() const { return m_center; }
+    glm::vec3 GetCenter() const override { return m_center; }
 	inline float GetRadius() const { return m_radius; }
 private:
-	Vector3f m_center;
-	float m_radius;
+	glm::vec3 m_center;
+	float m_radius = 0;
 };
 
 #endif

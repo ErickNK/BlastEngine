@@ -8,27 +8,23 @@
 #include "../../Rendering/Terrain/Terrain.h"
 #include "Collider.h"
 
+class AxisAlignedBoundingBox;
+class BoundingSphere;
+class Plane;
 
-template <class Parent> class AxisAlignedBoundingBox;
-template <class Parent> class BoundingSphere;
-template <class Parent> class Plane;
-
-class TerrainCollider : public Collider<Terrain> {
+class TerrainCollider : public Collider {
+public:
     TerrainCollider();
 
-    template <class OtherParent>
-    IntersectData IntersectBoundingSphere(const BoundingSphere<OtherParent>& other) const;
+    IntersectData IntersectBoundingSphere(const BoundingSphere& other) const;
 
-    template <class OtherParent>
-    IntersectData IntersectAABB(const AxisAlignedBoundingBox<OtherParent>& other) const;
+    IntersectData IntersectAABB(const AxisAlignedBoundingBox& other) const;
 
-    template <class OtherParent>
-    IntersectData IntersectPlane(const Plane<OtherParent>& other) const;
+    IntersectData IntersectPlane(const Plane& other) const;
 
     IntersectData IntersectTerrain(const TerrainCollider& other) const;
 
-    template <class OtherParent>
-    IntersectData Intersect(const Collider<OtherParent>& other) const;
+    IntersectData Intersect(const Collider& other) const;
 };
 
 

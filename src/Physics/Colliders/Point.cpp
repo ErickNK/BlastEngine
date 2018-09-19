@@ -3,33 +3,34 @@
 #include "TerrainCollider.h"
 #include "BoundingSphere.h"
 #include "Plane.h"
+#include "../Objects/PhysicsObject.h"
 
-template <class OtherParent>
-IntersectData Point::IntersectBoundingSphere(const BoundingSphere<OtherParent>& other) const {
-    return other.IntersectPoint(*this);
+IntersectData Point::IntersectBoundingSphere(const BoundingSphere& other) const {
+//    return other.IntersectPoint(*this);
+    return {false,glm::vec3()};
 }
 
-template <class OtherParent>
-IntersectData Point::IntersectAABB(const AxisAlignedBoundingBox<OtherParent> &other) const {
-    return other.IntersectPoint(*this);
+IntersectData Point::IntersectAABB(const AxisAlignedBoundingBox& other) const {
+//    return other.IntersectPoint(*this);
+    return {false,glm::vec3()};
 }
 
-template <class OtherParent>
-IntersectData Point::IntersectPlane(const Plane<OtherParent> &other) const {
-    return other.IntersectPoint(*this);
+IntersectData Point::IntersectPlane(const Plane& other) const {
+//    return other.IntersectPoint(*this);
+    return {false,glm::vec3()};
 }
 
 IntersectData Point::IntersectTerrain(const TerrainCollider &other) const {
     IntersectData result;
 
-    float terrainHeight = other.GetParent().getTerrainHeight(this->m_parent.GetX(),this->m_parent.GetY());
+    float terrainHeight = ((Terrain*)other.GetParent()->getParent())->getTerrainHeight(this->m_point.x,this->m_point.y);
 
-    bool interaction = this->m_parent.GetY() < terrainHeight;
+    bool interaction = this->m_point.y < terrainHeight; // Lower than terrain
 
     if(interaction){
-        result = IntersectData(true, (this->m_parent - Vector3f(this->m_parent.GetX(),terrainHeight,this->m_parent.GetZ())));
+        result = IntersectData(true, (this->m_point - glm::vec3(this->m_point.x,terrainHeight,this->m_point.z)));
     }else{
-        result = IntersectData(false, Vector3f());
+        result = IntersectData(false, glm::vec3());
     }
 
     return result;
@@ -37,26 +38,25 @@ IntersectData Point::IntersectTerrain(const TerrainCollider &other) const {
 
 IntersectData Point::IntersectPoint(const Point &point) const {
     //If point is the same
-    if(this->m_parent == point.m_parent) return {true, Vector3f(0,0,0)};
+    if(this->m_point == point.m_point) return {true, glm::vec3(0,0,0)};
     else {
         //get direction
-        return {false, point.m_parent - this->m_parent};
+        return {false, point.m_point - this->m_point};
     }
 }
 
-template <class OtherParent>
-IntersectData Point::Intersect(const Collider<OtherParent>& other) const
+IntersectData Point::Intersect(const Collider& other) const
 {
 
-    switch (other.m_type){
+    switch (other.GetType()){
         case TYPE_BOUNDINGSPHERE:{
-            return this->IntersectBoundingSphere((BoundingSphere<OtherParent>&)other);
+            return this->IntersectBoundingSphere((BoundingSphere&)other);
         }
         case TYPE_AABB:{
-            return this->IntersectAABB((AxisAlignedBoundingBox<OtherParent>&)other);
+            return this->IntersectAABB((AxisAlignedBoundingBox&)other);
         }
         case TYPE_PLANE:{
-            return this->IntersectPlane((Plane<OtherParent>&)other);
+            return this->IntersectPlane((Plane&)other);
         }
         case TYPE_TERRAIN:{
             return this->IntersectTerrain((TerrainCollider&)other);
@@ -67,7 +67,7 @@ IntersectData Point::Intersect(const Collider<OtherParent>& other) const
         case NUM_TYPES:break;
         default:{
             std::cerr << "Error: Collisions not implemented between specified colliders" << std::endl;
-            return {false,0};
+            return {false,glm::vec3()};
         }
     }
 }

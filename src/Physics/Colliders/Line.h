@@ -10,40 +10,45 @@
 
 #include "Point.h"
 
-class Line : Collider<std::pair<Point,Point>>{
+class Line : Collider{
 
     Line(): Collider(TYPE_LINE){
-        this->m_parent.first.SetParent(Vector3f());
-        this->m_parent.second.SetParent(Vector3f());
+        start = Point();
+        end = Point();
     };
     Line(const Line &line): Collider(TYPE_LINE){
+        start = line.start;
+        end = line.end;
         this->m_parent = line.m_parent;
     }
     Line(Point p1,Point p2): Collider(TYPE_LINE){
-        this->m_parent.first = std::move(p1);
-        this->m_parent.second = std::move(p2);
+        start = std::move(p1);
+        end = std::move(p2);
     }
-    Line(Vector3f p1,Vector3f p2): Collider(TYPE_LINE){
-        this->m_parent.first.SetParent(std::move(p1));
-        this->m_parent.second.SetParent(std::move(p2));
+    Line(glm::vec3 p1,glm::vec3 p2): Collider(TYPE_LINE){
+        start = Point(p1);
+        end = Point(p2);
     }
 
     IntersectData IntersectPoint(Point& point) const;
 
-    template <class OtherParent>
-    IntersectData Intersect(const Collider<OtherParent>& other) const;
+    IntersectData Intersect(const Collider& other) const override;
 
-    Vector3f ToVector() {
-        return (m_parent.second.GetParent() - m_parent.first.GetParent());
+    glm::vec3 ToVector() {
+        return (end.m_point - start.m_point);
     }
 
     float getLength(){
-        (m_parent.second.GetParent() - m_parent.first.GetParent()).Length();
+        glm::length(end.m_point - start.m_point);
     }
 
     float getLengthSquared(){
-        (m_parent.second.GetParent() - m_parent.first.GetParent()).LengthSq();
+        glm::length2(end.m_point - start.m_point);
     }
+
+private:
+    Point start;
+    Point end;
 };
 
 

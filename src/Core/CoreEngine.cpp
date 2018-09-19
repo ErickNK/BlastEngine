@@ -5,6 +5,11 @@
 #include "CoreEngine.h"
 #include "../Common/Time.h"
 
+void CoreEngine::Init() {
+    m_game->SetEngine(this);
+    m_game->Init();
+}
+
 void CoreEngine::Start() {
     if(m_isRunning) { return; }
     Run();
@@ -57,7 +62,7 @@ void CoreEngine::Run() {
         //but 20ms of actual time has passed. To ensure all time is accounted for, all passed time is
         //stored in unprocessedTime, and then the engine processes as much time as it can. Any
         //unaccounted time can then be processed later, since it will remain stored in unprocessedTime.
-        while(unProcessedTime > m_frameTimeLimit)
+        while(unProcessedTime >= m_frameTimeLimit)
         {
             if(m_window->getShouldClose()) Stop();
 
@@ -67,11 +72,12 @@ void CoreEngine::Run() {
             //afterwards.
             glfwPollEvents(); //Update input system
             m_game->ProcessInput(m_window->getInput(), (float)m_frameTimeLimit);
-            m_game->Update((float)m_frameTimeLimit);
+            m_game->Update(m_time_since_start, (float)m_frameTimeLimit);
 
             //The scene has been updated therefore rerender the scene.
             m_shouldRender = true;
             unProcessedTime -= m_frameTimeLimit; //Account for un-processed time
+            m_time_since_start += m_frameTimeLimit;
         }
 
         if(m_shouldRender)

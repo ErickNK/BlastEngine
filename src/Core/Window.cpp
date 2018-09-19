@@ -83,6 +83,12 @@ Window::~Window() {
 
 
 void Window::Update() {
+    //Reset inputs
+    this->m_input.setYChange(0);
+    this->m_input.setXChange(0);
+    this->m_input.setXWheelChange(0);
+    this->m_input.setYWheelChange(0);
+
     //Swap buffers : Draw to screen
     glfwSwapBuffers(mainWindow);
 }

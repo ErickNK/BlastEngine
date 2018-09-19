@@ -2,23 +2,21 @@
 #define PHYSICS_ENGINE_INCLUDED_H
 
 
-#include "PhysicsObject.h"
+#include "Objects/PhysicsObject.h"
 #include "Colliders/IntersectData.h"
 #include "../Core/Entities/Entity.h"
+#include "Objects/RigidBody.h"
+#include "../Core/Scene.h"
 #include <vector>
 
 class PhysicsEngine {
 public:
-	PhysicsEngine() {}
+	PhysicsEngine() = default;
 
-	void AddObject(const PhysicsObject& object);
+	void Simulate(double time, float delta, Scene* scene);
 
-	void Simulate(float delta);
+	void HandleCollisions(Scene* scene);
 
-	void HandleCollisions();
-
-private:
-	std::vector<PhysicsObject> m_objects;
 };
 
 #endif

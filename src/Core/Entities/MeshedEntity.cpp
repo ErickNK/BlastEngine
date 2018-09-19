@@ -5,7 +5,7 @@
 #include "MeshedEntity.h"
 
 MeshedEntity::MeshedEntity(Mesh &mesh, Transform &transform, Material &material) :
-    m_mesh(mesh), m_transform(transform), m_material(material) {}
+    m_mesh(mesh), m_material(material) {}
 
 MeshedEntity::~MeshedEntity()
 {
@@ -80,6 +80,10 @@ void MeshedEntity::Render(Shader* shader) const
     for (auto m_component : m_components) {
         m_component->Render(shader);
     }
+}
+
+std::vector<EntityComponent<MeshedEntity> *> &MeshedEntity::getComponents() {
+    return m_components;
 }
 
 //std::vector<GameObject*> MeshedEntity::GetAllAttached()

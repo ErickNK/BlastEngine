@@ -7,26 +7,28 @@
 #include "../../Common/math3d.h"
 #include "../../Common/referenceCounter.h"
 #include "../../Common/CommonValues.h"
+#include "../../Core/Entities/Entity.h"
 
-template <class Parent>
+class PhysicsObject;
+
 class Collider: public ReferenceCounter {
 public:
-	Collider(ColliderType type) :
+	explicit Collider(ColliderType type) :
 		ReferenceCounter(),
 		m_type(type) {}
 
 	virtual IntersectData Intersect(const Collider& other) const {};
-	virtual void Transform(const Vector3f translation) {};
+	virtual void Transform(const glm::vec3 translation) {};
 
 	inline ColliderType GetType() const { return m_type;}
     inline void SetType(ColliderType type){ m_type = type;}
-    inline void SetParent(Parent parent){ m_parent = parent;}
-    inline Parent GetParent() const { return m_parent;}
+    inline void SetParent(PhysicsObject* parent){ m_parent = parent;}
+    inline PhysicsObject* GetParent() const { return m_parent;}
 
-	virtual Vector3f GetCenter() const { return Vector3f(0,0,0); }
+	virtual glm::vec3 GetCenter() const { return glm::vec3(0,0,0); }
 
 protected:
 	ColliderType m_type;
-	Parent m_parent;
+    PhysicsObject* m_parent{};
 };
 #endif

@@ -23,15 +23,12 @@ private:
 
 public:
     double getXChange() {
-        double tempXChange = XChange;
-        XChange = 0;
-        return tempXChange;
+
+        return XChange;
     }
 
     double getYChange() {
-        double tempYChange = YChange;
-        YChange = 0;
-        return tempYChange;
+        return YChange;
     }
 
     bool *getKeys() {
@@ -95,15 +92,11 @@ public:
     }
 
     double getXWheelChange() {
-        double tempXChange = XWheelChange;
-        YWheelChange = 0;
-        return tempXChange;
+        return XWheelChange;
     }
 
     double getYWheelChange() {
-        double tempYChange = YWheelChange;
-        YWheelChange = 0;
-        return tempYChange;
+        return YWheelChange;
     }
 
     void setXWheelChange(double XWheelChange) {
