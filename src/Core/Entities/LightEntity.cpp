@@ -48,3 +48,7 @@ LightEntity* LightEntity::AddShadowComponent(ShadowRendererComponent *component)
     component->SetParent((Light *)(this));
     return this;
 }
+
+Transform &LightEntity::getTransform() {
+    return m_transform;
+}

@@ -10,7 +10,7 @@ void TPSCameraAttachment::ProcessInput(Input *input, float delta) {
     float verticalDistance = m_camera->CalculateVerticalDistnace();
     double angle_around_change = m_camera->angle_around_attachment - oldAngle_around_attachment;
     if(angle_around_change != 0) {
-//        m_camera->setYaw(static_cast<float>(m_meshed_entity->getTransform().GetRot().y + angle_around_change));
+        m_camera->setYaw(180 - static_cast<float>(m_meshed_entity->getTransform().GetRot().y +  m_camera->angle_around_attachment ));
     }
 
     float theta = m_meshed_entity->getTransform().GetRot().y + m_camera->angle_around_attachment;
@@ -33,5 +33,9 @@ void TPSCameraAttachment::SetAttachment(MeshedEntity* entity) {
 
 void TPSCameraAttachment::SetCamera(TPSCamera *camera) {
     m_camera = camera;
+}
+
+MeshedEntity *TPSCameraAttachment::getMeshedEntity() const {
+    return m_meshed_entity;
 }
 

@@ -20,9 +20,14 @@ void Scene::ProcessInput(Input* input, float delta) {
 }
 
 void Scene::Update(float delta) {
+    for(LightEntity* m_light: m_lights){
+        m_light->Update(delta);
+    }
+
     for(MeshedEntity* m_meshed_Entity: m_meshed_Entities){
         m_meshed_Entity->UpdateAll(delta);
     }
+
     if(m_current_skybox != nullptr) m_current_skybox->Update(delta);
 }
 

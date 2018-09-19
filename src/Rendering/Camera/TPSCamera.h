@@ -16,7 +16,7 @@ public:
               GLfloat startMovementSpeed, GLfloat startTurningSpeed):
     FPSCamera(startPosition,startUp,startYaw,startPitch,startRoll,startMovementSpeed,startTurningSpeed){}
 
-//    void UpdateView() override;
+    void UpdateView() override;
     void ProcessInput(Input* input, float delta) override;
 
     void Attach(MeshedEntity* meshedEntity);
@@ -30,8 +30,8 @@ public:
 
     float distance_from_attachment = 50;
     float angle_around_attachment = 0;
-    float angle_around_speed = 1;
-    float zoom_speed = 5;
+    float angle_around_speed = 0.05;
+    float zoom_speed = 1;
 
     TPSCameraAttachment* m_component;
 

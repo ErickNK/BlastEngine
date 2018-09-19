@@ -30,6 +30,8 @@ public:
 
     void SetCamera(TPSCamera *camera);
 
+    MeshedEntity *getMeshedEntity() const;
+
 private:
     MeshedEntity* m_meshed_entity;
     TPSCamera* m_camera;

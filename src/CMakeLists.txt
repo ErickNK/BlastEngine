@@ -109,7 +109,7 @@ set(SOURCE_FILES
         Physics/Forces/Force.cpp Physics/Forces/Force.h
         Physics/Objects/RigidBody.cpp Physics/Objects/RigidBody.h
         Physics/Objects/TerrainBody.cpp Physics/Objects/TerrainBody.h
-        ) # which files should be compiled
+        Core/Components/Behaviours/LightRotationComponent.h) # which files should be compiled
 
 add_executable(MorderOpenGLUdemyTutorial ${SOURCE_FILES}) # which files should produce executables
 

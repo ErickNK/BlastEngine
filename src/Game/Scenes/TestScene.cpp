@@ -25,6 +25,7 @@
 #include "../../Physics/Colliders/Point.h"
 #include "../../Physics/Colliders/TerrainCollider.h"
 #include "../../Physics/Objects/TerrainBody.h"
+#include "../../Core/Components/Behaviours/LightRotationComponent.h"
 
 void TestScene::Init() {
     m_meshed_loader = new MeshedLoader();
@@ -80,14 +81,14 @@ void TestScene::SetupCamera(){
 
 //    this->AddCamera(tpsCamera);
 
-    auto * fpsCam = new FPSCamera(
-            glm::vec3(0.0f,10.0f,5.0f),
+    auto * fpsCam = new TPSCamera(
+            glm::vec3(0.0f,15.0f,-5.0f),
             glm::vec3(0.0f,1.0f,0.0f),
             0.0f,
             0.0f,
             0.0f,
             15.0f,
-            0.005f
+            0.0005f
     );
     fpsCam->setProjection(
             45.0f,
@@ -195,6 +196,7 @@ void TestScene::CreateCharacters() {
     nanosuit->AddComponent(reinterpret_cast<EntityComponent<MeshedEntity> *>(rigidBody))
             ->AddComponent(new PlayerMovement());
 
+    ((TPSCamera*) this->getCurrentCamera())->SetAttachmentComponent(new TPSCameraAttachment(nanosuit));
     this->AddPhysicsObject(rigidBody);
     this->AddMeshedToScene(nanosuit);
 }
@@ -211,14 +213,15 @@ void TestScene::CreateLighting() {
     directionalLight->AddShadowComponent(new ShadowRendererComponent());
     this->AddLightToScene(directionalLight);
 
-//    PointLight* pointLight = new PointLight(
-//            glm::vec3(0.0f,1.0f,1.0f), /*Color*/
-//            glm::vec3(-2.0f,2.0f,2.0f), /*Position*/
-//            0.0f, 1.0f, /*Ambient/diffuse*/
-//            glm::vec3(0.134f,0.245f,1.0f), /*Attenuation*/
-//            1024,1024); /*Shadow*/
-//    pointLight->AddComponent(new LightComponent());
-//    this->AddLightToScene(pointLight);
+    PointLight* pointLight = new PointLight(
+            glm::vec3(0.0f,1.0f,1.0f), /*Color*/
+            glm::vec3(-2.0f,2.0f,2.0f), /*Position*/
+            0.0f, 1.0f, /*Ambient/diffuse*/
+            glm::vec3(0.1002f,0.1209f,1.0f), /*Attenuation*/
+            1024,1024); /*Shadow*/
+    pointLight->AddComponent(new LightComponent())
+    ->AddComponent(new LightRotationComponent());
+    this->AddLightToScene(pointLight);
 
 //    SpotLight* spotLight = new SpotLight(
 //            glm::vec3(1.0f,0.0f,1.0f),/*Color*/

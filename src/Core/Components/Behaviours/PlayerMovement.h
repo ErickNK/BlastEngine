@@ -15,23 +15,11 @@ public:
     void ProcessInput(Input* input, float delta) override {
         mainForce->setAmount(glm::vec3(0,0,0));
         this->handleKeys(input->getKeys(),delta);
-//        this->handleMouse(input->getXChange(),input->getYChange());
+        this->handleMouse(input->getXChange(),input->getYChange());
     }
 
     void Update(float delta) override {
-        //Deal with falling
 
-        //Terrain Collusion detection
-//        terrain_height = m_currentTerrain->getTerrainHeight(
-//                    m_entity->getTransform().GetPos().x,
-//                    m_entity->getTransform().GetPos().z
-//                );
-
-//        if(m_entity->getTransform().GetPos().y < terrain_height){
-//            upward_speed = 0;
-//            is_in_air = false;
-//            m_entity->getTransform().GetPos().y = terrain_height;
-//        }
     }
 
     virtual void handleKeys(const bool *keys, GLfloat deltaTime) {
@@ -39,27 +27,33 @@ public:
         GLfloat turn_velocity = m_turn_speed * deltaTime;
         GLfloat jump_velocity = jump_power * deltaTime;
 
+        glm::quat temp = m_entity->getTransform().GetRot();
+
+        glm::vec3 forward = glm::rotate(temp,glm::vec3(0,0,1));
+        glm::vec3 right = glm::rotate(temp,glm::vec3(1,0,0));
+        glm::vec3 up = glm::rotate(temp,glm::vec3(0,1,0));
+
         if(keys[GLFW_KEY_W]){
-            mainForce->setAmount(m_entity->getTransform().GetForward() * m_movement_speed);
+            m_entity->getTransform().GetPos() += forward * movement_velocity;
         }
 
         if(keys[GLFW_KEY_D]){
-            mainForce->setAmount(-(m_entity->getTransform().GetRight() * m_movement_speed));
+            m_entity->getTransform().GetPos() -= right * movement_velocity;
         }
 
         if(keys[GLFW_KEY_S]){
-            mainForce->setAmount(-(m_entity->getTransform().GetForward() * m_movement_speed));
+            m_entity->getTransform().GetPos() -= forward * movement_velocity;
         }
 
         if(keys[GLFW_KEY_A]){
-            mainForce->setAmount(m_entity->getTransform().GetRight() * m_movement_speed);
+            m_entity->getTransform().GetPos() += right * movement_velocity;
         }
 
         if(keys[GLFW_KEY_SPACE]){
-//            if(!is_in_air){
-                mainForce->setAmount(m_entity->getTransform().GetUp() * jump_power);
-//                is_in_air = true;
-//            }
+            if(!is_in_air){
+                mainForce->setAmount(up * jump_power);
+                is_in_air = true;
+            }
         }
     }
 
@@ -68,7 +62,7 @@ public:
         xChange *= m_turn_speed;
         yChange *= m_turn_speed;
 
-        m_entity->getTransform().Rotate(xChange,glm::vec3(0,1,0));
+//        m_entity->getTransform().Rotate(glm::vec3(0,xChange,0));
     }
 
     void SetParent(MeshedEntity *entity) override {
@@ -87,8 +81,8 @@ public:
     }
 
 private:
-    float m_movement_speed = 100;
-    float m_turn_speed = 160;
+    float m_movement_speed = 15;
+    float m_turn_speed = 0.005;
     float jump_power = 50;
     bool is_in_air = false;
     RigidBody* m_parent_body = nullptr;

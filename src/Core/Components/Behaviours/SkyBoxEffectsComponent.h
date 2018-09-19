@@ -14,7 +14,7 @@ class SkyBoxEffectsComponent: public EntityComponent<SkyBox,RenderingEngine> {
 public:
     void Update(float delta) override {
         m_entity->setBlendFactor(static_cast<float>(Time::GetGameWorldTime()));
-        m_entity->getTransform().Rotate(glm::vec3(0,glm::degrees(.000001f) * m_entity->getRotationSpeed(),0));
+        m_entity->getTransform().Rotate(glm::vec3(0,glm::degrees(.00001f) * m_entity->getRotationSpeed(),0));
     }
 
 };

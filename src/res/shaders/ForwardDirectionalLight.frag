@@ -85,7 +85,7 @@ float CalcDirectionalLightShadowFactor(DirectionalLight directionalLight){
     //Deal with shadow acne
     vec3 normalizedNormal = normalize(vNormal);
     vec3 normalizedLightDir = normalize(-directionalLight.direction);
-    float bias = max(0.005 * (1 - dot(normalizedNormal,normalizedLightDir)), 0.0005);
+    float bias = max(0.05 * (1 - dot(normalizedNormal,normalizedLightDir)), 0.0005);
 
     //PCF
     float shadow = 0.0f;
@@ -109,7 +109,7 @@ float CalcDirectionalLightShadowFactor(DirectionalLight directionalLight){
                 * loop. */
             ).r;
             //Deal with shadow acne
-            shadow += currentDepth > pcfDepth ? 1.0 : 0.0; /*Accumulate the average shadow.*/
+            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0; /*Accumulate the average shadow.*/
         }
     }
 

@@ -31,6 +31,8 @@ public:
 
     LightEntity* AddShadowComponent(ShadowRendererComponent* component);
 
+    Transform &getTransform();
+
 protected:
     std::vector<EntityComponent<Light,RenderingEngine>*> m_light_components;
 

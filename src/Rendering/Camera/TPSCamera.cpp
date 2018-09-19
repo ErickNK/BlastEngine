@@ -4,29 +4,28 @@
 
 #include "TPSCamera.h"
 
-//void TPSCamera::UpdateView()
-//{
-//    m_forward = glm::normalize(m_look_at - m_transform.GetPos());
-//
-//    //detmine axis for pitch rotation
-//    m_right = glm::normalize(glm::cross(m_forward, m_up));
-//    //compute quaternion for pitch based on the camera pitch angle
-//    glm::quat pitch_quat = glm::angleAxis(m_pitch, m_right);
-//    //determine heading quaternion from the camera up vector and the heading angle
-//    glm::quat heading_quat = glm::angleAxis(-m_yaw, m_up);
-//    //add the two quaternions
-//    glm::quat temp = glm::cross(pitch_quat, heading_quat);
-//    temp = glm::normalize(temp);
-//    //update the direction from the quaternion
-//    m_forward = glm::rotate(temp, m_forward);
-//    //set the look at to be infront of the camera
-//    m_look_at = m_transform.GetPos() + m_forward * 1.0f;
-//    //damping for smooth camera
-//    m_yaw *= .5;
-//    m_pitch *= .5;
-//
-//    m_viewMatrix = glm::lookAt(m_transform.GetPos(), m_look_at, m_up);
-//}
+void TPSCamera::UpdateView()
+{
+
+    //detmine axis for pitch rotation
+    m_right = glm::normalize(glm::cross(m_forward, m_up));
+    //compute quaternion for pitch based on the camera pitch angle
+    glm::quat pitch_quat = glm::angleAxis(m_pitch, m_right);
+    //determine heading quaternion from the camera up vector and the heading angle
+    glm::quat heading_quat = glm::angleAxis(m_yaw, m_up);
+    //add the two quaternions
+    glm::quat temp = glm::cross(pitch_quat, heading_quat);
+    temp = glm::normalize(temp);
+    //update the direction from the quaternion
+    m_forward = glm::rotate(temp, m_forward);
+    //set the look at to be infront of the camera
+    m_look_at = m_transform.GetPos() + m_forward * 1.0f;
+    //damping for smooth camera
+    m_yaw *= .5;
+    m_pitch *= .5;
+
+    m_viewMatrix = glm::lookAt(m_transform.GetPos(), m_look_at, m_up);
+}
 
 void TPSCamera::ProcessInput(Input *input, float delta) {
     CalulateZoom(input);
@@ -60,7 +59,7 @@ float TPSCamera::CalculateVerticalDistnace() {
 }
 
 void TPSCamera::setYaw(float d) {
-    m_yaw = d;
+    m_yaw = d * angle_around_speed;
 }
 
 void TPSCamera::setXPos(float d) {
@@ -80,6 +79,8 @@ void TPSCamera::Attach(MeshedEntity* meshedEntity) {
 void TPSCamera::SetAttachmentComponent(TPSCameraAttachment *pAttachment) {
     m_component = pAttachment;
     m_component->SetCamera(this);
+    m_forward = glm::normalize(m_component->getMeshedEntity()->getTransform().GetPos() - m_transform.GetPos());
+
 }
 
 void TPSCamera::setForward(glm::vec3 forward) {
