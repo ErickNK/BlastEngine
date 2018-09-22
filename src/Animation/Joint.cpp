@@ -4,7 +4,8 @@
 
 #include "Joint.h"
 
-Joint::Joint(int index, std::string& name, glm::mat4 localBindTransform) : m_index(index),
+Joint::Joint(int index, std::string& name, glm::mat4 localBindTransform) :
+m_index(index),
 m_name(name),
 m_localBindTransform(localBindTransform) {}
 
@@ -14,7 +15,7 @@ void Joint::addChild(Joint child) {
 
 void Joint::calcInverseBindTransform(glm::mat4 parentBindTransform) {
     glm::mat4 bindTransform = parentBindTransform * m_localBindTransform;
-//        Matrix4f.invert(bindTransform, inverseBindTransform);
+    m_inverseBindTransform = glm::inverse(bindTransform);
 
     for (Joint child : m_children) {
         child.calcInverseBindTransform(bindTransform);

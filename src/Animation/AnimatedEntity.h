@@ -7,48 +7,22 @@
 
 
 #include "Joint.h"
-#include "../../Common/math3d.h"
+#include "../Common/math3d.h"
+#include "../Core/Entities/MeshedEntity.h"
+#include "Animation.h"
 
-class AnimatedGameObject : GameObject{
+class AnimatedEntity : public MeshedEntity{
 public:
-    AnimatedGameObject(Mesh &mesh, Transform &transform, Material &material, Joint& rootJoint, int jointCount) :
-    GameObject(mesh,transform,material) ,
+    AnimatedEntity() = default;
+
+    AnimatedEntity(Mesh &mesh, Transform &transform, Material &material, Joint& rootJoint, int jointCount) :
+    MeshedEntity(mesh,transform,material) ,
     m_rootJoint(rootJoint),
     m_jointCount(jointCount){
         m_rootJoint.calcInverseBindTransform(glm::mat4());
     };
 
-    /**
-     * Instructs this entity to carry out a given animation. To do this it
-     * basically sets the chosen animation as the current animation in the
-     * {@link Animator} object.
-     *
-     * @param animation
-     *            - the animation to be carried out.
-     */
-//    void doAnimation(Animation animation) {
-//        animator.doAnimation(animation);
-//    }
-
     const Joint &getRootJoint() const;
-
-    /**
-	 * Instructs this entity to carry out a given animation. To do this it
-	 * basically sets the chosen animation as the current animation in the
-	 * {@link Animator} object.
-	 *
-	 * @param animation
-	 *            - the animation to be carried out.
-	 */
-    void doAnimation();
-
-    /**
-     * Updates the animator for this entity, basically updating the animated
-     * pose of the entity. Must be called every frame.
-     */
-    void update() {
-        animator.update();
-    }
 
     /**
      * Gets an array of the all important model-space transforms of all the
@@ -59,10 +33,10 @@ public:
      * @return The array of model-space transforms of the joints in the current
      *         animation pose.
      */
-    Matrix4f[] getJointTransforms() {
-            Matrix4f[] jointMatrices = new Matrix4f[m_jointCount];
-            addJointsToArray(m_rootJoint, jointMatrices);
-            return jointMatrices;
+    glm::mat4* getJointTransforms() {
+        auto * jointMatrices = new glm::mat4[m_jointCount];
+        addJointsToArray(m_rootJoint, jointMatrices);
+        return jointMatrices;
     }
 
 
@@ -78,7 +52,7 @@ private:
     * @param jointMatrices
     *            - the array of joint transforms that is being filled.
     */
-    void addJointsToArray(Joint headJoint, Matrix4f * jointMatrices) {
+    void addJointsToArray(Joint headJoint, glm::mat4 * jointMatrices) {
         jointMatrices[headJoint.m_index] = headJoint.getAnimatedTransform();
         for (Joint childJoint : headJoint.m_children) {
             addJointsToArray(childJoint, jointMatrices);
@@ -87,9 +61,8 @@ private:
 
     // skeleton
     Joint m_rootJoint;
-    int m_jointCount;
+    int m_jointCount = 0;
 
-//private final Animator animator;
 };
 
 

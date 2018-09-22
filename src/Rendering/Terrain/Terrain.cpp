@@ -119,7 +119,7 @@ glm::vec3 Terrain::calculateNormal(int x, int z) {
     float heightR = getPixelHeight(x+1,z);
     float heightU = getPixelHeight(x,z-1);
     float heightD = getPixelHeight(x,z+1);
-    glm::vec3 normal = glm::vec3(heightL-heightR,2.0f,heightD-heightU);
+    glm::vec3 normal = glm::vec3(heightR-heightL,2.0f,heightU-heightD);
     glm::normalize(normal);
     return normal;
 }

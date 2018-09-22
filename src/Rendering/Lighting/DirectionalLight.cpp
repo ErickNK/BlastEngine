@@ -58,7 +58,7 @@ void DirectionalLight::UseLight(std::map<std::string, GLint>& m_uniforms,int sha
 
 void DirectionalLight::SetupLightSpace(std::map<std::string, GLint>& m_uniforms, GLuint shaderProgram) {
 	//Calculate Light space
-	lightSpace = lightProjection * glm::lookAt(-direction,glm::vec3(0.0f,1.0f,1.0f),glm::vec3(0.0f,1.0f,0.0f));
+	lightSpace = lightProjection * glm::lookAt(glm::vec3(0.0f,1.0f,200.0f),glm::vec3(0.0f,1.0f,200.0f) + direction,glm::vec3(0.0f,1.0f,0.0f));
 
 	//Set Light Space
     m_uniforms["directionalLightSpace"] = glGetUniformLocation(shaderProgram, "directionalLightSpace");

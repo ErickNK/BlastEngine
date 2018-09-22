@@ -51,7 +51,7 @@ vec4 totalSpecularTexture;
 void CalcTotalDiffuseTexture(){
     totalDiffuseTexture = vec4(1, 1, 1, 1);
     if(material.diffuseTextureCount == 0){
-        totalDiffuseTexture = vec4(0, 0, 0, 0);
+        totalDiffuseTexture = vec4(1, 1, 1, 1);
     }else{
         for(int i = 0; i < material.diffuseTextureCount; i++){
             totalDiffuseTexture *= texture(material.diffuse_texture[i], vTexCoord);

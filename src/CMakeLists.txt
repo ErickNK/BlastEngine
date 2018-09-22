@@ -68,8 +68,8 @@ set(SOURCE_FILES
         Rendering/Shaders/ForwardSpotLightShader.cpp Rendering/Shaders/ForwardSpotLightShader.h
         Rendering/Terrain/Terrain.cpp Rendering/Terrain/Terrain.h
         Rendering/Shaders/TerrainShader.cpp Rendering/Shaders/TerrainShader.h
-        #        Rendering/Animation/Joint.cpp Rendering/Animation/Joint.h
-#        Rendering/Animation/AnimatedGameObject.cpp Rendering/Animation/AnimatedGameObject.h
+        Animation/Joint.cpp Animation/Joint.h
+        Animation/AnimatedEntity.cpp Animation/AnimatedEntity.h
         Rendering/Loaders/MeshedLoader.cpp Rendering/Loaders/MeshedLoader.h
         Rendering/Shaders/FogShader.cpp Rendering/Shaders/FogShader.h
         Core/Components/RenderingComponents/FogComponent.h Rendering/Fog.h
@@ -109,7 +109,7 @@ set(SOURCE_FILES
         Physics/Forces/Force.cpp Physics/Forces/Force.h
         Physics/Objects/RigidBody.cpp Physics/Objects/RigidBody.h
         Physics/Objects/TerrainBody.cpp Physics/Objects/TerrainBody.h
-        Core/Components/Behaviours/LightRotationComponent.h) # which files should be compiled
+        Core/Components/Behaviours/LightRotationComponent.h Rendering/Loaders/AnimatedLoader.cpp Rendering/Loaders/AnimatedLoader.h Animation/Animation.h Animation/JointTransform.h Animation/KeyFrame.h Animation/AnimationComponent.h Animation/AnimationRendererComponent.h Rendering/Shaders/AnimationShader.cpp Rendering/Shaders/AnimationShader.h Rendering/PostProcessing/Screen.cpp Rendering/PostProcessing/Screen.h Rendering/Shaders/PostProcessingScreenShader.h Rendering/PostProcessing/FrameBufferObject.cpp Rendering/PostProcessing/FrameBufferObject.h) # which files should be compiled
 
 add_executable(MorderOpenGLUdemyTutorial ${SOURCE_FILES}) # which files should produce executables
 

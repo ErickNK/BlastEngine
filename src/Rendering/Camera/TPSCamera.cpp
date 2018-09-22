@@ -7,12 +7,14 @@
 void TPSCamera::UpdateView()
 {
 
+    m_forward = glm::normalize(m_component->getMeshedEntity()->getTransform().GetPos() - m_transform.GetPos());
+
     //detmine axis for pitch rotation
     m_right = glm::normalize(glm::cross(m_forward, m_up));
     //compute quaternion for pitch based on the camera pitch angle
     glm::quat pitch_quat = glm::angleAxis(m_pitch, m_right);
     //determine heading quaternion from the camera up vector and the heading angle
-    glm::quat heading_quat = glm::angleAxis(m_yaw, m_up);
+    glm::quat heading_quat = glm::angleAxis(0.0f, m_up);
     //add the two quaternions
     glm::quat temp = glm::cross(pitch_quat, heading_quat);
     temp = glm::normalize(temp);
@@ -79,8 +81,6 @@ void TPSCamera::Attach(MeshedEntity* meshedEntity) {
 void TPSCamera::SetAttachmentComponent(TPSCameraAttachment *pAttachment) {
     m_component = pAttachment;
     m_component->SetCamera(this);
-    m_forward = glm::normalize(m_component->getMeshedEntity()->getTransform().GetPos() - m_transform.GetPos());
-
 }
 
 void TPSCamera::setForward(glm::vec3 forward) {

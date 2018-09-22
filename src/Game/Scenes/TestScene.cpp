@@ -81,14 +81,14 @@ void TestScene::SetupCamera(){
 
 //    this->AddCamera(tpsCamera);
 
-    auto * fpsCam = new TPSCamera(
+    auto * fpsCam = new FPSCamera(
             glm::vec3(0.0f,15.0f,-5.0f),
             glm::vec3(0.0f,1.0f,0.0f),
             0.0f,
             0.0f,
             0.0f,
             15.0f,
-            0.0005f
+            0.005f
     );
     fpsCam->setProjection(
             45.0f,
@@ -193,10 +193,10 @@ void TestScene::CreateCharacters() {
     m_meshed_loader->LoadGameObject("../res/models/nanosuit/nanosuit.obj",nanosuit,options);
 
     auto * rigidBody = new RigidBody(new Point(),glm::vec3(0,0,0),100.0f);
-    nanosuit->AddComponent(reinterpret_cast<EntityComponent<MeshedEntity> *>(rigidBody))
-            ->AddComponent(new PlayerMovement());
+    nanosuit->AddComponent(reinterpret_cast<EntityComponent<MeshedEntity> *>(rigidBody));
+//            ->AddComponent(new PlayerMovement());
 
-    ((TPSCamera*) this->getCurrentCamera())->SetAttachmentComponent(new TPSCameraAttachment(nanosuit));
+//    ((TPSCamera*) this->getCurrentCamera())->SetAttachmentComponent(new TPSCameraAttachment(nanosuit));
     this->AddPhysicsObject(rigidBody);
     this->AddMeshedToScene(nanosuit);
 }
@@ -204,7 +204,7 @@ void TestScene::CreateCharacters() {
 void TestScene::CreateLighting() {
     DirectionalLight* directionalLight = new DirectionalLight(
             glm::vec3(1.0f,1.0f,1.0f),
-            glm::vec3(0.0f,-1.0,-1.0f),
+            glm::vec3(0.0f,-1.0,1.0f),
             0.0f, 0.7f,
             2018, 2018,
             glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 1000.0f));

@@ -81,51 +81,52 @@ float CalcDirectionalLightShadowFactor(DirectionalLight directionalLight){
 
     //Get how far (forwards and backwards) from the light the fragment is.
     float currentDepth = projCoords.z;
+    float closestDepth = texture(directionalLight.shadowMap,projCoords.xy).r;
 
-    //Deal with shadow acne
-    vec3 normalizedNormal = normalize(vNormal);
-    vec3 normalizedLightDir = normalize(-directionalLight.direction);
-    float bias = max(0.05 * (1 - dot(normalizedNormal,normalizedLightDir)), 0.0005);
+//    //Deal with shadow acne
+//    vec3 normalizedNormal = normalize(vNormal);
+//    vec3 normalizedLightDir = normalize(-directionalLight.direction);
+//    float bias = max(0.005 * (1 - dot(normalizedNormal,normalizedLightDir)), 0.0005);
+//
+//    //PCF
+//    float shadow = 0.0f;
+//    vec2 texelSize = 1.0 / textureSize(directionalLight.shadowMap, 0); //find out how big a unit texel is.
+//
+//    //We sample all the first texels around this fragment's texel. Forming a cube.
+//    for(int x = -1 /*Start at further left of the exact x texel of this fragment*/;
+//        x <= 1 /*Upto the right*/;
+//        ++x){
+//        for(int y = -1/*Start at further top of the exact y texel of this fragment*/;
+//            y <= 1 /*Upto the bottom*/; ++y){
+//            /*
+//             * Get depth of the fragment relative to the light in orthographic projection.
+//             * Each texel in the shadow map contains depth data in the .r attribute instead
+//             * of color like a normal texture.
+//             * */
+//            float pcfDepth = texture(
+//                    directionalLight.shadowMap,
+//                    projCoords.xy + vec2(x,y) * texelSize /*Get the exact texel in the current loop. Remember
+//                * the .xy only point to the current fragments texel not the one we want in the current
+//                * loop. */
+//            ).r;
+//            //Deal with shadow acne
+//            shadow += currentDepth /*- bias*/ > pcfDepth ? 1.0 : 0.0; /*Accumulate the average shadow.*/
+//        }
+//    }
+//
+//    shadow /= 9.0f; /*Find average of the shadows we are collecting from the sample*/
+//
+//    if(projCoords.z > 1.0){ //For points beyond the light space/ beyond the far plane
+//        shadow = 0.0; //Disable shadow and just say there is total light.
+//    }
 
-    //PCF
-    float shadow = 0.0f;
-    vec2 texelSize = 1.0 / textureSize(directionalLight.shadowMap, 0); //find out how big a unit texel is.
-
-    //We sample all the first texels around this fragment's texel. Forming a cube.
-    for(int x = -1 /*Start at further left of the exact x texel of this fragment*/;
-        x <= 1 /*Upto the right*/;
-        ++x){
-        for(int y = -1/*Start at further top of the exact y texel of this fragment*/;
-            y <= 1 /*Upto the bottom*/; ++y){
-            /*
-             * Get depth of the fragment relative to the light in orthographic projection.
-             * Each texel in the shadow map contains depth data in the .r attribute instead
-             * of color like a normal texture.
-             * */
-            float pcfDepth = texture(
-                    directionalLight.shadowMap,
-                    projCoords.xy + vec2(x,y) * texelSize /*Get the exact texel in the current loop. Remember
-                * the .xy only point to the current fragments texel not the one we want in the current
-                * loop. */
-            ).r;
-            //Deal with shadow acne
-            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0; /*Accumulate the average shadow.*/
-        }
-    }
-
-    shadow /= 9.0f; /*Find average of the shadows we are collecting from the sample*/
-
-    if(projCoords.z > 1.0){ //For points beyond the light space/ beyond the far plane
-        shadow = 0.0; //Disable shadow and just say there is total light.
-    }
-
-    return shadow;
+    return currentDepth > closestDepth ? 1.0 : 0.0;
 }
 
 void CalcTotalDiffuseTexture(){
     totalDiffuseTexture = vec4(1, 1, 1, 1);
     if(material.diffuseTextureCount == 0){
-        totalDiffuseTexture = vec4(0, 0, 0, 0);
+        totalDiffuseTexture = vec4(1, 1, 1, 1);
     }else {
         for (int i = 0; i < material.diffuseTextureCount; i++) {
             totalDiffuseTexture *= texture(material.diffuse_texture[i], vTexCoord);
@@ -136,7 +137,7 @@ void CalcTotalDiffuseTexture(){
 void CalcTotalSpecularTexture(){
     totalSpecularTexture = vec4(1, 1, 1, 1);
     if(material.specularTextureCount == 0){
-        totalSpecularTexture = vec4(0, 0, 0, 0);
+        totalSpecularTexture = vec4(1, 1, 1, 1);
     }else {
         for (int i = 0; i < material.specularTextureCount; i++) {
             totalSpecularTexture *= texture(material.specular_texture[i], vTexCoord);
@@ -190,7 +191,6 @@ vec4 CalcLightByDirection(Light light, vec3 lightDirection, float shadowFactor){
     return /*(1.0 - shadowFactor) **/ (diffuse + specular);
 
 }
-
 
 vec4 CalcDirectionalLight(){
     return CalcLightByDirection(

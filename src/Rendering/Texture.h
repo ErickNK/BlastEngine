@@ -20,6 +20,8 @@ public:
     /**
      * Constructor. Load a texture from storage.
      * */
+	explicit Texture(GLuint texture,TextureTypeEnum typeName):m_texture(texture), m_textureType(typeName){}
+
 	Texture(std::string fileLocation, TextureTypeEnum typeName);
 
 	Texture(std::string path, std::string directory, TextureTypeEnum typeName);

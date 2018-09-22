@@ -11,6 +11,7 @@
 class TerrainRendererComponent;
 class RenderingEngine;
 
+//TODO: create a loader class to handle loading the terrain
 class Terrain : public MeshedEntity{
 
 public:

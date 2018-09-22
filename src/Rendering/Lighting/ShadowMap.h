@@ -26,6 +26,8 @@ public:
 	GLuint GetShadowWidth() { return m_shadowWidth; }
 	GLuint GetShadowHeight() { return m_shadowHeight; }
 
+    GLuint GetTexture();
+
 protected:
 	GLuint m_frameBufferObject, m_shadowMapTexture;
 	GLuint m_shadowWidth, m_shadowHeight;

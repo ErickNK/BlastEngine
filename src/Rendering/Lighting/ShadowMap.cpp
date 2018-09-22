@@ -27,12 +27,12 @@ bool ShadowMap::Init(GLuint width, GLuint height)
 		float shadowBorderColors[]{1.0f,1.0f,1.0f,1.0f}; //No shadows beyond what the shadow map does not cover
 		glTexParameterfv(GL_TEXTURE_2D,GL_TEXTURE_BORDER_COLOR,shadowBorderColors);
 		//Overlap filter
-		glTexParameterf(
+		glTexParameteri(
 			GL_TEXTURE_2D,
 			GL_TEXTURE_MIN_FILTER, // Applied when texture is further away/smaller
 			GL_LINEAR_MIPMAP_LINEAR
 		);
-		glTexParameterf(
+		glTexParameteri(
 			GL_TEXTURE_2D,
 			GL_TEXTURE_MAG_FILTER, // Applied when texture is closer/bigger
 			GL_LINEAR
@@ -77,12 +77,12 @@ bool ShadowMap::Init(GLuint width, GLuint height)
 
 void ShadowMap::BindFrameBuffer()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObject); //Bind shadow buffer.
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_frameBufferObject); //Bind shadow buffer.
 }
 
 void ShadowMap::UnBindFrameBuffer()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, 0); //unBind shadow buffer.
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); //unBind shadow buffer.
 }
 
 void ShadowMap::UseShadowMap(GLenum textureUnit)
@@ -92,4 +92,8 @@ void ShadowMap::UseShadowMap(GLenum textureUnit)
 
 	// Bind the texture for use
 	glBindTexture(GL_TEXTURE_2D, m_shadowMapTexture);
+}
+
+GLuint ShadowMap::GetTexture() {
+    return m_shadowMapTexture;
 }

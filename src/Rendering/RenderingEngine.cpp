@@ -27,6 +27,7 @@
 #include "../Core/Entities/GUIEntity.h"
 #include "Shaders/GUIShader.h"
 #include "Shaders/SkyBoxShader.h"
+#include "Shaders/PostProcessingScreenShader.h"
 
 RenderingEngine::RenderingEngine(Window* window): m_window(window) {
     CreateShaders();
@@ -69,6 +70,10 @@ void RenderingEngine::CreateShaders(){
     auto  * skyboxShader = new SkyBoxShader();
     skyboxShader->Init();
     m_shaders[SKY_BOX_SHADER] = skyboxShader;
+
+    auto  * postProcessingScreenShader = new PostProcessingScreenShader();
+    postProcessingScreenShader->Init();
+    m_shaders[POST_PROCESSING_SCREEN_SHADER] = postProcessingScreenShader;
 }
 
 void RenderingEngine::StartBlendColor(){
@@ -91,7 +96,7 @@ void RenderingEngine::RenderAmbientLight(){
 
     ambient_light_shader->Bind();
 
-        ambient_light_shader->setLight(glm::vec3(1,1,1),0.006);
+        ambient_light_shader->setLight(glm::vec3(1,1,1),0.06);
 
         RenderAllMeshed();
 
@@ -99,9 +104,17 @@ void RenderingEngine::RenderAmbientLight(){
 }
 
 void RenderingEngine::RenderEffects() {
-    for (auto m_light : m_current_scene->getEffectEntities()) {
-        m_light->Render(this);
-    }
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ZERO,GL_SRC_COLOR);
+//    glDepthMask(GL_FALSE);
+
+        for (auto m_light : m_current_scene->getEffectEntities()) {
+            m_light->Render(this);
+        }
+
+//    glDepthFunc(GL_LESS);
+//    glDepthMask(GL_TRUE);
+    glDisable(GL_BLEND);
 }
 
 void RenderingEngine::RenderAllMeshed(){
@@ -123,14 +136,28 @@ void RenderingEngine::RenderLights()
 }
 
 void RenderingEngine::RenderTerrain() {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_DST_COLOR,GL_ZERO);
+    glBlendEquation(GL_ADD);
+    glDepthMask(GL_FALSE);
+
+    glDepthFunc(GL_EQUAL); //Do blend function on pixels that appear closest to the screen.
     for (auto m_Terrain : m_current_scene->getTerrains()) {
         m_Terrain->RenderTerrain(this);
     }
+
+    glDepthFunc(GL_LESS);
+    glDepthMask(GL_TRUE);
+    glDisable(GL_BLEND);
 }
 
 void RenderingEngine::RenderGUI() {
-    auto * entity = m_current_scene->getCurrentGUI();
-    if(entity != nullptr) entity->Render(this);
+    StartAlphaBlending();
+    glDisable(GL_DEPTH_TEST);
+        auto * entity = m_current_scene->getCurrentGUI();
+        if(entity != nullptr) entity->Render(this);
+    glEnable(GL_DEPTH_TEST);
+    EndAlphaBlending();
 }
 
 void RenderingEngine::RenderSkybox() {
@@ -148,7 +175,7 @@ void RenderingEngine::RenderScene() {
 
     m_renderProfileTimer.StartInvocation();
 
-        RenderShadows();
+//        RenderShadows();
 
         m_window->ResetViewPort();
 
@@ -157,18 +184,14 @@ void RenderingEngine::RenderScene() {
         RenderAmbientLight();
 
         StartBlendColor();
-
             RenderLights();
-            RenderTerrain();
-            RenderEffects();
-
         EndBlendColor();
 
-        StartAlphaBlending();
-        glDisable(GL_DEPTH_TEST);
-            RenderGUI();
-        glEnable(GL_DEPTH_TEST);
-        EndAlphaBlending();
+        RenderTerrain();
+
+        RenderEffects();
+
+        RenderGUI();
 
     m_renderProfileTimer.StopInvocation();
 }

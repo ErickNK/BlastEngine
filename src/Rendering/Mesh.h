@@ -27,22 +27,30 @@ public:
     /**
      * Constructor
      * */
-    Vertex(const glm::vec3& pos,const glm::vec2& texCoord = glm::vec2(0, 0),const glm::vec3& normal = glm::vec3(0,0,0)
-            ,const glm::vec4& color = glm::vec4(1,1,1,1)){
+    Vertex(
+            const glm::vec3& pos,
+            const glm::vec2& texCoord = glm::vec2(0, 0),
+            const glm::vec3& normal = glm::vec3(0,0,0),
+            const glm::vec3& tangent = glm::vec3(0,0,0),
+            const glm::vec4& color = glm::vec4(1,1,1,1)
+                    ){
         this->pos = pos;
         this->texCoord = texCoord;
         this->normal = normal;
+        this->tangent = tangent;
         this->color = color;
     }
 
     inline glm::vec3* GetPos() { return &pos;}
     inline glm::vec2* GetTexCoord() { return &texCoord;}
     inline glm::vec3* GetNormal() { return &normal; }
+    inline glm::vec3* GetTangent() { return &normal; }
     inline glm::vec4* GetColor() { return &color; }
 
     inline void SetPos(const glm::vec3 &pos) { Vertex::pos = pos; }
     inline void SetTexCoord(const glm::vec2 &texCoord) { Vertex::texCoord = texCoord; }
     inline void SetNormal(const glm::vec3 &normal) { Vertex::normal = normal; }
+    inline void SetTangent(const glm::vec3 &tangent) { Vertex::tangent = tangent; }
     inline void SetColor(const glm::vec4 &color) { Vertex::color = color; }
 
 protected:
@@ -50,6 +58,7 @@ private:
     glm::vec3 pos; //For positioning
     glm::vec2 texCoord; //For texturing
     glm::vec3 normal; //For lighting
+    glm::vec3 tangent; //For lighting
     glm::vec4 color; //For lighting
 };
 

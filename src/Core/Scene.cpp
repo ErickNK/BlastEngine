@@ -102,3 +102,11 @@ void Scene::AddPhysicsObject(PhysicsObject *object) {
 std::vector<PhysicsObject *> &Scene::getPhysicsObjects() {
     return m_physics_object;
 }
+
+void Scene::AddAnimatedEntity(AnimatedEntity *object) {
+    m_animated_Entities.push_back(object);
+}
+
+const std::vector<AnimatedEntity *> &Scene::getAnimatedEntities() const {
+    return m_animated_Entities;
+}
