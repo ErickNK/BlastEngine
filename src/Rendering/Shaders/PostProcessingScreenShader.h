@@ -11,11 +11,12 @@
 class PostProcessingScreenShader: public Shader {
 public:
     PostProcessingScreenShader() : Shader(POST_PROCESSING_SCREEN_SHADER){
-        m_shaderFiles[GL_VERTEX_SHADER] = "../res/shaders/BasicShader.vert";
-        m_shaderFiles[GL_FRAGMENT_SHADER] = "../res/shaders/ForwardDirectionalLight.frag";
+        m_shaderFiles[GL_VERTEX_SHADER] = "../res/shaders/PostProcessingScreen.vert";
+        m_shaderFiles[GL_FRAGMENT_SHADER] = "../res/shaders/PostProcessingScreen.frag";
     }
 
     void CreateUniforms() override {
+        Shader::CreateUniforms();
         m_uniforms["texture"] = glGetUniformLocation(m_program, "texture");
     }
 

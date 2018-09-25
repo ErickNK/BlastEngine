@@ -13,11 +13,7 @@
 class TerrainRendererComponent: public EntityComponent<Terrain,RenderingEngine> {
 public:
     void RenderTerrain(RenderingEngine* engine) const {
-        auto * shader = (TerrainShader*) engine->GetShader(TERRAIN_SHADER);
-
-        engine->SetCurrentShader(TERRAIN_SHADER);
-
-        shader->Bind();
+        auto * shader = (TerrainShader*) engine->BindShader(TERRAIN_SHADER);
 
             shader->setTerrain(m_entity);
 
@@ -25,7 +21,7 @@ public:
 
             m_entity->RenderAll(shader);
 
-        shader->UnBind();
+        engine->UnBindShader(TERRAIN_SHADER);
     }
 };
 

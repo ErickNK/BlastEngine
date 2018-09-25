@@ -4,7 +4,7 @@
 
 #include "SkyBoxShader.h"
 #include "../Fog.h"
-SkyBoxShader::SkyBoxShader() : Shader(TERRAIN_SHADER){
+SkyBoxShader::SkyBoxShader() : Shader(SKY_BOX_SHADER){
     m_shaderFiles[GL_VERTEX_SHADER] = "../res/shaders/SkyBox.vert";
     m_shaderFiles[GL_FRAGMENT_SHADER] = "../res/shaders/SkyBox.frag";
 }

@@ -180,4 +180,8 @@ void Camera::setProjection(glm::mat4 projection) {
     m_projection = projection;
 }
 
+void Camera::invertPitch() {
+    m_pitch = -m_pitch;
+}
+
 

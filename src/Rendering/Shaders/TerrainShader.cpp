@@ -26,7 +26,7 @@ void TerrainShader::setTerrain(Terrain * terrain) {
     glUniform1i(m_uniforms["bTexture"], 0);
     glUniform1i(m_uniforms["blendMap"], 0);
 
-    for (auto &i : terrain->getMaterial().getTextures()) {
+    for (auto &i : terrain->getMaterial()->getTextures()) {
         auto textureUnit = static_cast<unsigned int>(getAvailableDrawingTextureUnit());
         TextureTypeEnum type = i->GetTextureType();
 

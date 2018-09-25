@@ -18,7 +18,7 @@ void GUILoader::Clean(){
 }
 
 //TODO: allow multiple textures per GUIEntity
-bool GUILoader::LoadGUI(std::map<GUITexture*,Transform*> textures, GUIEntity *root) {
+bool GUILoader::LoadGUI(std::map<Texture*,Transform*> textures, GUIEntity *root) {
     withTexManuallyProvided = true;
     this->textures_transforms_loaded = std::move(textures);
 
@@ -32,7 +32,7 @@ bool GUILoader::LoadGUI(std::map<GUITexture*,Transform*> textures, GUIEntity *ro
 //    withTexManuallyProvided = true;
 //
 //    for (const std::string &x : textureLocations) {
-//        this->textures_loaded.push_back(new GUITexture(x, GUI_TEXTURE)); //Keep so we don't reload it.
+//        this->textures_loaded.push_back(new Texture(x, GUI_TEXTURE)); //Keep so we don't reload it.
 //    }
 //
 //    this->processNode(root);
@@ -69,13 +69,13 @@ void GUILoader::processNode(GUIEntity* root) {
         }
 
     }else{
-        std::vector<GUITexture *> textures = loadGUITextures();
+        std::vector<Texture *> textures = loadTextures();
         root->setMaterial(*new GUIMaterial(textures));
     }
 }
 
-std::vector<GUITexture *> GUILoader::loadGUITextures() {
-    std::vector<GUITexture *> textures;
+std::vector<Texture *> GUILoader::loadTextures() {
+    std::vector<Texture *> textures;
 
     std::vector<std::string> files;
 
@@ -95,7 +95,7 @@ std::vector<GUITexture *> GUILoader::loadGUITextures() {
 
             //TODO: configure Texture class
             if (!skip) { //If not loaded
-                GUITexture* texture = new GUITexture("../res/textures/gui/health.png",GUI_TEXTURE);;
+                Texture* texture = new Texture("../res/textures/gui/health.png",GUI_TEXTURE);;
                 textures.push_back(texture);
 
                 this->textures_loaded.push_back(texture); //Keep so we don't reload it.

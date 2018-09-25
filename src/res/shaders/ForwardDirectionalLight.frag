@@ -19,7 +19,7 @@ in vec4 vDirectionalLightSpacePosition;
 
 //output variables ------------------------------------------
 
-out vec4 colour;
+layout(location = 0) out vec4 colour;
 
 // ----------------------------------------------------------
 
@@ -77,7 +77,7 @@ float CalcDirectionalLightShadowFactor(DirectionalLight directionalLight){
     //Convert into normalized device coordinates (-1,1)
     vec3 projCoords = vDirectionalLightSpacePosition.xyz / vDirectionalLightSpacePosition.w;
     //Convert to 0-1 range. Which is what depth range is
-    projCoords = (projCoords * 0.5) + 0.5;
+    projCoords = projCoords / 2.0 + 0.5;
 
     //Get how far (forwards and backwards) from the light the fragment is.
     float currentDepth = projCoords.z;

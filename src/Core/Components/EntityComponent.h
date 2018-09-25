@@ -14,7 +14,7 @@ public:
     EntityComponent() = default;
     EntityComponent(Entity* entity) : m_entity(entity),m_type() {}
     virtual void ProcessInput(Input* input, float delta) {}
-    virtual void Update(float delta) {}
+    virtual void Update(double time, float delta) {}
     virtual void Render(RenderParam* shader) const {};
     virtual void SetParent(Entity* entity) { m_entity = entity; }
     virtual Entity *getParent() const { return m_entity; }

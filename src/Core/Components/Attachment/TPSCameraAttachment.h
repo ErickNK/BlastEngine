@@ -24,7 +24,7 @@ public:
 
     void ProcessInput(Input *input, float delta);
 
-    void Update(float delta);
+    void Update(double time, float delta);
 
     void SetAttachment(MeshedEntity* entity);
 

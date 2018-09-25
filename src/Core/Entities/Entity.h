@@ -16,7 +16,7 @@ public:
 
     virtual void ProcessInput(Input* input, float delta) {}
 
-    virtual void Update(float delta) {}
+    virtual void Update(double time, float delta) {}
 
     Transform& getTransform() { return m_transform; }
 

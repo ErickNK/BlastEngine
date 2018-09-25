@@ -34,6 +34,9 @@ void Shader::Init(){
 
 	//Uniforms
 	CreateUniforms();
+
+    GLenum someError = glGetError();
+    assert( someError == GL_NO_ERROR);
 }
 
 void Shader::CreateUniforms() {
@@ -44,6 +47,17 @@ void Shader::CreateUniforms() {
     m_uniforms["normalMatrix"] = glGetUniformLocation(m_program, "normalMatrix");
     m_uniforms["cameraPosition"] = glGetUniformLocation(m_program, "cameraPosition");
     m_uniforms["cameraDirection"] = glGetUniformLocation(m_program, "cameraDirection");
+
+    for(int i = 0; i < MAX_CLIP_PLANES; i++){
+        char locBuff[100] = {'\0'};
+        snprintf(locBuff, sizeof(locBuff), "clipPlanes[%d]",i);
+        m_uniforms[locBuff] = glGetUniformLocation(m_program, locBuff);
+        if(m_uniforms[locBuff] != -1) {
+            glUseProgram(m_program);
+                glUniform4f(m_uniforms[locBuff], 0.0f, -1.0f, 0.0f, 10000000.0f);
+            glUseProgram(0);
+        }
+    }
 }
 
 //TODO: figure out how to add multiple items in vector without the previous once being destroyed.
@@ -83,6 +97,59 @@ void Shader::UpdateNormalMatrix(const glm::mat3& normalMatrix){
 
 void Shader::UpdateView(const glm::mat4& view){
     glUniformMatrix4fv(m_uniforms["view"],1,GL_FALSE, glm::value_ptr(view));
+}
+
+void Shader::ActivateClipPlane(int id, const glm::vec4& plane){
+    char locBuff[100] = {'\0'};
+    snprintf(locBuff, sizeof(locBuff), "clipPlanes[%d]",id);
+
+    if(m_uniforms[locBuff] != -1){
+        glEnable(GL_CLIP_DISTANCE0 + id);
+        glUniform4f(m_uniforms[locBuff],plane.x,plane.y,plane.z,plane.w);
+    }else{
+        glDisable(GL_CLIP_DISTANCE0 + id);
+    }
+
+    GLenum someError = glGetError();
+    assert( someError == GL_NO_ERROR);
+}
+
+void Shader::DeactivateClipPlane(int id){
+    char locBuff[100] = {'\0'};
+    snprintf(locBuff, sizeof(locBuff), "clipPlanes[%d]",id);
+
+    if(m_uniforms[locBuff] != -1){
+        glDisable(GL_CLIP_DISTANCE0 + id);
+        glUniform4f(m_uniforms[locBuff],0.0f,-1.0f,0.0f,100000000.0f);
+    }
+
+    GLenum someError = glGetError();
+    assert( someError == GL_NO_ERROR);
+}
+
+void Shader::Uniform1i(std::string name, int value){
+    if(m_uniforms.find(name) != m_uniforms.end() &&  m_uniforms[name] != -1)
+        glUniform1i(m_uniforms[name],value);
+}
+
+void Shader::Uniform2f(const char *string, float d, float d1) {
+    if(m_uniforms.find(string) != m_uniforms.end() && m_uniforms[string] != -1)
+        glUniform2f(m_uniforms[string],d,d1);
+}
+
+void Shader::Uniform1f(const char *string, GLfloat d) {
+    if(m_uniforms.find(string) != m_uniforms.end() && m_uniforms[string] != -1)
+        glUniform1f(m_uniforms[string],d);
+}
+
+void Shader::Uniform3f(const char* string, GLfloat i, GLfloat i1, GLfloat i2) {
+    if(m_uniforms.find(string) != m_uniforms.end() && m_uniforms[string] != -1)
+        glUniform3f(m_uniforms[string],i,i1,i2);
+}
+
+void Shader::Uniform4f(const char* string, GLfloat i, GLfloat i1, GLfloat i2, GLfloat i3) {
+    if(m_uniforms.find(string) != m_uniforms.end() && m_uniforms[string] != -1)
+        glUniform4f(m_uniforms[string],i,i1,i2,i3);
 }
 
 void Shader::UpdateCamera(const Camera &camera) {

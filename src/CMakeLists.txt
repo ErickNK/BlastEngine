@@ -109,7 +109,14 @@ set(SOURCE_FILES
         Physics/Forces/Force.cpp Physics/Forces/Force.h
         Physics/Objects/RigidBody.cpp Physics/Objects/RigidBody.h
         Physics/Objects/TerrainBody.cpp Physics/Objects/TerrainBody.h
-        Core/Components/Behaviours/LightRotationComponent.h Rendering/Loaders/AnimatedLoader.cpp Rendering/Loaders/AnimatedLoader.h Animation/Animation.h Animation/JointTransform.h Animation/KeyFrame.h Animation/AnimationComponent.h Animation/AnimationRendererComponent.h Rendering/Shaders/AnimationShader.cpp Rendering/Shaders/AnimationShader.h Rendering/PostProcessing/Screen.cpp Rendering/PostProcessing/Screen.h Rendering/Shaders/PostProcessingScreenShader.h Rendering/PostProcessing/FrameBufferObject.cpp Rendering/PostProcessing/FrameBufferObject.h) # which files should be compiled
+        Core/Components/Behaviours/LightRotationComponent.h
+        Rendering/Loaders/AnimatedLoader.cpp Rendering/Loaders/AnimatedLoader.h
+        Animation/Animation.h Animation/JointTransform.h Animation/KeyFrame.h Animation/AnimationComponent.h Animation/AnimationRendererComponent.h
+        Rendering/Shaders/AnimationShader.cpp Rendering/Shaders/AnimationShader.h
+        Rendering/PostProcessing/Screen.cpp Rendering/PostProcessing/Screen.h
+        Rendering/Shaders/PostProcessingScreenShader.h
+        Rendering/PostProcessing/FrameBufferObject.cpp Rendering/PostProcessing/FrameBufferObject.h
+        Rendering/Primitives/Water.h Rendering/Primitives/Water.cpp Core/Components/RenderingComponents/WaterRendererComponent.h Rendering/Shaders/WaterShader.h) # which files should be compiled
 
 add_executable(MorderOpenGLUdemyTutorial ${SOURCE_FILES}) # which files should produce executables
 

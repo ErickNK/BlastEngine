@@ -8,6 +8,8 @@
 
 #include <stdio.h>
 #include "GL/glew.h"
+#include "../../Common/CommonValues.h"
+#include "../Texture.h"
 
 //TODO: make FrameBufferObject reusable for making shadow-maps
 class FrameBufferObject {
@@ -16,7 +18,7 @@ public:
 
     ~FrameBufferObject();
 
-    virtual bool Init(GLuint width, GLuint height, GLenum type, GLenum attachment, GLenum component);
+    virtual bool Generate(GLuint &id, GLuint width, GLuint height, GLenum* options);
 
     virtual void setForReading(bool color, int unit) const;
 
@@ -29,30 +31,46 @@ public:
     * write to the texture.
     */
     virtual void BindFrameBuffer() const;
-    virtual void UnBindFrameBuffer() const;
+    virtual void UnBindFrameBuffer(GLuint displayWidth, GLuint displayHeight) const;
 
     /*
     * Sets the shadow-map to be used for drawing shadows.
     */
-    virtual void UseTexture(GLenum textureUnit) const;
+    virtual void UseTexture(int id, GLenum textureUnit) const;
 
     //GETTERS
     GLuint GetWidth() { return m_width; }
     GLuint GetHeight() { return m_height; }
-    GLuint GetTexture() { return m_texture; }
+    GLuint* GetTextures() { return m_textures; }
+    Texture* GetTexture(int id) const {
+        return new Texture(m_textures[id],GUI_TEXTURE);
+    }
+    GLuint* GetRenderBuffers() { return m_renderBuffers; }
     GLuint GetFrameBuffer() { return m_frameBufferObject; }
 protected:
-    GLuint m_frameBufferObject, m_texture;
+
+    GLuint m_frameBufferObject, m_textures[32], m_renderBuffers[32];
     GLuint m_width, m_height;
-    GLenum m_type, m_attachment, m_component;
+    GLenum* m_options;
+    int m_texture_count = -1, m_render_buffer_count = -1;
+    int m_current_drawing_unit = 0, m_current_reading_unit = 0;
+    GLuint m_texture_test;
 
     virtual void setOverlayFilter();
 
     virtual void setWrapFilter();
 
-    virtual void setData();
+    virtual void setTextureData();
 
     virtual void attachTexture();
+
+    virtual void CreateFBOTexture();
+
+    virtual void CreateFBORenderBuffer();
+
+    virtual void setRenderBufferStorage();
+
+    virtual void attachRenderBuffer();
 };
 
 

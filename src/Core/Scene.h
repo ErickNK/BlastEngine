@@ -14,6 +14,7 @@
 #include "MousePicker.h"
 #include "../Physics/Objects/RigidBody.h"
 #include "../Animation/AnimatedEntity.h"
+#include "../Rendering/Primitives/Water.h"
 
 class GUIEntity;
 class LightEntity;
@@ -38,7 +39,7 @@ public:
     /**
      * Update the state of our objects
      * */
-    void Update(float delta);
+    void Update(double time, float delta);
 
     /**
      * Add new objects to the scene
@@ -53,6 +54,7 @@ public:
     void AddMousePicker(MousePicker *picker);
     void AddPhysicsObject(PhysicsObject* object);
     void AddAnimatedEntity(AnimatedEntity* enitity);
+    void AddWaterBody(Water* water);
 
     void SetCurrentCamera(int position);
     void SetCurrentSkyBox(int position);
@@ -65,6 +67,8 @@ public:
     const std::vector<GUIEntity *> getGUIs() const;
 
     const std::vector<Terrain *> &getTerrains() const;
+
+    const std::vector<Water *> &getWaterBodies() const;
 
     const std::vector<MeshedEntity *> &getMeshedEntities() const;
 
@@ -102,6 +106,7 @@ protected:
     std::vector<SkyBox*> m_skyboxes;
     std::vector<LightEntity*> m_lights;
     std::vector<Terrain*> m_terrains;
+    std::vector<Water*> m_waters;
     std::vector<MeshedEntity*> m_meshed_Entities;
     std::vector<EffectEntity*> m_effect_Entities;
     std::vector<PhysicsObject*> m_physics_object;

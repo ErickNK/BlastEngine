@@ -50,5 +50,5 @@ void main(){
     /**
      * MAIN fragment colouring
      * */
-    colour = (backgroundTextureColor + rTextureColor + gTextureColor + bTextureColor) * 0.4;
+    colour = (backgroundTextureColor + rTextureColor + gTextureColor + bTextureColor);
 }

@@ -12,12 +12,9 @@
 class ShadowRendererComponent : public LightComponent{
 
     void RenderDirectionalLight(RenderingEngine* engine) const override {
-        auto * shader = (DirectionalLightShadowMapShader*) engine->GetShader(DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER);
+        auto * shader = (DirectionalLightShadowMapShader*) engine->BindShader(DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER);
 
-        engine->SetCurrentShader(DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER);
-
-        shader->Bind();
-
+            glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
             glClear(GL_DEPTH_BUFFER_BIT);
 
             //Set view port same size as our shadow-map framebuffer
@@ -31,7 +28,7 @@ class ShadowRendererComponent : public LightComponent{
 
             m_entity->GetShadowMap()->UnBindFrameBuffer(); //stop writing
 
-        shader->UnBind();
+        engine->UnBindShader(DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER);
     }
 
     virtual void RenderPointLight(RenderingEngine* engine) const {

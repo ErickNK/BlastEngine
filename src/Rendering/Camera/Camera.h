@@ -53,6 +53,8 @@ public:
 
     void setAllowTurn(bool turn);
 
+    virtual void UpdateView();
+
 protected:
     /**
     * The position of the camera
@@ -78,14 +80,13 @@ protected:
 
     glm::mat4 m_projection;
 
-	virtual void UpdateView();
-
 public:
 	float field_of_view =  45.0f;
 	float aspect = 1366.0f/786.0f;
 	float near_clip = 0.1f;
 	float far_clip = 1000.0f;
 
+    void invertPitch();
 };
 
 

@@ -12,17 +12,13 @@
 class FogComponent : public EntityComponent<EffectEntity,RenderingEngine> {
 
     void Render(RenderingEngine *engine) const override {
-        auto * shader = (FogShader*) engine->GetShader(FOG_SHADER);
-
-        engine->SetCurrentShader(FOG_SHADER);
-
-        shader->Bind();
+        auto * shader = (FogShader*) engine->BindShader(FOG_SHADER);
 
             shader->SetFog(reinterpret_cast<Fog *>(m_entity));
 
             engine->RenderAllMeshed();
 
-        shader->UnBind();
+        engine->UnBindShader(FOG_SHADER);
     }
 };
 

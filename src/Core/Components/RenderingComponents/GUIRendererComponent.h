@@ -15,13 +15,7 @@
 class GUIRendererComponent : public EntityComponent<GUIEntity,RenderingEngine>{
 public:
     virtual void Render(RenderingEngine* engine) const {
-        auto * shader = (GUIShader*) engine->GetShader(GUI_SHADER);
-
-        engine->SetCurrentShader(GUI_SHADER);
-
-        shader->Bind();
-
-//            shader->UpdateProjection(glm::ortho(-1.0f,1.0f,-1.0f,1.0f));
+        auto * shader = (GUIShader*) engine->BindShader(GUI_SHADER);
 
             //Draw one by one.
             m_entity->getGUIMesh().Bind();
@@ -35,7 +29,7 @@ public:
             m_entity->getGUIMesh().UnBind();
 
 
-        shader->UnBind();
+        engine->UnBindShader(GUI_SHADER);
 
     };
 };

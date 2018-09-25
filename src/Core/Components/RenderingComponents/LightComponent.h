@@ -35,45 +35,33 @@ public:
 
 protected:
     virtual void RenderDirectionalLight(RenderingEngine* engine) const{
-        auto * directional_light_shader = (ForwardDirectionalLightShader*) engine->GetShader(FORWARD_DIRECTIONAL_LIGHT_SHADER);
-
-        engine->SetCurrentShader(FORWARD_DIRECTIONAL_LIGHT_SHADER);
-
-        directional_light_shader->Bind();
+        auto * directional_light_shader = (ForwardDirectionalLightShader*) engine->BindShader(FORWARD_DIRECTIONAL_LIGHT_SHADER);
 
             directional_light_shader->setLight(dynamic_cast<DirectionalLight *>(m_entity));
 
             engine->RenderAllMeshed();
 
-        directional_light_shader->UnBind();
+        engine->UnBindShader(FORWARD_DIRECTIONAL_LIGHT_SHADER);
     }
 
     virtual void RenderPointLight(RenderingEngine* engine) const {
-        auto * point_light_shader = (ForwardPointLightShader*) engine->GetShader(FORWARD_POINT_LIGHT_SHADER);
-
-        engine->SetCurrentShader(FORWARD_POINT_LIGHT_SHADER);
-
-        point_light_shader->Bind();
+        auto * point_light_shader = (ForwardPointLightShader*) engine->BindShader(FORWARD_POINT_LIGHT_SHADER);
 
             point_light_shader->setLight(dynamic_cast<PointLight *>(m_entity));
 
             engine->RenderAllMeshed();
 
-        point_light_shader->UnBind();
+        engine->UnBindShader(FORWARD_POINT_LIGHT_SHADER);
     }
 
     virtual void RenderSpotLight(RenderingEngine* engine) const {
-        auto * spot_light_shader = (ForwardSpotLightShader*) engine->GetShader(FORWARD_SPOT_LIGHT_SHADER);
-
-        engine->SetCurrentShader(FORWARD_SPOT_LIGHT_SHADER);
-
-        spot_light_shader->Bind();
+        auto * spot_light_shader = (ForwardSpotLightShader*) engine->BindShader(FORWARD_SPOT_LIGHT_SHADER);
 
             spot_light_shader->setLight(dynamic_cast<SpotLight *>(m_entity));
 
             engine->RenderAllMeshed();
 
-        spot_light_shader->UnBind();
+        engine->UnBindShader(FORWARD_SPOT_LIGHT_SHADER);
     }
 };
 

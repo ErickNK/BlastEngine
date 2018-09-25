@@ -13,12 +13,8 @@ class SkyBoxRendererComponent : public EntityComponent<SkyBox,RenderingEngine>{
 public:
     void Render(RenderingEngine* engine) const override {
 
-        auto * shader = (SkyBoxShader*) engine->GetShader(SKY_BOX_SHADER);
-
-        engine->SetCurrentShader(SKY_BOX_SHADER);
-
         glDepthMask(GL_FALSE);
-        shader->Bind();
+        auto * shader = (SkyBoxShader*) engine->BindShader(SKY_BOX_SHADER);
 
             glm::mat4 view = engine->getCurrentScene()->getCurrentCamera()->getViewMatrix();
             view = glm::mat4(glm::mat3(view));
@@ -47,7 +43,7 @@ public:
 
             m_entity->getSkyMesh()->Draw();
 
-        shader->UnBind();
+        engine->UnBindShader(SKY_BOX_SHADER);
         glDepthMask(GL_TRUE);
 
     }

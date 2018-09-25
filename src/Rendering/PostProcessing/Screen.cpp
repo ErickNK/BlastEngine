@@ -74,19 +74,15 @@ Screen::Screen() {
 
 void Screen::Render(RenderingEngine *engine)
 {
-    auto * shader = (PostProcessingScreenShader*) engine->GetShader(POST_PROCESSING_SCREEN_SHADER);
-
-    engine->SetCurrentShader(POST_PROCESSING_SCREEN_SHADER);
-
-    shader->Bind();
     glDisable(GL_DEPTH_TEST);
+    auto * shader = (PostProcessingScreenShader*) engine->BindShader(POST_PROCESSING_SCREEN_SHADER);
 
         m_screen_material.UseMaterial(shader);
 
         m_screen_mesh.Draw();
 
+    engine->UnBindShader(TERRAIN_SHADER);
     glEnable(GL_DEPTH_TEST);
-    shader->UnBind();
 
 }
 

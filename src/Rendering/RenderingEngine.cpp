@@ -28,9 +28,13 @@
 #include "Shaders/GUIShader.h"
 #include "Shaders/SkyBoxShader.h"
 #include "Shaders/PostProcessingScreenShader.h"
+#include "Shaders/WaterShader.h"
 
 RenderingEngine::RenderingEngine(Window* window): m_window(window) {
     CreateShaders();
+    for(int i = 0; i < MAX_CLIP_PLANES; i++){
+        m_activated_clipping_Planes[i] = false;
+    }
 }
 
 void RenderingEngine::CreateShaders(){
@@ -74,53 +78,40 @@ void RenderingEngine::CreateShaders(){
     auto  * postProcessingScreenShader = new PostProcessingScreenShader();
     postProcessingScreenShader->Init();
     m_shaders[POST_PROCESSING_SCREEN_SHADER] = postProcessingScreenShader;
-}
 
-void RenderingEngine::StartBlendColor(){
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE,GL_ONE);
-    glDepthMask(GL_FALSE);
-    glDepthFunc(GL_EQUAL); //Do blend function on pixels that appear closest to the screen.
-}
-
-void RenderingEngine::EndBlendColor(){
-    glDepthFunc(GL_LESS);
-    glDepthMask(GL_TRUE);
-    glDisable(GL_BLEND);
+    auto  * waterShader = new WaterShader();
+    waterShader->Init();
+    m_shaders[WATER_SHADER] = waterShader;
 }
 
 void RenderingEngine::RenderAmbientLight(){
-    auto * ambient_light_shader = (ForwardAmbientShader*)  m_shaders[FORWARD_AMBIENT_SHADER];
+    auto * ambient_light_shader = (ForwardAmbientShader*)  BindShader(FORWARD_AMBIENT_SHADER);
 
-    m_current_shader = FORWARD_AMBIENT_SHADER;
-
-    ambient_light_shader->Bind();
-
-        ambient_light_shader->setLight(glm::vec3(1,1,1),0.06);
+        ambient_light_shader->setLight(glm::vec3(1,1,1),0.4f);
 
         RenderAllMeshed();
 
-    ambient_light_shader->UnBind();
+    UnBindShader(FORWARD_AMBIENT_SHADER);
 }
 
 void RenderingEngine::RenderEffects() {
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ZERO,GL_SRC_COLOR);
-//    glDepthMask(GL_FALSE);
+    if(render_effects) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+        glDepthMask(GL_FALSE);
 
         for (auto m_light : m_current_scene->getEffectEntities()) {
             m_light->Render(this);
         }
 
-//    glDepthFunc(GL_LESS);
-//    glDepthMask(GL_TRUE);
-    glDisable(GL_BLEND);
+        glDepthFunc(GL_LESS);
+        glDepthMask(GL_TRUE);
+        glDisable(GL_BLEND);
+    }
 }
 
 void RenderingEngine::RenderAllMeshed(){
     for (auto m_meshed : m_current_scene->getMeshedEntities()) {
-
-        m_shaders[m_current_shader]->UpdateCamera(*getCurrentScene()->getCurrentCamera());
 
         m_meshed->RenderAll(m_shaders[m_current_shader]);
 
@@ -130,34 +121,49 @@ void RenderingEngine::RenderAllMeshed(){
 
 void RenderingEngine::RenderLights()
 {
-    for (auto m_light : m_current_scene->getLights()) {
+    if(render_lights) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+        glDepthMask(GL_FALSE);
+        glDepthFunc(GL_EQUAL); //Do blend function on pixels that appear closest to the screen.
+
+        for (auto m_light : m_current_scene->getLights()) {
             m_light->RenderLight(this);
+        }
+
+        glDepthFunc(GL_LESS);
+        glDepthMask(GL_TRUE);
+        glDisable(GL_BLEND);
     }
 }
 
 void RenderingEngine::RenderTerrain() {
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_DST_COLOR,GL_ZERO);
-    glBlendEquation(GL_ADD);
-    glDepthMask(GL_FALSE);
+    if(render_terrain) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_DST_COLOR, GL_ZERO);
+        glBlendEquation(GL_FUNC_ADD);
+        glDepthMask(GL_FALSE);
+        glDepthFunc(GL_EQUAL); //Do blend function on pixels that appear closest to the screen.
 
-    glDepthFunc(GL_EQUAL); //Do blend function on pixels that appear closest to the screen.
-    for (auto m_Terrain : m_current_scene->getTerrains()) {
-        m_Terrain->RenderTerrain(this);
+        for (auto m_Terrain : m_current_scene->getTerrains()) {
+            m_Terrain->RenderTerrain(this);
+        }
+
+        glDepthFunc(GL_LESS);
+        glDepthMask(GL_TRUE);
+        glDisable(GL_BLEND);
     }
-
-    glDepthFunc(GL_LESS);
-    glDepthMask(GL_TRUE);
-    glDisable(GL_BLEND);
 }
 
 void RenderingEngine::RenderGUI() {
-    StartAlphaBlending();
-    glDisable(GL_DEPTH_TEST);
-        auto * entity = m_current_scene->getCurrentGUI();
-        if(entity != nullptr) entity->Render(this);
-    glEnable(GL_DEPTH_TEST);
-    EndAlphaBlending();
+    if(render_gui) {
+        StartAlphaBlending();
+        glDisable(GL_DEPTH_TEST);
+        auto *entity = m_current_scene->getCurrentGUI();
+        if (entity != nullptr) entity->Render(this);
+        glEnable(GL_DEPTH_TEST);
+        EndAlphaBlending();
+    }
 }
 
 void RenderingEngine::RenderSkybox() {
@@ -165,8 +171,19 @@ void RenderingEngine::RenderSkybox() {
 }
 
 void RenderingEngine::RenderShadows() {
-    for (auto m_light : m_current_scene->getLights()) {
-        m_light->RenderShadow(this);
+    if(render_shadows){
+        for (auto m_light : m_current_scene->getLights()) {
+            m_light->RenderShadow(this);
+        }
+        m_window->ResetViewPort();
+    }
+}
+
+void RenderingEngine::RenderWater(){
+    if(render_water) {
+        for (auto m_water : m_current_scene->getWaterBodies()) {
+            m_water->RenderWater(this);
+        }
     }
 }
 
@@ -175,33 +192,45 @@ void RenderingEngine::RenderScene() {
 
     m_renderProfileTimer.StartInvocation();
 
-//        RenderShadows();
-
-        m_window->ResetViewPort();
+        RenderShadows();
 
         RenderSkybox();
 
+        //TODO: make a component of the scene
         RenderAmbientLight();
 
-        StartBlendColor();
-            RenderLights();
-        EndBlendColor();
+        RenderLights();
 
         RenderTerrain();
 
         RenderEffects();
 
+        RenderWater();
+
         RenderGUI();
 
     m_renderProfileTimer.StopInvocation();
+
+    GLenum someError = glGetError();
+    assert( someError == GL_NO_ERROR);
 }
 
-Shader* RenderingEngine::GetShader(ShaderType type) {
+Shader* RenderingEngine::BindShader(ShaderType type) {
+    //Set current shader
+    m_current_shader = type;
+
+    //Bind for use
+    m_shaders[type]->Bind();
+
+    //Update the shader
+    UpdateShader(m_shaders[type]);
+
     return m_shaders[type];
 }
 
-void RenderingEngine::SetCurrentShader(ShaderType type) {
-    m_current_shader = type;
+void RenderingEngine::UnBindShader(ShaderType type) {
+    //UnBind for use
+    m_shaders[type]->UnBind();
 }
 
 void RenderingEngine::SetCurrentScene(Scene * scene) {
@@ -229,4 +258,35 @@ void RenderingEngine::StartAlphaBlending() {
 
 void RenderingEngine::EndAlphaBlending() {
     glDisable(GL_BLEND);
+}
+
+Shader* RenderingEngine::UpdateShader(Shader *shader) {
+    //Update View
+    shader->UpdateCamera(*getCurrentScene()->getCurrentCamera());
+
+    //Update clipping planes
+    for(int i = 0; i < MAX_CLIP_PLANES; i++){
+        if(m_activated_clipping_Planes[i]) shader->ActivateClipPlane(i,m_clipping_Planes[i]);
+        else shader->DeactivateClipPlane(i);
+    }
+
+}
+
+void RenderingEngine::ActivateClipPlane(int id, glm::vec4& plane) {
+    m_activated_clipping_Planes[id] = true;
+    m_clipping_Planes[id] = plane;
+
+    GLenum someError = glGetError();
+    assert( someError == GL_NO_ERROR);
+}
+
+void RenderingEngine::DeactivateClipPlane(int id) {
+    m_activated_clipping_Planes[id] = false;
+
+    GLenum someError = glGetError();
+    assert( someError == GL_NO_ERROR);
+}
+
+void RenderingEngine::CleanUP() {
+
 }

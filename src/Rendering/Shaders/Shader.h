@@ -63,6 +63,22 @@ public:
     void UpdateView(const glm::mat4& view);
 
     /**
+     * Activate a clipping plane.
+     * */
+    void ActivateClipPlane(int id, const glm::vec4& plane);
+
+    /**
+     * Deactivate a clipping plane.
+     * */
+    void DeactivateClipPlane(int id);
+
+    void Uniform1i(std::string name, int value);
+
+    void Uniform3f(const char* string, GLfloat i, GLfloat i1, GLfloat i2);
+
+    void Uniform4f(const char* string, GLfloat i, GLfloat i1, GLfloat i2, GLfloat i3);
+
+    /**
      * Update some uniform data on GPU
      * */
     void UpdateCamera(const Camera &camera);
@@ -115,6 +131,11 @@ public:
     void resetGlobalTextureUnits();
 
     void resetDrawingTextureUnits();
+
+    void Uniform2f(const char string[19], float d, float d1);
+
+    void Uniform1f(const char string[27], GLfloat d);
+
 protected:
     /**
    * Keeps track of the last issued glabal texture unit. Global texture units

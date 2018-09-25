@@ -23,7 +23,7 @@ void TPSCameraAttachment::ProcessInput(Input *input, float delta) {
     oldAngle_around_attachment = m_camera->angle_around_attachment;
 }
 
-void TPSCameraAttachment::Update(float delta) {
+void TPSCameraAttachment::Update(double time, float delta) {
 
 }
 

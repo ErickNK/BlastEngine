@@ -7,23 +7,22 @@
 
 #include <vector>
 #include "../Material.h"
-#include "GUITexture.h"
 
 class GUIMaterial{
 public:
     GUIMaterial() = default;
 
-    explicit GUIMaterial(std::vector<GUITexture*>& textures);
+    explicit GUIMaterial(std::vector<Texture*>& textures);
 
-    void AddGUI(GUITexture* gui);
+    void AddGUI(Texture* gui);
 
     void UseMaterial(Shader * shader);
 
-    const std::vector<GUITexture *> &getTextures() const;
+    const std::vector<Texture *> &getTextures() const;
 
 private:
-    std::vector<GUITexture*> textures;
-    GUITexture* activeTexture = nullptr;
+    std::vector<Texture*> textures;
+    Texture* activeTexture = nullptr;
 };
 
 

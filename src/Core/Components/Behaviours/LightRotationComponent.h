@@ -11,7 +11,7 @@
 
 class LightRotationComponent : public EntityComponent<Light,RenderingEngine> {
 public:
-    void Update(float delta) override {
+    void Update(double time, float delta) override {
         dynamic_cast<PointLight *>(m_entity)->getTransform().Rotate(glm::vec3(0,glm::degrees(.00001f),0));
     }
 };

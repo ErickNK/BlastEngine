@@ -26,6 +26,8 @@
 #include "../../Physics/Colliders/TerrainCollider.h"
 #include "../../Physics/Objects/TerrainBody.h"
 #include "../../Core/Components/Behaviours/LightRotationComponent.h"
+#include "../../Rendering/Primitives/Water.h"
+#include "../../Rendering/PostProcessing/Screen.h"
 
 void TestScene::Init() {
     m_meshed_loader = new MeshedLoader();
@@ -81,14 +83,14 @@ void TestScene::SetupCamera(){
 
 //    this->AddCamera(tpsCamera);
 
-    auto * fpsCam = new FPSCamera(
+    auto * fpsCam = new Camera(
             glm::vec3(0.0f,15.0f,-5.0f),
             glm::vec3(0.0f,1.0f,0.0f),
-            0.0f,
+//            0.0f,
             0.0f,
             0.0f,
             15.0f,
-            0.005f
+            0.5f
     );
     fpsCam->setProjection(
             45.0f,
@@ -122,6 +124,12 @@ void TestScene::CreateTerrain(){
     terrain->AddComponent(reinterpret_cast<EntityComponent<MeshedEntity> *>(terrainBody));
     this->AddPhysicsObject(terrainBody);
     this->AddTerrain(terrain);
+
+    std::map<TextureTypeEnum, std::string> waterTextures;
+    waterTextures[DU_DV_MAP] = "../res/textures/terrain/waterDUDV.png";
+    waterTextures[NORMAL_MAP] = "../res/textures/terrain/matchingNormalMap.png";
+    auto * water = new Water(1,1,-5,waterTextures);
+    this->AddWaterBody(water);
 
     //Trees
     int spice = 1;
@@ -204,8 +212,8 @@ void TestScene::CreateCharacters() {
 void TestScene::CreateLighting() {
     DirectionalLight* directionalLight = new DirectionalLight(
             glm::vec3(1.0f,1.0f,1.0f),
-            glm::vec3(0.0f,-1.0,1.0f),
-            0.0f, 0.7f,
+            glm::vec3(0.0f,-1.0,-1.0f),
+            0.0f, 0.9f,
             2018, 2018,
             glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 1000.0f));
 
@@ -213,15 +221,15 @@ void TestScene::CreateLighting() {
     directionalLight->AddShadowComponent(new ShadowRendererComponent());
     this->AddLightToScene(directionalLight);
 
-    PointLight* pointLight = new PointLight(
-            glm::vec3(0.0f,1.0f,1.0f), /*Color*/
-            glm::vec3(-2.0f,2.0f,2.0f), /*Position*/
-            0.0f, 1.0f, /*Ambient/diffuse*/
-            glm::vec3(0.1002f,0.1209f,1.0f), /*Attenuation*/
-            1024,1024); /*Shadow*/
-    pointLight->AddComponent(new LightComponent())
-    ->AddComponent(new LightRotationComponent());
-    this->AddLightToScene(pointLight);
+//    PointLight* pointLight = new PointLight(
+//            glm::vec3(0.0f,1.0f,1.0f), /*Color*/
+//            glm::vec3(-2.0f,2.0f,2.0f), /*Position*/
+//            0.0f, 1.0f, /*Ambient/diffuse*/
+//            glm::vec3(0.1002f,0.1209f,1.0f), /*Attenuation*/
+//            1024,1024); /*Shadow*/
+//    pointLight->AddComponent(new LightComponent())
+//    ->AddComponent(new LightRotationComponent());
+//    this->AddLightToScene(pointLight);
 
 //    SpotLight* spotLight = new SpotLight(
 //            glm::vec3(1.0f,0.0f,1.0f),/*Color*/
@@ -236,11 +244,11 @@ void TestScene::CreateLighting() {
 }
 
 void TestScene::CreateGUI(){
-    std::map<GUITexture*,Transform*> textures;
-    GUITexture * healthTexture = new GUITexture("../res/textures/gui/health.png",GUI_TEXTURE);
-    Transform* healthTransform = new Transform(glm::vec3(-0.75f,-0.9f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f));
+    std::map<Texture*,Transform*> textures;
 
-    textures.emplace(healthTexture,healthTransform);
+//    textures.emplace(this->m_waters[0]->getReflectionFBO().GetTexture(this->m_waters[0]->getReflectionTexture()),new Transform(glm::vec3(-0.5f,0.5f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
+//    textures.emplace(this->m_waters[0]->getRefractionFBO().GetTexture(this->m_waters[0]->getRefractionTexture()),new Transform(glm::vec3(0.5f,0.5f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
+//    textures.emplace(new Texture("../res/textures/gui/health.png",GUI_TEXTURE),new Transform(glm::vec3(-0.75f,-0.9f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
 
     auto * guiEntity = new GUIEntity();
     guiEntity->InitMesh();

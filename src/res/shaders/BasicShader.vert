@@ -1,5 +1,11 @@
 #version 400
 
+//constants --------------------------------------
+
+const int MAX_CLIP_PLANES = 6;
+
+//---------------------------------------------------------
+
 //Attribute Pointers --------------------------------------
 
 layout (location = 0) in vec3 position;
@@ -17,7 +23,12 @@ out vec3 vFragPos;
 out vec4 vCol;
 
 /* Position of the fragment relative to the light */
-out vec4 vDirectionalLightSpacePosition; 
+out vec4 vDirectionalLightSpacePosition;
+
+out gl_PerVertex{
+    vec4 gl_Position;
+    float gl_ClipDistance[MAX_CLIP_PLANES];
+};
 
 //---------------------------------------------------------
 
@@ -37,6 +48,9 @@ uniform mat3 normalMatrix;
 uniform bool hasFakeLighting;
 uniform int textureAtlasNumOfRows;
 uniform vec2 textureAtlasOffset;
+
+uniform vec4 clipPlanes[MAX_CLIP_PLANES];
+
 //---------------------------------------------------------
 
 void main(){
@@ -45,7 +59,18 @@ void main(){
      * MAIN processing of our point/vertex from worldSpace -> viewSpace -> clipSpace
      * then display it.
      * */
-    gl_Position = projection * view * model * vec4(position, 1.0);
+    vec4 worldPosition = model * vec4(position, 1.0);
+    vec4 viewPosition = view * worldPosition;
+    vec4 clipPosition = projection * viewPosition;
+
+    gl_Position = clipPosition;
+
+    /**
+     * Clip planes
+     * */
+     for (int i = 0; i < MAX_CLIP_PLANES; i++){
+         gl_ClipDistance[i] = dot(worldPosition,clipPlanes[i]);
+     }
 
     //Check for fake lighting
     vec3 actualNormal = normal;

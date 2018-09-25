@@ -4,14 +4,14 @@
 
 #include "GUIMaterial.h"
 
-GUIMaterial::GUIMaterial(std::vector<GUITexture *> &textures)
+GUIMaterial::GUIMaterial(std::vector<Texture *> &textures)
 : textures(textures){}
 
-void GUIMaterial::AddGUI(GUITexture* gui) {
+void GUIMaterial::AddGUI(Texture* gui) {
     textures.push_back(gui);
 }
 
-const std::vector<GUITexture *> &GUIMaterial::getTextures() const {
+const std::vector<Texture *> &GUIMaterial::getTextures() const {
     return textures;
 }
 

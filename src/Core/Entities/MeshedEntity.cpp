@@ -5,7 +5,7 @@
 #include "MeshedEntity.h"
 
 MeshedEntity::MeshedEntity(Mesh &mesh, Transform &transform, Material &material) :
-    m_mesh(mesh), m_material(material) {}
+    m_mesh(&mesh), m_material(&material) {}
 
 MeshedEntity::~MeshedEntity()
 {
@@ -41,21 +41,23 @@ void MeshedEntity::ProcessInputAll(Input* input, float delta)
     }
 }
 
-void MeshedEntity::UpdateAll(float delta)
+void MeshedEntity::UpdateAll(double time, float delta)
 {
-    Update(delta);
+    Update(time, delta);
 
     for (auto &i : m_children) {
-        i->UpdateAll(delta);
+        i->UpdateAll(time, delta);
     }
 }
 
 void MeshedEntity::RenderAll(Shader* shader) const
 {
-    Render(shader);
+    if(allow_render) {
+        Render(shader);
 
-    for (auto i : m_children) {
-        i->RenderAll(shader);
+        for (auto i : m_children) {
+            i->RenderAll(shader);
+        }
     }
 }
 
@@ -68,10 +70,10 @@ void MeshedEntity::ProcessInput(Input* input, float delta)
     }
 }
 
-void MeshedEntity::Update(float delta)
+void MeshedEntity::Update(double time,float delta)
 {
     for (auto &m_component : m_components) {
-        m_component->Update(delta);
+        m_component->Update(time,delta);
     }
 }
 

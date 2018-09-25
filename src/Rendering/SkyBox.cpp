@@ -127,9 +127,9 @@ GLuint* SkyBox::getTextures() {
     return m_textures;
 }
 
-void SkyBox::Update(float delta) {
+void SkyBox::Update(double time, float delta) {
 	for (auto m_component : m_components) {
-		m_component->Update(delta);
+		m_component->Update(time,delta);
 	}
 }
 

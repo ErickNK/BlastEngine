@@ -35,7 +35,7 @@ public:
 
     void ProcessInputAll(Input* input, float delta);
 
-    void UpdateAll(float delta);
+    void UpdateAll(double time,float delta);
 
     void RenderAll(Shader* shader) const;
 
@@ -47,24 +47,25 @@ public:
 
 //    std::vector<MeshedEntity*> GetAllAttached();
 
-    Mesh& getMesh() { return m_mesh; }
+    Mesh* getMesh() { return m_mesh; }
 
-    void setMesh(Mesh& m_mesh) { MeshedEntity::m_mesh = m_mesh; }
+    void setMesh(Mesh* m_mesh) { MeshedEntity::m_mesh = m_mesh; }
 
-    Material& getMaterial() { return m_material; }
+    Material* getMaterial() { return m_material; }
 
-    void setMaterial(Material& m_material) { MeshedEntity::m_material = m_material; }
+    void setMaterial(Material* m_material) { MeshedEntity::m_material = m_material; }
 
+    bool allow_render = true;
 protected:
     std::vector<MeshedEntity*> m_children;
     std::vector<EntityComponent<MeshedEntity>*> m_components;
 
-    Mesh m_mesh;
-    Material m_material;
+    Mesh* m_mesh;
+    Material* m_material;
 
     void ProcessInput(Input* input, float delta) override;
 
-    void Update(float delta) override;
+    void Update(double time, float delta) override;
 
     void Render(Shader* shader) const;
 };

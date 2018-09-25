@@ -60,11 +60,11 @@ void Terrain::InitTerrain() {
             }
         }
 
-        m_mesh = Mesh(vertices, vertices.size(), indices, indices.size());
+        m_mesh = new Mesh(vertices, vertices.size(), indices, indices.size());
         for (auto const &x : m_textureLocations) {
             textures.push_back(new Texture(x.second, x.first));
         }
-        m_material = Material(0.0, 0.0, textures);
+        m_material = new Material(0.0, 0.0, textures);
         m_transform = Transform();
 
         m_transform.GetPos().x = x;

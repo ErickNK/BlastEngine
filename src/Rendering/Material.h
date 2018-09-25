@@ -21,7 +21,7 @@ public:
 
     virtual ~Material();
 
-	void UseMaterial(Shader * shader) ;
+	virtual void UseMaterial(Shader * shader) ;
 
 	static void SetupUniforms(std::map<std::string, GLint>& m_uniforms,GLuint shaderProgram);
 
@@ -36,11 +36,12 @@ public:
     bool& isHasTransparency();
 
 private:
-	std::vector<Texture*> textures;
-    GLfloat specularIntensity;
+	GLfloat specularIntensity;
     GLfloat shininess;
     bool hasTransparency = false;
     bool hasFakeLighting = false;
+protected:
+	std::vector<Texture*> textures;
 };
 
 

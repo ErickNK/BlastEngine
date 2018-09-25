@@ -4,7 +4,6 @@
 
 #include "GUIEntity.h"
 #include "../Components/EntityComponent.h"
-#include "../../Rendering/GUI/GUITexture.h"
 
 GUIEntity::GUIEntity() = default;
 
@@ -43,10 +42,10 @@ void GUIEntity::ProcessInput(Input* input, float delta)
     }
 }
 
-void GUIEntity::Update(float delta)
+void GUIEntity::Update(double time, float delta)
 {
     for (auto &m_component : m_components) {
-        m_component->Update(delta);
+        m_component->Update(time, delta);
     }
 }
 

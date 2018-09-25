@@ -26,7 +26,9 @@ public:
 
 //    inline double DisplayWindowSyncTime(double dividend) { return m_windowSyncProfileTimer.DisplayAndReset("Window Sync Time: ", dividend); }
 
-    Shader* GetShader(ShaderType type);
+    Shader* BindShader(ShaderType type);
+
+    void UnBindShader(ShaderType type);
 
     void EnableCulling();
 
@@ -46,29 +48,43 @@ public:
 
     void RenderGUI();
 
-    void SetCurrentShader(ShaderType type);
-
     void SetCurrentScene(Scene * scene);
 
     Scene *getCurrentScene() const;
+
+    void ActivateClipPlane(int id, glm::vec4& plane);
+
+    void DeactivateClipPlane(int id);
+
+    bool render_terrain = true;
+    bool render_water = true;
+    bool render_lights = true;
+    bool render_gui = true;
+    bool render_effects = true;
+    bool render_shadows = false;
+
+    void CleanUP();
 
 private:
     //Shaders
     Shader* m_shaders[NUM_SHADER_TYPES];
     ShaderType m_current_shader;
-    Scene * m_current_scene = nullptr;
 
     //Profilers
     ProfileTimer m_renderProfileTimer;
 //    ProfileTimer m_windowSyncProfileTimer;
 
+    Scene * m_current_scene = nullptr;
     Window* m_window = nullptr;
+
+    glm::vec4 m_clipping_Planes [MAX_CLIP_PLANES];
+    bool m_activated_clipping_Planes [MAX_CLIP_PLANES];
 
     void RenderShadows();
     void RenderSkybox();
+    void RenderWater();
+    Shader* UpdateShader(Shader* shader);
     void CreateShaders();
-    void StartBlendColor();
-    void EndBlendColor();
     void StartAlphaBlending();
     void EndAlphaBlending();
 };

@@ -30,13 +30,13 @@ public:
                 );
             }
 
-            m_entity->getMaterial().UseMaterial(shader);
+            m_entity->getMaterial()->UseMaterial(shader);
 
             shader->resetDrawingTextureUnits();
 
         }
 
-        m_entity->getMesh().Draw();
+        m_entity->getMesh()->Draw();
     }
 };
 

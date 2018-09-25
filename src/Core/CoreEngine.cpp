@@ -82,7 +82,7 @@ void CoreEngine::Run() {
 
         if(m_shouldRender)
         {
-            m_window->Clear(0.0f, 0.0f, 0.0f, 1.0f);
+            m_window->Clear(0.0f, 1.0f, 1.0f, 1.0f);
 
             //Render game
             m_game->Render();

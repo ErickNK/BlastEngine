@@ -22,7 +22,7 @@ int main() {
     engine.setPhysicsEngine(&physicsEngine);
     engine.setRenderingEngine(&renderer);
     engine.setGame(&game);
-	engine.setFrameTimeLimit(1.0/100.0);
+	engine.setFrameTimeLimit(1.0/60.0);
 
 	engine.Init();
 	engine.Start();

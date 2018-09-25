@@ -15,10 +15,10 @@ void LightEntity::ProcessInput(Input* input, float delta)
     }
 }
 
-void LightEntity::Update(float delta)
+void LightEntity::Update(double time, float delta)
 {
     for (auto &m_component : m_light_components) {
-        m_component->Update(delta);
+        m_component->Update(time, delta);
     }
 }
 

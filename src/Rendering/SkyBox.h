@@ -33,7 +33,7 @@ public:
 
     SkyBox* AddComponent(EntityComponent<SkyBox,RenderingEngine>* component);
 
-    void Update(float delta);
+    void Update(double time, float delta);
 
 	void Render(RenderingEngine *engine);
 

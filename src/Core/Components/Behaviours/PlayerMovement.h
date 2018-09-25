@@ -18,7 +18,7 @@ public:
         this->handleMouse(input->getXChange(),input->getYChange());
     }
 
-    void Update(float delta) override {
+    void Update(double time, float delta) override {
 
     }
 

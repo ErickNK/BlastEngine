@@ -24,7 +24,7 @@ void Game::Update(double time, float delta)
 {
     m_updateTimer.StartInvocation();
 
-    m_currentScene->Update(delta);
+    m_currentScene->Update(time,delta);
     m_core_engine->GetPhysicsEngine()->Simulate(time, delta, m_currentScene);
     m_core_engine->GetPhysicsEngine()->HandleCollisions(m_currentScene);
 
