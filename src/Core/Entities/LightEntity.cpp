@@ -20,6 +20,10 @@ void LightEntity::Update(double time, float delta)
     for (auto &m_component : m_light_components) {
         m_component->Update(time, delta);
     }
+
+    for (auto m_component : m_shadow_components) {
+        m_component->Update(time, delta);
+    }
 }
 
 void LightEntity::RenderLight(RenderingEngine* engine) const

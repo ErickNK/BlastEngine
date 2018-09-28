@@ -53,7 +53,7 @@ void AnimatedLoader::processNode(aiNode * node, const aiScene * scene, AnimatedE
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
 
         //Process Object
-        MeshedEntity * child = this->processObject(mesh, scene);
+        AnimatedEntity * child = this->processObject(mesh, scene);
 
         //Add Components
         child->AddComponent(new MeshedRendererComponent());

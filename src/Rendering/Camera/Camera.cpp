@@ -97,11 +97,11 @@ void Camera::handleKeys(const bool *keys, GLfloat deltaTime) {
     }
 
     if(keys[GLFW_KEY_LEFT]){
-        m_yaw -= glm::degrees(5.0) * tvelocity;
+        m_yaw -= glm::degrees(10.0) * tvelocity;
     }
 
     if(keys[GLFW_KEY_RIGHT]){
-        m_yaw += glm::degrees(5.0) * tvelocity;
+        m_yaw += glm::degrees(10.0) * tvelocity;
     }
 }
 

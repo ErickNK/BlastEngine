@@ -189,10 +189,11 @@ MeshedEntity* MeshedLoader::processObject(aiMesh *mesh, const aiScene *scene) {
         vertices.push_back(vertex);
     }
 
+    //TODO : a way to set the specular intensity and shininess of object
     return new MeshedEntity(
             *new Mesh(vertices, vertices.size(), indices, indices.size()),
             *new Transform(),
-            *new Material(7.0f, 30.0f, textures, options)
+            *new Material(0.3f, 12.0f, textures, options)
     );
 }
 

@@ -61,9 +61,11 @@ public:
     bool render_lights = true;
     bool render_gui = true;
     bool render_effects = true;
-    bool render_shadows = false;
+    bool render_shadows = true;
 
     void CleanUP();
+
+    Window *getWindow();
 
 private:
     //Shaders

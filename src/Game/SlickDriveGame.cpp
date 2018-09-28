@@ -8,10 +8,11 @@
 #include "../Rendering/Lighting/SpotLight.h"
 #include "../Rendering/Terrain/Terrain.h"
 #include "Scenes/TestScene.h"
+#include "Scenes/ShadingScene.h"
 
 void SlickDriveGame::Init() {
 
-    auto * scene = new TestScene(this);
+    auto * scene = new ShadingScene(this);
     scene->Init();
     this->SetCurrentScene(scene);
 };

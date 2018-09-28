@@ -23,13 +23,9 @@ public:
 
     ~DirectionalLight() override;
 
-	void SetupLightSpace(std::map<std::string, GLint>& m_uniforms, GLuint shaderProgram);
-
 	void UseLight(std::map<std::string, GLint>& m_uniforms, int shadowTextureUnit);
 	
     static void SetupUniforms(std::map<std::string, GLint>& m_uniforms,GLuint shaderProgram);
-
-//    void AddToEngine(CoreEngine *engine) override;
 
 private:
 

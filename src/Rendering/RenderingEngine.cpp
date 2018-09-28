@@ -87,7 +87,7 @@ void RenderingEngine::CreateShaders(){
 void RenderingEngine::RenderAmbientLight(){
     auto * ambient_light_shader = (ForwardAmbientShader*)  BindShader(FORWARD_AMBIENT_SHADER);
 
-        ambient_light_shader->setLight(glm::vec3(1,1,1),0.4f);
+        ambient_light_shader->setLight(glm::vec3(1,1,1),0.006f);
 
         RenderAllMeshed();
 
@@ -134,6 +134,9 @@ void RenderingEngine::RenderLights()
         glDepthFunc(GL_LESS);
         glDepthMask(GL_TRUE);
         glDisable(GL_BLEND);
+
+        GLenum someError = glGetError();
+        assert( someError == GL_NO_ERROR);
     }
 }
 
@@ -152,6 +155,9 @@ void RenderingEngine::RenderTerrain() {
         glDepthFunc(GL_LESS);
         glDepthMask(GL_TRUE);
         glDisable(GL_BLEND);
+
+        GLenum someError = glGetError();
+        assert( someError == GL_NO_ERROR);
     }
 }
 
@@ -163,11 +169,17 @@ void RenderingEngine::RenderGUI() {
         if (entity != nullptr) entity->Render(this);
         glEnable(GL_DEPTH_TEST);
         EndAlphaBlending();
+
+        GLenum someError = glGetError();
+        assert( someError == GL_NO_ERROR);
     }
 }
 
 void RenderingEngine::RenderSkybox() {
-    if(m_current_scene != nullptr) m_current_scene->getCurrentSkybox()->Render(this);
+    if(m_current_scene != nullptr && m_current_scene->getCurrentSkybox() != nullptr) m_current_scene->getCurrentSkybox()->Render(this);
+
+    GLenum someError = glGetError();
+    assert( someError == GL_NO_ERROR);
 }
 
 void RenderingEngine::RenderShadows() {
@@ -175,7 +187,9 @@ void RenderingEngine::RenderShadows() {
         for (auto m_light : m_current_scene->getLights()) {
             m_light->RenderShadow(this);
         }
-        m_window->ResetViewPort();
+
+        GLenum someError = glGetError();
+        assert( someError == GL_NO_ERROR);
     }
 }
 
@@ -184,6 +198,9 @@ void RenderingEngine::RenderWater(){
         for (auto m_water : m_current_scene->getWaterBodies()) {
             m_water->RenderWater(this);
         }
+
+        GLenum someError = glGetError();
+        assert( someError == GL_NO_ERROR);
     }
 }
 
@@ -289,4 +306,8 @@ void RenderingEngine::DeactivateClipPlane(int id) {
 
 void RenderingEngine::CleanUP() {
 
+}
+
+Window *RenderingEngine::getWindow() {
+    return m_window;
 }

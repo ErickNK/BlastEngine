@@ -9,9 +9,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "ShadowMap.h"
 #include "../../Core/Entities/LightEntity.h"
 #include "../../Common/CommonValues.h"
+#include "../PostProcessing/FrameBufferObject.h"
+#include "Shadow.h"
 
 class CoreEngine;
 
@@ -23,7 +24,11 @@ public:
 
     virtual ~Light();
 
-	ShadowMap* GetShadowMap() { return shadowMap; }
+	FrameBufferObject GetShadowMapFBO() { return m_shadow.shadow_map_fbo; }
+
+	Shadow& GetShadow() { return m_shadow; }
+
+    GLuint GetShadowMapTexture() { return m_shadow.shadow_map_texture; }
 
 	const glm::vec3 &getColor() const;
 
@@ -43,13 +48,9 @@ protected:
 
 	GLfloat diffuseIntensity;
 
-	glm::mat4 lightProjection;
-
-	glm::mat4 lightSpace;
-
-	ShadowMap* shadowMap;
-
 	LightType m_type;
+
+	Shadow m_shadow;
 
 	//TODO improve cell shading
 	bool m_allow_cell_shading = false;

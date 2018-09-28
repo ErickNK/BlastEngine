@@ -183,3 +183,7 @@ bool& Material::isHasTransparency() {
     return hasTransparency;
 }
 
+void Material::AddTexture(Texture *texture) {
+    textures.push_back(texture);
+}
+

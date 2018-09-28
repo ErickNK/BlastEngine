@@ -6,10 +6,7 @@
 
 DirectionalLightShadowMapShader::DirectionalLightShadowMapShader() : Shader(DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER){
     m_shaderFiles[GL_VERTEX_SHADER] = "../res/shaders/DirectionalLightShadowMapShader.vert";
-}
-
-void DirectionalLightShadowMapShader::SetDirectionalLight(DirectionalLight *dLight) {
-    dLight->SetupLightSpace(m_uniforms, m_program);
+    m_shaderFiles[GL_FRAGMENT_SHADER] = "../res/shaders/DirectionalLightShadowMapShader.frag";
 }
 
 void DirectionalLightShadowMapShader::CreateUniforms() {

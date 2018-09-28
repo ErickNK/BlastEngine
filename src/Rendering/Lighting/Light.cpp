@@ -21,10 +21,7 @@ Light::Light(
 		color(color),
 		ambientIntensity(ambientIntensity),
 		diffuseIntensity(diffuseIntensity)
-{
-	shadowMap = new ShadowMap();
-	shadowMap->Init(shadowWidth,shadowHeight);
-}
+{}
 
 Light::~Light() {}
 

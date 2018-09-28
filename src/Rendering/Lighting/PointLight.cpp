@@ -30,7 +30,7 @@ void PointLight::CalculateRange(){
 void PointLight::UseLight(std::map<std::string, GLint>& m_uniforms, int shadowTextureUnit) {
 
 	//Start using Lights shadow map
-	shadowMap->UseShadowMap(shadowTextureUnit);
+    m_shadow.shadow_map_fbo.UseTexture(m_shadow.shadow_map_texture,shadowTextureUnit);
 
 	//Set shadowTextureUnit
 	glUniform1i(m_uniforms["pointLight.shadowMap"], shadowTextureUnit);

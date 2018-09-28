@@ -9,10 +9,15 @@ layout (location = 0) in vec3 position;
 //Uniform variables ------------------------------------
 
 uniform mat4 model;
-uniform mat4 directionalLightSpace;
+uniform mat4 view;
+uniform mat4 projection;
 
 //------------------------------------------------------
 
 void main(){
-	gl_Position = directionalLightSpace * model * vec4(position, 1.0);
+	vec4 worldPosition = model * vec4(position, 1.0);
+	vec4 viewPosition = view * worldPosition;
+	vec4 clipPosition = projection * viewPosition;
+
+	gl_Position = clipPosition;
 }

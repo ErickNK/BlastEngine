@@ -49,7 +49,7 @@ public:
 
             engine->DeactivateClipPlane(0);
 
-        m_entity->getReflectionFBO().UnBindFrameBuffer(1366,786);
+        m_entity->getReflectionFBO().UnBindFrameBuffer(engine->getWindow()->getBufferWidth(),engine->getWindow()->getBufferHeight());
 
         //REFRACTION
         m_entity->getRefractionFBO().BindFrameBuffer();
@@ -64,7 +64,7 @@ public:
 
             engine->DeactivateClipPlane(0);
 
-        m_entity->getRefractionFBO().UnBindFrameBuffer(1366,786);
+        m_entity->getRefractionFBO().UnBindFrameBuffer(engine->getWindow()->getBufferWidth(),engine->getWindow()->getBufferHeight());
 
         //RENDER
         m_entity->allow_render = true;

@@ -11,7 +11,6 @@ set(SOURCE_FILES
         Physics/Colliders/Plane.cpp
         Physics/Objects/PhysicsObject.cpp
         Physics/PhysicsEngine.cpp
-        Rendering/Lighting/ShadowMap.cpp
         Rendering/SkyBox.cpp
         Rendering/stb_image.c
         Rendering/Camera/Camera.cpp
@@ -34,7 +33,6 @@ set(SOURCE_FILES
         Physics/Colliders/Collider.h
         Physics/Colliders/IntersectData.h
         Physics/Colliders/Plane.h
-        Rendering/Lighting/ShadowMap.h
         Rendering/SkyBox.h
         Rendering/stb_image.h
         Rendering/Camera/Camera.h
@@ -51,8 +49,6 @@ set(SOURCE_FILES
         Rendering/Transform.h
         Core/Window.h
         main.cpp
-        Rendering/Lighting/OmniShadowMap.cpp
-        Rendering/Lighting/OmniShadowMap.h
         Core/CoreEngine.cpp Core/CoreEngine.h
         Common/Time.cpp Common/Time.h
         Common/Util.cpp Common/Util.h
@@ -116,7 +112,7 @@ set(SOURCE_FILES
         Rendering/PostProcessing/Screen.cpp Rendering/PostProcessing/Screen.h
         Rendering/Shaders/PostProcessingScreenShader.h
         Rendering/PostProcessing/FrameBufferObject.cpp Rendering/PostProcessing/FrameBufferObject.h
-        Rendering/Primitives/Water.h Rendering/Primitives/Water.cpp Core/Components/RenderingComponents/WaterRendererComponent.h Rendering/Shaders/WaterShader.h) # which files should be compiled
+        Rendering/Primitives/Water.h Rendering/Primitives/Water.cpp Core/Components/RenderingComponents/WaterRendererComponent.h Rendering/Shaders/WaterShader.h Game/Scenes/ShadingScene.h Rendering/Lighting/Shadow.h Rendering/Camera/QuatCamera.h Game/SphereMovement.h) # which files should be compiled
 
 add_executable(MorderOpenGLUdemyTutorial ${SOURCE_FILES}) # which files should produce executables
 

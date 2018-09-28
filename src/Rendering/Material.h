@@ -35,6 +35,8 @@ public:
 
     bool& isHasTransparency();
 
+    void AddTexture(Texture *texture);
+
 private:
 	GLfloat specularIntensity;
     GLfloat shininess;
