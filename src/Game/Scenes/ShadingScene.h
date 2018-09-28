@@ -16,6 +16,8 @@
 #include "../../Core/Components/RenderingComponents/GUIRendererComponent.h"
 #include "../../Rendering/Loaders/GUILoader.h"
 #include "../SphereMovement.h"
+#include "../../Core/Components/Behaviours/PlayerMovement.h"
+#include "../../Rendering/Camera/TPSCamera.h"
 
 class ShadingScene : public Scene{
 public:
@@ -32,9 +34,10 @@ public:
 
     void SetupCamera(){
         //CAMERA
-        auto * camera = new QuatCamera(
+        auto * camera = new TPSCamera(
                 glm::vec3(0.0f,15.0f,10.0f),
                 glm::vec3(0.0f,1.0f,0.0f),
+                0.0f,
                 0.0f,
                 0.0f,
                 15.0f,
@@ -47,6 +50,7 @@ public:
                 1.0f,
                 1000.0f
         );
+        camera->setAllowMovement(false);
         this->AddCamera(camera);
         this->SetCurrentCamera(0);
     }
@@ -69,6 +73,9 @@ public:
         options[FakeLighting] = false;
 
         m_meshed_loader->LoadGameObject("../res/objects/sphere.obj",sphere,options);
+        sphere->AddComponent(new PlayerMovement());
+        ((TPSCamera*) this->getCurrentCamera())->SetAttachmentComponent(new TPSCameraAttachment(sphere));
+
         sphere->getTransform().GetScale() *= 10.0f;
         sphere->getTransform().GetPos().y = 15.0f;
         this->AddMeshedToScene(sphere);

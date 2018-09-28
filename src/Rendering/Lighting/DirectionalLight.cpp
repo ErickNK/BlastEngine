@@ -26,7 +26,7 @@ DirectionalLight::DirectionalLight(
     direction(glm::normalize(direction))
 {
 
-    m_transform.SetPos(glm::vec3(0.0f,30.0f,5.0f));
+    m_transform.SetPos(glm::vec3(0.0f,40.0f,5.0f));
     m_transform.LookAt(direction);
     m_shadow.m_shadow_camera.setProjection(lightProj);
 

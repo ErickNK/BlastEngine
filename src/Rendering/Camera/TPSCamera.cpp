@@ -4,29 +4,27 @@
 
 #include "TPSCamera.h"
 
-void TPSCamera::UpdateView()
-{
+void TPSCamera::UpdateView() {
 
-    m_forward = glm::normalize(m_component->getMeshedEntity()->getTransform().GetPos() - m_transform.GetPos());
+//    //Pitch locally
+//    glm::quat qPitch = glm::angleAxis(-m_pitch, m_transform.GetRight());
+//    //Yaw globally
+//    glm::quat qYaw = glm::angleAxis(-m_yaw, m_worldUp);
+//
+//    //For a FPS camera we can omit roll
+//    glm::quat orientation = qPitch * qYaw;
+//
+//    m_component->getMeshedEntity()->getTransform().SetRot(glm::normalize(orientation));
+//
+//    m_transform.SetRot(glm::normalize(orientation));
 
-    //detmine axis for pitch rotation
-    m_right = glm::normalize(glm::cross(m_forward, m_up));
-    //compute quaternion for pitch based on the camera pitch angle
-    glm::quat pitch_quat = glm::angleAxis(m_pitch, m_right);
-    //determine heading quaternion from the camera up vector and the heading angle
-    glm::quat heading_quat = glm::angleAxis(0.0f, m_up);
-    //add the two quaternions
-    glm::quat temp = glm::cross(pitch_quat, heading_quat);
-    temp = glm::normalize(temp);
-    //update the direction from the quaternion
-    m_forward = glm::rotate(temp, m_forward);
-    //set the look at to be infront of the camera
-    m_look_at = m_transform.GetPos() + m_forward * 1.0f;
-    //damping for smooth camera
-    m_yaw *= .5;
-    m_pitch *= .5;
+    m_look_at = m_component->getMeshedEntity()->getTransform().GetPos();
 
-    m_viewMatrix = glm::lookAt(m_transform.GetPos(), m_look_at, m_up);
+    m_viewMatrix = glm::lookAt(m_transform.GetPos(), m_look_at, m_component->getMeshedEntity()->getTransform().GetUp());
+//
+//    m_look_at = m_transform.GetPos() + m_transform.GetForward() * 1.0f;
+//
+//    m_viewMatrix = glm::lookAt(m_transform.GetPos(), m_look_at, m_transform.GetUp());
 }
 
 void TPSCamera::ProcessInput(Input *input, float delta) {
@@ -43,8 +41,8 @@ void TPSCamera::CalulateZoom(Input* input) {
 }
 
 void TPSCamera::CalulatePitch(Input* input) {
-    auto pitchChange = static_cast<float>(input->getYChange() * m_turnSpeed);
-    m_pitch = pitchChange;
+    auto pitchChange = static_cast<float>(input->getYChange() * pitch_angle_speed);
+    m_pitch -= pitchChange;
 }
 
 void TPSCamera::CalulateAngleAround(Input* input) {
@@ -61,7 +59,7 @@ float TPSCamera::CalculateVerticalDistnace() {
 }
 
 void TPSCamera::setYaw(float d) {
-    m_yaw = d * angle_around_speed;
+    m_yaw = d;
 }
 
 void TPSCamera::setXPos(float d) {
@@ -81,16 +79,4 @@ void TPSCamera::Attach(MeshedEntity* meshedEntity) {
 void TPSCamera::SetAttachmentComponent(TPSCameraAttachment *pAttachment) {
     m_component = pAttachment;
     m_component->SetCamera(this);
-}
-
-void TPSCamera::setForward(glm::vec3 forward) {
-    m_forward = forward;
-}
-
-void TPSCamera::setTransform(Transform &transform) {
-    m_transform = transform;
-}
-
-void TPSCamera::setLookAt(glm::vec3 lookat) {
-    m_look_at = lookat;
 }
