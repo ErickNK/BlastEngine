@@ -4,8 +4,8 @@
 
 #include "AnimationShader.h"
 AnimationShader::AnimationShader() : Shader(DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER){
-    m_shaderFiles[GL_VERTEX_SHADER] = "../res/shaders/DirectionalLightShadowMapShader.vert";
-    m_shaderFiles[GL_VERTEX_SHADER] = "../res/shaders/DirectionalLightShadowMapShader.vert";
+    m_shaderFiles[GL_VERTEX_SHADER] = "DirectionalLightShadowMapShader.vert";
+    m_shaderFiles[GL_VERTEX_SHADER] = "DirectionalLightShadowMapShader.vert";
 }
 
 void SetAnimated(AnimatedEntity *animatedEntity){

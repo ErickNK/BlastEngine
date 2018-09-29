@@ -6,8 +6,8 @@
 #include "../Material.h"
 
 ForwardPointLightShader::ForwardPointLightShader() : Shader(FORWARD_POINT_LIGHT_SHADER){
-    m_shaderFiles[GL_VERTEX_SHADER] = "../res/shaders/BasicShader.vert";
-    m_shaderFiles[GL_FRAGMENT_SHADER] = "../res/shaders/ForwardPointLight.frag";
+    m_shaderFiles[GL_VERTEX_SHADER] = "BasicShader.vert";
+    m_shaderFiles[GL_FRAGMENT_SHADER] = "ForwardPointLight.frag";
 }
 
 void ForwardPointLightShader::CreateUniforms() {

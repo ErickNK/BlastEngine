@@ -14,8 +14,8 @@
 class WaterShader: public Shader  {
 public:
     WaterShader() : Shader(WATER_SHADER){
-        m_shaderFiles[GL_VERTEX_SHADER] = "../res/shaders/WaterShader.vert";
-        m_shaderFiles[GL_FRAGMENT_SHADER] = "../res/shaders/WaterShader.frag";
+        m_shaderFiles[GL_VERTEX_SHADER] = "WaterShader.vert";
+        m_shaderFiles[GL_FRAGMENT_SHADER] = "WaterShader.frag";
     }
 
     void CreateUniforms() override {

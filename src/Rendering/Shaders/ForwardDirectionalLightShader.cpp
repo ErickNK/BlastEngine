@@ -7,8 +7,8 @@
 #include "../Lighting/DirectionalLight.h"
 
 ForwardDirectionalLightShader::ForwardDirectionalLightShader() : Shader(FORWARD_DIRECTIONAL_LIGHT_SHADER){
-    m_shaderFiles[GL_VERTEX_SHADER] = "../res/shaders/BasicShader.vert";
-    m_shaderFiles[GL_FRAGMENT_SHADER] = "../res/shaders/ForwardDirectionalLight.frag";
+    m_shaderFiles[GL_VERTEX_SHADER] = "BasicShader.vert";
+    m_shaderFiles[GL_FRAGMENT_SHADER] = "ForwardDirectionalLight.frag";
 }
 
 void ForwardDirectionalLightShader::CreateUniforms() {

@@ -1,6 +1,8 @@
 #include <utility>
 
 #include "Shader.h"
+#include "../../Common/Util.h"
+#include "../../Common/CommonValues.h"
 #include <iostream>
 #include <fstream>
 
@@ -164,7 +166,7 @@ void Shader::UpdateCamera(const Camera &camera) {
 std::string Shader::LoadShader(const std::string& fileName) {
 
     std::ifstream file;
-    file.open((fileName).c_str());
+    file.open((SHADER_DIRECTORY + fileName).c_str());
 
     std::string output;
     std::string line;
@@ -174,7 +176,16 @@ std::string Shader::LoadShader(const std::string& fileName) {
         while(file.good())
         {
             getline(file, line);
-            output.append(line + "\n");
+            if(line.find("#include") == std::string::npos)
+                output.append(line + "\n");
+            else
+            {
+                std::string includeFileName = Util::Split(line, ' ')[1];
+                includeFileName = includeFileName.substr(1,includeFileName.length() - 2);
+
+                std::string toAppend = LoadShader(includeFileName);
+                output.append(toAppend + "\n");
+            }
         }
     }
     else

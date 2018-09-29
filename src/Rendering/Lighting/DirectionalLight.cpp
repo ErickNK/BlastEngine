@@ -35,9 +35,9 @@ DirectionalLight::DirectionalLight(
 
     options[TYPE] = GL_TEXTURE;
     options[TEXTURE_TYPE] = GL_TEXTURE_2D;
-    options[INTERNAL_COMPONENT_FORMAT] = GL_DEPTH_COMPONENT32;
-    options[EXTERNAL_COMPONENT_FORMAT] = GL_DEPTH_COMPONENT;
-    options[ATTACHMENT_TYPE] = GL_DEPTH_ATTACHMENT;
+    options[INTERNAL_COMPONENT_FORMAT] = GL_RG32F;
+    options[EXTERNAL_COMPONENT_FORMAT] = GL_RGBA;
+    options[ATTACHMENT_TYPE] = GL_COLOR_ATTACHMENT0;
     options[ENABLE_OVERLAY_FILTER] = GL_TRUE;
     options[ENABLE_WRAP_FILTER] = GL_TRUE;
     options[WRAP_FILTER] = GL_CLAMP_TO_BORDER;
@@ -54,7 +54,9 @@ void DirectionalLight::UseLight(std::map<std::string, GLint>& m_uniforms,int sha
 
     glm::vec3 forward = m_transform.GetForward();
 
-    m_shadow.lightSpace = m_shadow.m_shadow_camera.getProjection() * m_shadow.m_shadow_camera.getViewMatrix();
+    m_shadow.lightSpace = m_shadow.biasMatrix //Convert to 0-1 range. Which is what depth range is
+                          * m_shadow.m_shadow_camera.getProjection()
+                          * m_shadow.m_shadow_camera.getViewMatrix();
 
     //Start using Lights shadow map
     m_shadow.shadow_map_fbo.UseTexture(m_shadow.shadow_map_texture,shadowTextureUnit);
@@ -115,7 +117,3 @@ void DirectionalLight::SetupUniforms(std::map<std::string, GLint>& m_uniforms,GL
     GLenum someError = glGetError();
     assert( someError == GL_NO_ERROR);
 }
-
-/*void DirectionalLight::AddToEngine(CoreEngine *engine) {
-    engine->GetRenderingEngine()->AddDirectionalLight(this);
-}*/

@@ -5,6 +5,7 @@
 #ifndef MORDEROPENGLUDEMYTUTORIAL_COMMONVALUES_H
 #define MORDEROPENGLUDEMYTUTORIAL_COMMONVALUES_H
 
+#include <string>
 #include <GL/glew.h>
 #include "../Rendering/stb_image.h"
 
@@ -13,6 +14,8 @@ const int
 	MAX_GLOBAL_TEXTURE_UNITS = 16, 
 	MAX_DRAWING_TEXTURE_UNITS = 16,
     MAX_CLIP_PLANES = 6;
+
+const std::string SHADER_DIRECTORY = "../res/shaders/";
 
 /**
  * Uniforms used

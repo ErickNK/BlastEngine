@@ -7,8 +7,8 @@
 #include "../Lighting/Light.h"
 
 ForwardAmbientShader::ForwardAmbientShader() : Shader(FORWARD_AMBIENT_SHADER){
-    m_shaderFiles[GL_VERTEX_SHADER] = "../res/shaders/BasicShader.vert";
-    m_shaderFiles[GL_FRAGMENT_SHADER] = "../res/shaders/ForwardAmbient.frag";
+    m_shaderFiles[GL_VERTEX_SHADER] = "BasicShader.vert";
+    m_shaderFiles[GL_FRAGMENT_SHADER] = "ForwardAmbient.frag";
 }
 
 void ForwardAmbientShader::CreateUniforms() {

@@ -11,8 +11,8 @@
 class PostProcessingScreenShader: public Shader {
 public:
     PostProcessingScreenShader() : Shader(POST_PROCESSING_SCREEN_SHADER){
-        m_shaderFiles[GL_VERTEX_SHADER] = "../res/shaders/PostProcessingScreen.vert";
-        m_shaderFiles[GL_FRAGMENT_SHADER] = "../res/shaders/PostProcessingScreen.frag";
+        m_shaderFiles[GL_VERTEX_SHADER] = "PostProcessingScreen.vert";
+        m_shaderFiles[GL_FRAGMENT_SHADER] = "PostProcessingScreen.frag";
     }
 
     void CreateUniforms() override {

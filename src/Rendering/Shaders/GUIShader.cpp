@@ -4,8 +4,8 @@
 
 #include "GUIShader.h"
 GUIShader::GUIShader() : Shader(TERRAIN_SHADER){
-    m_shaderFiles[GL_VERTEX_SHADER] = "../res/shaders/GUIShader.vert";
-    m_shaderFiles[GL_FRAGMENT_SHADER] = "../res/shaders/GUIShader.frag";
+    m_shaderFiles[GL_VERTEX_SHADER] = "GUIShader.vert";
+    m_shaderFiles[GL_FRAGMENT_SHADER] = "GUIShader.frag";
 }
 
 void GUIShader::CreateUniforms() {

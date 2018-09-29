@@ -1,5 +1,5 @@
 #version 400
-
+#include "Sampling.frag"
 //Constant variables -----------------------------------------
 
 const int MAX_MATERIAL_TEXTURES = 3;
@@ -76,48 +76,24 @@ float CalcDirectionalLightShadowFactor(DirectionalLight directionalLight){
 
     //Convert into normalized device coordinates (-1,1)
     vec3 projCoords = vDirectionalLightSpacePosition.xyz / vDirectionalLightSpacePosition.w;
-    //Convert to 0-1 range. Which is what depth range is
-    projCoords = projCoords / 2.0 + 0.5;
 
-    //Get how far (forwards and backwards) from the light the fragment is.
+    //Get how far (forwards and backwards) from the light this fragment is.
     float currentDepth = projCoords.z;
 
-    //Deal with shadow acne
+//    Deal with shadow acne
     vec3 normalizedNormal = normalize(vNormal);
     vec3 normalizedLightDir = normalize(-directionalLight.direction);
     float bias = max(0.05 * (1 - dot(normalizedNormal,normalizedLightDir)), 0.0005);
 
-    //PCF
+    //PCF`
     float shadow = 0.0f;
     vec2 texelSize = 1.0 / textureSize(directionalLight.shadowMap, 0); //find out how big a unit texel is.
 
-    //We sample all the first texels around this fragment's texel. Forming a cube.
-    for(int x = -1 /*Start at further left of the exact x texel of this fragment*/;
-        x <= 1 /*Upto the right*/;
-        ++x){
-        for(int y = -1/*Start at further top of the exact y texel of this fragment*/;
-            y <= 1 /*Upto the bottom*/; ++y){
-            /*
-             * Get depth of the fragment relative to the light in orthographic projection.
-             * Each texel in the shadow map contains depth data in the .r attribute instead
-             * of color like a normal texture.
-             * */
-            float pcfDepth = texture(
-                    directionalLight.shadowMap,
-                    projCoords.xy + vec2(x,y) * texelSize /*Get the exact texel in the current loop. Remember
-                * the .xy only point to the current fragments texel not the one we want in the current
-                * loop. */
-            ).r;
-            //Deal with shadow acne
-            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0; /*Accumulate the average shadow.*/
-        }
+    shadow = SampleShadowMapPCF(directionalLight.shadowMap,projCoords.xy,currentDepth - bias,texelSize,1);
+
+    if(currentDepth > 1.0){ //For points beyond the light space/ beyond the far plane
+        shadow = 0.0; //Disable shadow and just say there is total light.
     }
-
-    shadow /= 9.0f; /*Find average of the shadows we are collecting from the sample*/
-
-//    if(projCoords.z > 1.0){ //For points beyond the light space/ beyond the far plane
-//        shadow = 0.0; //Disable shadow and just say there is total light.
-//    }
 
     return shadow;
 }

@@ -5,8 +5,8 @@
 #include "SkyBoxShader.h"
 #include "../Fog.h"
 SkyBoxShader::SkyBoxShader() : Shader(SKY_BOX_SHADER){
-    m_shaderFiles[GL_VERTEX_SHADER] = "../res/shaders/SkyBox.vert";
-    m_shaderFiles[GL_FRAGMENT_SHADER] = "../res/shaders/SkyBox.frag";
+    m_shaderFiles[GL_VERTEX_SHADER] = "SkyBox.vert";
+    m_shaderFiles[GL_FRAGMENT_SHADER] = "SkyBox.frag";
 }
 
 void SkyBoxShader::CreateUniforms() {

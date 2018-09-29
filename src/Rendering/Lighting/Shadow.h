@@ -22,13 +22,17 @@ public:
             0.0005f
         );
 
-    glm::mat4 lightProjection;
+    glm::mat4 biasMatrix = glm::scale(glm::vec3(0.5,0.5,0.5)) * glm::translate(glm::vec3(1.0,1.0,1.0));
 
     glm::mat4 lightSpace;
 
     FrameBufferObject shadow_map_fbo;
 
     GLuint shadow_map_texture = 0;
+
+    bool m_flipFaces = false;
+
+    float m_bias;
 };
 
 

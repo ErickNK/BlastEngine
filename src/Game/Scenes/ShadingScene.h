@@ -86,11 +86,13 @@ public:
         //LIGHT
         sun = new DirectionalLight(
                 glm::vec3(1.0f,1.0f,1.0f),
-                glm::vec3(0.0f,-1.0,-1.0f),
+                glm::vec3(15.0f,-15.0,0.0f),
                 0.0f, 0.9f,
                 2048, 2048,
                 glm::ortho(-200.0f, 200.0f, -200.0f, 200.0f, 1.0f, 10000.0f));
 
+        sun->getTransform().SetPos(glm::vec3(0.0f,100.0f,100.0f));
+        sun->GetShadow().m_flipFaces = false;
         sun->AddComponent(new LightComponent());
         sun->AddComponent(new LightMovement());
         sun->AddShadowComponent(new ShadowRendererComponent());
@@ -100,9 +102,7 @@ public:
     void CreateGUI(){
         std::map<Texture*,Transform*> textures;
 
-//    textures.emplace(this->m_waters[0]->getReflectionFBO().GetTexture(this->m_waters[0]->getReflectionTexture()),new Transform(glm::vec3(-0.5f,0.5f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
     textures.emplace(new Texture(sun->GetShadowMapFBO().GetTextures()[sun->GetShadowMapTexture()],GUI_TEXTURE),new Transform(glm::vec3(0.5f,0.5f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
-//    textures.emplace(new Texture("../res/textures/gui/health.png",GUI_TEXTURE),new Transform(glm::vec3(-0.75f,-0.9f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
 
         auto * guiEntity = new GUIEntity();
         guiEntity->InitMesh();

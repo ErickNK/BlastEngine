@@ -5,8 +5,8 @@
 #include "TerrainShader.h"
 
 TerrainShader::TerrainShader() : Shader(TERRAIN_SHADER){
-    m_shaderFiles[GL_VERTEX_SHADER] = "../res/shaders/SimpleTerrainShader.vert";
-    m_shaderFiles[GL_FRAGMENT_SHADER] = "../res/shaders/SimpleTerrainShader.frag";
+    m_shaderFiles[GL_VERTEX_SHADER] = "SimpleTerrainShader.vert";
+    m_shaderFiles[GL_FRAGMENT_SHADER] = "SimpleTerrainShader.frag";
 }
 
 void TerrainShader::CreateUniforms() {

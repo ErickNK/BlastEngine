@@ -7,8 +7,8 @@
 
 
 FogShader::FogShader() : Shader(FOG_SHADER){
-    m_shaderFiles[GL_VERTEX_SHADER] = "../res/shaders/FogShader.vert";
-    m_shaderFiles[GL_FRAGMENT_SHADER] = "../res/shaders/FogShader.frag";
+    m_shaderFiles[GL_VERTEX_SHADER] = "FogShader.vert";
+    m_shaderFiles[GL_FRAGMENT_SHADER] = "FogShader.frag";
 }
 
 void FogShader::CreateUniforms() {

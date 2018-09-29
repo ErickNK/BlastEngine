@@ -23,17 +23,17 @@ public:
         auto * shader = (DirectionalLightShadowMapShader*) engine->BindShader(DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER);
 
             m_entity->GetShadowMapFBO().BindFrameBuffer(); //Begin writing
-            m_entity->GetShadowMapFBO().setForDrawing(false,0);
+            m_entity->GetShadowMapFBO().setForDrawing(true,0);
+            if(m_entity->GetShadow().m_flipFaces) glCullFace(GL_FRONT);
 
                 glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-//                m_entity->GetShadow().m_shadow_camera.setViewMatrix(engine->getCurrentScene()->getCurrentCamera()->getViewMatrix());
 
                 shader->UpdateCamera(m_entity->GetShadow().m_shadow_camera);
 
                 engine->RenderAllMeshed();
 
+            if(m_entity->GetShadow().m_flipFaces) glCullFace(GL_BACK);
             m_entity->GetShadowMapFBO().UnBindFrameBuffer(engine->getWindow()->getBufferWidth(),engine->getWindow()->getBufferHeight()); //stop writing
 
         engine->UnBindShader(DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER);
