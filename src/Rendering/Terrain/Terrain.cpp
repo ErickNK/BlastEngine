@@ -101,7 +101,7 @@ void Terrain::AddComponents(){
 }
 
 void Terrain::RenderTerrain(RenderingEngine *engine) {
-    m_terrain_renderer->RenderTerrain(engine);
+    m_terrain_renderer->Render(engine);
 }
 
 float Terrain::getPixelHeight(int x, int y) {

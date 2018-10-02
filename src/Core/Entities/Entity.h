@@ -9,6 +9,8 @@
 #include "../../Rendering/Transform.h"
 #include "../Input.h"
 
+class RenderingEngine;
+
 class Entity {
 public:
 
@@ -18,12 +20,25 @@ public:
 
     virtual void Update(double time, float delta) {}
 
+    virtual void Render(RenderingEngine* engine) {}
+
     Transform& getTransform() { return m_transform; }
 
     void setTransform(Transform& transform) { m_transform = transform; }
 
+    bool isAllowRender() const {
+        return allow_render;
+    }
+
+    void setAllowRender(bool allow_render) {
+        Entity::allow_render = allow_render;
+    }
+
 protected:
+
     Transform m_transform;
+
+    bool allow_render = true;
 };
 
 

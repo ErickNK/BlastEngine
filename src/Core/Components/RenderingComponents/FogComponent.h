@@ -9,7 +9,7 @@
 #include "../../../Rendering/RenderingEngine.h"
 #include "../EntityComponent.h"
 
-class FogComponent : public EntityComponent<EffectEntity,RenderingEngine> {
+class FogComponent : public EntityComponent<EffectEntity> {
 
     void Render(RenderingEngine *engine) const override {
         auto * shader = (FogShader*) engine->BindShader(FOG_SHADER);

@@ -18,9 +18,9 @@ void TPSCamera::UpdateView() {
 //
 //    m_transform.SetRot(glm::normalize(orientation));
 
-    m_look_at = m_component->getMeshedEntity()->getTransform().GetPos();
+    m_look_at = m_component->getEntity()->getTransform().GetPos();
 
-    m_viewMatrix = glm::lookAt(m_transform.GetPos(), m_look_at, m_component->getMeshedEntity()->getTransform().GetUp());
+    m_viewMatrix = glm::lookAt(m_transform.GetPos(), m_look_at, m_component->getEntity()->getTransform().GetUp());
 //
 //    m_look_at = m_transform.GetPos() + m_transform.GetForward() * 1.0f;
 //

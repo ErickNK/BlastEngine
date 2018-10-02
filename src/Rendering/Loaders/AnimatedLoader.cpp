@@ -5,25 +5,62 @@
 #include "AnimatedLoader.h"
 #include "../../Core/Components/RenderingComponents/MeshedRendererComponent.h"
 #include "../../Animation/AnimatedEntity.h"
+#include "../../Core/Components/RenderingComponents/AnimatedRendererComponent.h"
+#include "../../Common/Util.h"
+#include "MeshedLoader.h"
+#include "../../Animation/AnimationComponent.h"
+#include "../TextureAtlas.h"
 
 AnimatedLoader::AnimatedLoader() = default;
 
 void AnimatedLoader::Clean(){
     withTexManuallyProvided = false;
 
-    this->textures_loaded.clear();
+    textures_loaded.clear();
 
-    hasTransparency = false;
+    all_joints.clear();
 
-//    for (bool &option : options) {
-//        option = false;
-//    }
+    necessityMap.clear();
+
+    for (bool &option : options) {
+        option = false;
+    }
 }
+
+bool AnimatedLoader::LoadAnimatedObject(std::string path,
+                                  std::map<TextureTypeEnum, std::string> textureLocations,
+                                  AnimatedEntity *root, bool *options) {
+    withTexManuallyProvided = true;
+    std::copy(options, options + Num_Options, AnimatedLoader::options);
+
+    for (auto const& x : textureLocations) {
+        this->textures_loaded.push_back( new Texture(x.second, x.first)); //Keep so we don't reload it.
+    }
+
+    return LoadAnimatedObject(std::move(path),root,AnimatedLoader::options);
+}
+
+bool AnimatedLoader::LoadAnimatedObject(std::string path,
+                                  std::map<TextureTypeEnum, std::string*> textureAtlases,
+                                  AnimatedEntity *root, bool *options) {
+    withTexManuallyProvided = true;
+    std::copy(options, options + Num_Options, AnimatedLoader::options);
+
+    for (auto const& x : textureAtlases) {
+        int index = stoi(std::string(x.second[1]));
+        int numberOfRows = stoi(std::string(x.second[2]));
+        this->textures_loaded.push_back( new TextureAtlas(x.second[0], x.first,index,numberOfRows)); //Keep so we don't reload it.
+    }
+
+    return LoadAnimatedObject(std::move(path),root,AnimatedLoader::options);
+}
+
+
 
 bool AnimatedLoader::LoadAnimatedObject(std::string path, AnimatedEntity *root, bool *options) {
     AnimatedLoader::path = path;
     AnimatedLoader::directory = path.substr(0, path.find_last_of('/'));
-//    std::copy(options, options + Num_Options, MeshedLoader::options);
+    std::copy(options, options + Num_Options, AnimatedLoader::options);
 
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(path,
@@ -39,24 +76,31 @@ bool AnimatedLoader::LoadAnimatedObject(std::string path, AnimatedEntity *root, 
         return false;
     }
 
-    this->processNode(scene->mRootNode, scene, root);
+    this->processNode(scene->mRootNode, scene, root, aiMatrix4x4());
+
+    Joint * rootJoint = nullptr;
+    this->processSkeleton(scene->mRootNode, rootJoint, root);
+
+    root->AddComponent(new AnimationComponent());
 
     Clean();
 
     return true;
 }
 
-void AnimatedLoader::processNode(aiNode * node, const aiScene * scene, AnimatedEntity* root) {
+void AnimatedLoader::processNode(aiNode * node, const aiScene * scene, AnimatedEntity* root, aiMatrix4x4 accTransform) {
+
+    node->mTransformation = node->mTransformation * accTransform;
 
     //Process leaf nodes
     for (GLuint i = 0; i < node->mNumMeshes; i++) {
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
 
         //Process Object
-        AnimatedEntity * child = this->processObject(mesh, scene);
+        AnimatedEntity * child = this->processObject(node, mesh, scene);
 
         //Add Components
-        child->AddComponent(new MeshedRendererComponent());
+        this->AddComponents(child);
 
         //Add children
         root->AddChild(child);
@@ -66,23 +110,21 @@ void AnimatedLoader::processNode(aiNode * node, const aiScene * scene, AnimatedE
     for (GLuint i = 0; i < node->mNumChildren; i++) {
         auto * group = new AnimatedEntity();
 
-        this->processNode(node->mChildren[i], scene, group);
+        this->processNode(node->mChildren[i], scene, group, node->mTransformation);
 
         //Add node
         root->AddChild(group);
     }
 }
 
-AnimatedEntity* AnimatedLoader::processObject(aiMesh *mesh, const aiScene *scene) {
+AnimatedEntity* AnimatedLoader::processObject(aiNode * node, aiMesh *mesh, const aiScene *scene) {
 
-    std::vector<Vertex> vertices;
+    std::vector<AnimatedVertex> vertices;
     std::vector<GLuint> indices;
     std::vector<Texture*> textures;
+    std::vector<Joint*> joints;
     glm::vec4 color = glm::vec4(1,1,1,1);
-    std::vector<Joint> joints;
 
-    std::map<int,int> bone_index_map0;
-    std::map<int,int> bone_index_map1;
 
     //Process the indices
     for (GLuint i = 0; i < mesh->mNumFaces; i++) {
@@ -130,14 +172,18 @@ AnimatedEntity* AnimatedLoader::processObject(aiMesh *mesh, const aiScene *scene
 
     //Process the vertices
     for (GLuint i = 0; i < mesh->mNumVertices; i++) {
-        Vertex vertex;
+        AnimatedVertex vertex;
         glm::vec3 vector;
 
-        vector.x = mesh->mVertices[i].x;
-        vector.y = mesh->mVertices[i].y;
-        vector.z = mesh->mVertices[i].z;
-        vertex.SetPos(vector);
+        //POSITION
+        {
+            vector.x = mesh->mVertices[i].x;
+            vector.y = mesh->mVertices[i].y;
+            vector.z = mesh->mVertices[i].z;
+            vertex.SetPos(vector);
+        }
 
+        //NORMALS
         if (mesh->mNormals != NULL) {
             vector.x = mesh->mNormals[i].x;
             vector.y = mesh->mNormals[i].y;
@@ -151,7 +197,7 @@ AnimatedEntity* AnimatedLoader::processObject(aiMesh *mesh, const aiScene *scene
             vertex.SetNormal(vector);
         }
 
-
+        //TEXTURE COORDS
         if (mesh->mTextureCoords[0]) {
             glm::vec2 vec;
             vec.x = mesh->mTextureCoords[0][i].x;
@@ -162,6 +208,7 @@ AnimatedEntity* AnimatedLoader::processObject(aiMesh *mesh, const aiScene *scene
             vertex.SetTexCoord(glm::vec2(0.0f, 0.0f));
         }
 
+        //TANGENTS
         if (mesh->HasTangentsAndBitangents()) {
             glm::vec3 vec;
             vec.x = mesh->mTangents[i].x;
@@ -177,43 +224,104 @@ AnimatedEntity* AnimatedLoader::processObject(aiMesh *mesh, const aiScene *scene
         vertices.push_back(vertex);
     }
 
-
     // BONES
-    for(int b = 0; b < mesh->mNumBones; b++){
-        Joint joint;
-        aiBone* bone = mesh->mBones[b];
-        joint.m_name = bone->mName.C_Str();
+    for(unsigned int b = 0; b < mesh->mNumBones; b++){
+        if(joints.size() <= MAX_JOINTS_PER_MESH){
 
-        //Weights
-        for(int w = 0; w < bone->mNumWeights; w++) {
+            aiBone* bone = mesh->mBones[b];
 
-            aiVertexWeight weight = bone->mWeights[w];
-            int vertexIndex = weight.mVertexId;
+            auto * joint = new Joint();
 
-            if(bone_index_map0.find(vertexIndex) != bone_index_map0.end()){
+            joint->setMeshIndex(b);
+            joint->setName(bone->mName.C_Str());
 
-            }else if(bone_index_map0.at(vertexIndex) == 0){
+            glm::mat4 offsetMatrix = Util::fromAssimp(bone->mOffsetMatrix);
+            joint->setLocalOriginalTransform(offsetMatrix);
 
-            }else if(bone_index_map1.find(vertexIndex) != bone_index_map1.end()){
+            //Find the nodes necessary for skeleton
+            processBone(scene->mRootNode,node,bone);
 
-            }else if(bone_index_map1.at(vertexIndex) == 0){
+            //Weights and affected vertices
+            for(int w = 0; w < bone->mNumWeights; w++) {
 
-            }else{
-                std::cout << "Max 4 bones per vertex" << std::endl;
+                aiVertexWeight weight = bone->mWeights[w];
+
+                int vertexIndex = weight.mVertexId;
+
+                if(vertices[vertexIndex].getWeightCount() <= MAX_JOINTS_PER_VERTEX){
+
+                    vertices[vertexIndex].setJointID(vertices[vertexIndex].getWeightCount(), b);
+
+                    vertices[vertexIndex].setJointWeight(vertices[vertexIndex].getWeightCount(), weight.mWeight);
+
+                    vertices[vertexIndex].getWeightCount()++;
+
+                }else{
+                    std::cerr << "Only " << MAX_JOINTS_PER_VERTEX << " are allowed per vertex" << std::endl;
+                }
             }
-        }
 
+            joints.push_back(joint);
+            all_joints[bone->mName.C_Str()] = joint;
+        }
     }
 
+    return new AnimatedEntity(
+            *new AnimatedMesh(vertices, vertices.size(), indices, indices.size()),
+            *new Transform(),
+            *new Material(7.0f, 30.0f, textures, options),
+            joints
+    );
+}
+
+void AnimatedLoader::processBone(aiNode *node, aiNode *meshNode, aiBone *bone) {
+    if(node->mName == bone->mName){
+        AddNecessityRecursively(node,meshNode);
+        return;
+    }else{
+        for (GLuint i = 0; i < node->mNumChildren; i++) {
+            this->processBone(node->mChildren[i], meshNode, bone);
+        }
+    }
+}
+
+void AnimatedLoader::processSkeleton(aiNode *node, Joint* rootJoint, AnimatedEntity* root) {
+    //if not necessarry skip
+    if(necessityMap.find(node->mName.C_Str()) == necessityMap.end()) return;
 
 
+    //Is in skeleton
+    if(rootJoint == nullptr){
+        if(all_joints[node->mName.C_Str()] != nullptr) {
+            root->setRootJoint(all_joints[node->mName.C_Str()]);
+        }
+    }else{
+        if(all_joints[node->mName.C_Str()] != nullptr) {
+            rootJoint->addChild(all_joints[node->mName.C_Str()]);
+        }
+    }
 
+    //Process child joints
+    for (GLuint i = 0; i < node->mNumChildren; i++) {
 
-//    return new MeshedEntity(
-//            *new Mesh(vertices, vertices.size(), indices, indices.size()),
-//            *new Transform(),
-//            *new Material(7.0f, 30.0f, textures, options)
-//    );
+        processSkeleton(node->mChildren[i],all_joints[node->mName.C_Str()],root);
+
+    }
+}
+
+void AnimatedLoader::AddNecessityRecursively(aiNode *node, aiNode *meshNode){
+    //If not already in map add it.
+    if(necessityMap.find(node->mName.C_Str()) == necessityMap.end()){
+        necessityMap[node->mName.C_Str()] = (node);
+    }
+
+    if(node->mName == meshNode->mName) return;
+
+    if(node->mName == meshNode->mParent->mName) return;
+
+//    if(node->mParent == nullptr) return;
+
+    AddNecessityRecursively(node->mParent,meshNode);
 }
 
 std::vector<Texture*> AnimatedLoader::loadMaterialTextures(aiMaterial * material, aiTextureType type, TextureTypeEnum typeName) {
@@ -246,4 +354,9 @@ std::vector<Texture*> AnimatedLoader::loadMaterialTextures(aiMaterial * material
     }
 
     return textures;
+}
+
+void AnimatedLoader::AddComponents(AnimatedEntity *entity) {
+    entity->AddComponent(new AnimatedRendererComponent());
+//    entity->AddComponent(new AnimationComponent());
 }

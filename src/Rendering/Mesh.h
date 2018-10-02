@@ -9,6 +9,7 @@
 #include <GL/glew.h>
 #include <string>
 #include <vector>
+#include "../Common/CommonValues.h"
 
 class IndexedModel
 {
@@ -54,7 +55,6 @@ public:
     inline void SetColor(const glm::vec4 &color) { Vertex::color = color; }
 
 protected:
-private:
     glm::vec3 pos; //For positioning
     glm::vec2 texCoord; //For texturing
     glm::vec3 normal; //For lighting
@@ -85,18 +85,6 @@ public:
     virtual void Draw();
 protected:
     virtual void InitMesh(const IndexedModel& model);
-
-    /**
-     * Buffers
-     * */
-    enum{
-        POSITION_VB,
-        NORMAL_VB,
-        TEXCOORD_VB,
-        COLOR_VB,
-        INDEX_VB,
-        NUM_BUFFERS
-    };
 
     /**
      * The mesh data.

@@ -18,10 +18,10 @@ public:
 
     void Render(RenderingEngine *engine) const;
 
-    EffectEntity* AddComponent(EntityComponent<EffectEntity,RenderingEngine>* component);
+    EffectEntity* AddComponent(EntityComponent<EffectEntity>* component);
 
 private:
-    std::vector<EntityComponent<EffectEntity,RenderingEngine>*> m_components;
+    std::vector<EntityComponent<EffectEntity>*> m_components;
 };
 
 

@@ -1,19 +1,18 @@
 //
-// Created by erick on 9/10/18.
+// Created by erick on 9/30/18.
 //
 
-#ifndef MORDEROPENGLUDEMYTUTORIAL_MESHEDRENDERERCOMPONENT_H
-#define MORDEROPENGLUDEMYTUTORIAL_MESHEDRENDERERCOMPONENT_H
+#ifndef MORDEROPENGLUDEMYTUTORIAL_ANIMATEDRENDERERCOMPONENT_H
+#define MORDEROPENGLUDEMYTUTORIAL_ANIMATEDRENDERERCOMPONENT_H
 
 
-#include "../../Entities/MeshedEntity.h"
-#include "../EntityComponent.h"
+#include "../../../Animation/AnimatedEntity.h"
 #include "../../../Rendering/RenderingEngine.h"
 
-class MeshedRendererComponent: public EntityComponent<MeshedEntity> {
+class AnimatedRendererComponent: public EntityComponent<AnimatedEntity>  {
 public:
-    MeshedRendererComponent(): EntityComponent(){
-        m_type = MESHED_RENDERER_COMPONENT;
+    AnimatedRendererComponent(): EntityComponent(){
+        m_type = ANIMATED_RENDERER_COMPONENT;
     }
 
     void Render(RenderingEngine* engine) const override {
@@ -42,9 +41,20 @@ public:
 
         }
 
+        shader->Uniform1i("isAnimated",true);
+
+        for(int i = 0; i < m_entity->getJoints().size(); i++){
+            char locBuff[100] = {'\0'};
+            snprintf(locBuff, sizeof(locBuff), "jointTransforms[%d]",m_entity->getJoints()[i]->getMeshIndex());
+            shader->UniformMatrix4fv(locBuff,m_entity->getJoints()[i]->getAnimatedTransform());
+        }
+
         m_entity->getMesh()->Draw();
+
+        shader->Uniform1i("isAnimated",false);
+
     }
 };
 
 
-#endif //MORDEROPENGLUDEMYTUTORIAL_MESHEDRENDERERCOMPONENT_H
+#endif //MORDEROPENGLUDEMYTUTORIAL_ANIMATEDRENDERERCOMPONENT_H

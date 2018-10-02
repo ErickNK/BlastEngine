@@ -10,7 +10,7 @@
 #include "../EntityComponent.h"
 #include "../../../Common/Time.h"
 
-class SkyBoxEffectsComponent: public EntityComponent<SkyBox,RenderingEngine> {
+class SkyBoxEffectsComponent: public EntityComponent<SkyBox> {
 public:
     void Update(double time, float delta) override {
         m_entity->setBlendFactor(static_cast<float>(Time::GetGameWorldTime()));

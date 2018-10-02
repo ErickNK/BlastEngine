@@ -12,9 +12,9 @@
 #include "../EntityComponent.h"
 #include "../../../Rendering/Shaders/GUIShader.h"
 
-class GUIRendererComponent : public EntityComponent<GUIEntity,RenderingEngine>{
+class GUIRendererComponent : public EntityComponent<GUIEntity>{
 public:
-    virtual void Render(RenderingEngine* engine) const {
+    void Render(RenderingEngine* engine) const override {
         auto * shader = (GUIShader*) engine->BindShader(GUI_SHADER);
 
             //Draw one by one.

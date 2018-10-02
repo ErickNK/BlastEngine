@@ -139,7 +139,7 @@ void SkyBox::Render(RenderingEngine *engine) {
     }
 }
 
-SkyBox* SkyBox::AddComponent(EntityComponent<SkyBox,RenderingEngine>* component) {
+SkyBox* SkyBox::AddComponent(EntityComponent<SkyBox>* component) {
     m_components.push_back(component);
     component->SetParent(this);
     return this;

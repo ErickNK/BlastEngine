@@ -9,7 +9,7 @@
 #include "../../../Rendering/RenderingEngine.h"
 #include "../../../Rendering/Shaders/SkyBoxShader.h"
 
-class SkyBoxRendererComponent : public EntityComponent<SkyBox,RenderingEngine>{
+class SkyBoxRendererComponent : public EntityComponent<SkyBox>{
 public:
     void Render(RenderingEngine* engine) const override {
 

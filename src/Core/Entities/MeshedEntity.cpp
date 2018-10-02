@@ -50,13 +50,13 @@ void MeshedEntity::UpdateAll(double time, float delta)
     }
 }
 
-void MeshedEntity::RenderAll(Shader* shader) const
+void MeshedEntity::RenderAll(RenderingEngine* engine) const
 {
     if(allow_render) {
-        Render(shader);
+        Render(engine);
 
         for (auto i : m_children) {
-            i->RenderAll(shader);
+            i->RenderAll(engine);
         }
     }
 }
@@ -77,10 +77,10 @@ void MeshedEntity::Update(double time,float delta)
     }
 }
 
-void MeshedEntity::Render(Shader* shader) const
+void MeshedEntity::Render(RenderingEngine* engine) const
 {
     for (auto m_component : m_components) {
-        m_component->Render(shader);
+        m_component->Render(engine);
     }
 }
 

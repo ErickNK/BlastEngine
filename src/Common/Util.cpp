@@ -72,3 +72,30 @@ int Util::getDirFiles (std::string dir, std::vector<std::string> &files)
     closedir(dp);
     return 0;
 }
+
+glm::mat4 Util::fromAssimp(aiMatrix4x4 m)
+{
+    glm::mat4 matrix;
+
+    matrix[0][0] = m.a1;
+    matrix[0][1] = m.a2;
+    matrix[0][2] = m.a3;
+    matrix[0][3] = m.a4;
+
+    matrix[1][0] = m.b1;
+    matrix[1][1] = m.b2;
+    matrix[1][2] = m.b3;
+    matrix[1][3] = m.b4;
+
+    matrix[2][0] = m.c1;
+    matrix[2][1] = m.c2;
+    matrix[2][2] = m.c3;
+    matrix[2][3] = m.c4;
+
+    matrix[3][0] = m.d1;
+    matrix[3][1] = m.d2;
+    matrix[3][2] = m.d3;
+    matrix[3][3] = m.d4;
+
+    return matrix;
+}

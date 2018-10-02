@@ -56,7 +56,7 @@ GUIEntity* GUIEntity::AddChild(GUIEntity* child)
     return this;
 }
 
-GUIEntity *GUIEntity::AddComponent(EntityComponent<GUIEntity,RenderingEngine> *component) {
+GUIEntity *GUIEntity::AddComponent(EntityComponent<GUIEntity> *component) {
     m_components.push_back(component);
     component->SetParent(this);
     return this;

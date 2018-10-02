@@ -12,7 +12,7 @@
 
 /**
  *
- * * Represents an animation that can applied to an {@link AnimatedModel} . It
+ * Represents an animation that can applied to an {@link AnimatedModel} . It
  * contains the length of the animation in seconds, and a list of
  * {@link KeyFrame}s.
  *
@@ -22,7 +22,7 @@
  */
 class Animation {
 public:
-    Animation():length(0){};
+    Animation():m_length(0){};
     /**
      *
      * @param lengthInSeconds
@@ -31,21 +31,42 @@ public:
      *            - all the keyframes for the animation, ordered by time of
      *            appearance in the animation.
      */
-    Animation(float lengthInSeconds, std::vector<KeyFrame> frames):
-    length(lengthInSeconds),
+    Animation(float lengthInSeconds, std::vector<KeyFrame*> frames):
+    m_length(lengthInSeconds),
     keyFrames(std::move(frames)){}
 
-    const float getLength() const {
-        return length;
+    const double getLength() const {
+        return m_length;
     }
 
-    const std::vector<KeyFrame> &getKeyFrames() const {
+    const std::vector<KeyFrame*> &getKeyFrames() const {
         return keyFrames;
     }
 
+    void setName(std::string name) {
+        m_name = name;
+    }
+
+    std::string getName(){
+        return m_name;
+    }
+
+    void setLength(double length) {
+        m_length = length;
+    }
+
+    void setKeyFrames(std::vector<KeyFrame*> frames) {
+        keyFrames = frames;
+    }
+
+    void addKeyFrames(KeyFrame *frame) {
+        keyFrames.push_back(frame);
+    }
+
 private:
-    float length; //in seconds
-    std::vector<KeyFrame> keyFrames;
+    std::string m_name;
+    double m_length; //in seconds
+    std::vector<KeyFrame*> keyFrames;
 
 };
 

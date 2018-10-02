@@ -49,6 +49,7 @@ void Shader::CreateUniforms() {
     m_uniforms["normalMatrix"] = glGetUniformLocation(m_program, "normalMatrix");
     m_uniforms["cameraPosition"] = glGetUniformLocation(m_program, "cameraPosition");
     m_uniforms["cameraDirection"] = glGetUniformLocation(m_program, "cameraDirection");
+    m_uniforms["isAnimated"] = glGetUniformLocation(m_program, "isAnimated");
 
     for(int i = 0; i < MAX_CLIP_PLANES; i++){
         char locBuff[100] = {'\0'};
@@ -59,6 +60,12 @@ void Shader::CreateUniforms() {
                 glUniform4f(m_uniforms[locBuff], 0.0f, -1.0f, 0.0f, 10000000.0f);
             glUseProgram(0);
         }
+    }
+
+    for(int i = 0; i < MAX_JOINTS_PER_MESH; i++){
+        char locBuff[100] = {'\0'};
+        snprintf(locBuff, sizeof(locBuff), "jointTransforms[%d]",i);
+        m_uniforms[locBuff] = glGetUniformLocation(m_program, locBuff);
     }
 }
 
@@ -152,6 +159,11 @@ void Shader::Uniform3f(const char* string, GLfloat i, GLfloat i1, GLfloat i2) {
 void Shader::Uniform4f(const char* string, GLfloat i, GLfloat i1, GLfloat i2, GLfloat i3) {
     if(m_uniforms.find(string) != m_uniforms.end() && m_uniforms[string] != -1)
         glUniform4f(m_uniforms[string],i,i1,i2,i3);
+}
+
+void Shader::UniformMatrix4fv(const char* string, const glm::mat4& matrix) {
+    if(m_uniforms.find(string) != m_uniforms.end() && m_uniforms[string] != -1)
+        glUniformMatrix4fv(m_uniforms[string],1,GL_FALSE, glm::value_ptr(matrix));
 }
 
 void Shader::UpdateCamera(const Camera &camera) {
@@ -269,4 +281,5 @@ void Shader::resetGlobalTextureUnits() {
 void Shader::resetDrawingTextureUnits() {
     lastIssuedDrawingTextureUnit = MAX_DRAWING_TEXTURE_UNITS + 0;
 }
+
 

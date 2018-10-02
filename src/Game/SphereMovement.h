@@ -11,7 +11,7 @@
 #include "../Rendering/Lighting/Light.h"
 #include "../Rendering/Lighting/DirectionalLight.h"
 
-class LightMovement : public EntityComponent<Light,RenderingEngine> {
+class LightMovement : public EntityComponent<Light> {
 public:
     void Update(double time, float delta) override {
 

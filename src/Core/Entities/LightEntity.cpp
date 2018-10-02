@@ -41,7 +41,7 @@ void LightEntity::RenderShadow(RenderingEngine* engine) const
 }
 
 
-LightEntity *LightEntity::AddComponent(EntityComponent<Light,RenderingEngine> *component) {
+LightEntity *LightEntity::AddComponent(EntityComponent<Light> *component) {
     m_light_components.push_back(component);
     component->SetParent((Light *)(this));
     return this;
@@ -51,8 +51,4 @@ LightEntity* LightEntity::AddShadowComponent(ShadowRendererComponent *component)
     m_shadow_components.push_back(component);
     component->SetParent((Light *)(this));
     return this;
-}
-
-Transform &LightEntity::getTransform() {
-    return m_transform;
 }

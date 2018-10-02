@@ -12,7 +12,7 @@ void EffectEntity::Render(RenderingEngine *engine) const
     }
 }
 
-EffectEntity* EffectEntity::AddComponent(EntityComponent<EffectEntity,RenderingEngine> *component) {
+EffectEntity* EffectEntity::AddComponent(EntityComponent<EffectEntity> *component) {
     m_components.push_back(component);
     component->SetParent(this);
     return this;

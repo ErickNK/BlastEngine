@@ -28,6 +28,10 @@ void Scene::Update(double time, float delta) {
         m_meshed_Entity->UpdateAll(time, delta);
     }
 
+    for(AnimatedEntity* m_animated_Entity: m_animated_Entities){
+        m_animated_Entity->UpdateAll(time, delta);
+    }
+
     if(m_current_skybox != nullptr) m_current_skybox->Update(time,delta);
 
     for(Water* water: m_waters){
@@ -37,6 +41,7 @@ void Scene::Update(double time, float delta) {
 
 void Scene::AddLightToScene(LightEntity* light) { m_lights.push_back(light); }
 void Scene::AddMeshedToScene(MeshedEntity* meshed) { m_meshed_Entities.push_back(meshed);}
+void Scene::AddAnimatedToScene(AnimatedEntity* animated) { m_animated_Entities.push_back(animated);}
 void Scene::AddEffectToScene(EffectEntity* effect) { m_effect_Entities.push_back(effect);}
 void Scene::AddCamera(Camera *camera) { m_cameras.push_back(camera); }
 void Scene::AddSkyBox(SkyBox *skyBox) { m_skyboxes.push_back(skyBox); }
@@ -61,6 +66,10 @@ const std::vector<LightEntity *> &Scene::getLights() const {
 
 const std::vector<MeshedEntity *> &Scene::getMeshedEntities() const {
     return m_meshed_Entities;
+}
+
+const std::vector<Entity* > &Scene::getEntities() const {
+    return m_entities;
 }
 
 const std::vector<EffectEntity *> &Scene::getEffectEntities() const {
@@ -121,4 +130,8 @@ const std::vector<AnimatedEntity *> &Scene::getAnimatedEntities() const {
 
 const std::vector<Water *> &Scene::getWaterBodies() const {
     return m_waters;
+}
+
+void Scene::AddEntity(Entity *entity) {
+    m_entities.push_back(entity);
 }

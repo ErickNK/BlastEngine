@@ -48,6 +48,7 @@
 #include <vector>
 #include <string>
 #include <glm/glm.hpp>
+#include <assimp/matrix4x4.h>
 
 namespace Util
 {
@@ -62,6 +63,7 @@ namespace Util
      * */
     float barryCentric(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec2 pos);
     int getDirFiles (std::string dir, std::vector<std::string> &files);
+    glm::mat4 fromAssimp(aiMatrix4x4 m);
 };
 
 #endif

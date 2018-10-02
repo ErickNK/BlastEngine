@@ -10,16 +10,16 @@
 #include "../../../Rendering/Shaders/TerrainShader.h"
 #include "../EntityComponent.h"
 
-class TerrainRendererComponent: public EntityComponent<Terrain,RenderingEngine> {
+class TerrainRendererComponent: public EntityComponent<Terrain> {
 public:
-    void RenderTerrain(RenderingEngine* engine) const {
+    void Render(RenderingEngine* engine) const override {
         auto * shader = (TerrainShader*) engine->BindShader(TERRAIN_SHADER);
 
             shader->setTerrain(m_entity);
 
             shader->UpdateCamera(*engine->getCurrentScene()->getCurrentCamera());
 
-            m_entity->RenderAll(shader);
+            m_entity->RenderAll(engine);
 
         engine->UnBindShader(TERRAIN_SHADER);
     }

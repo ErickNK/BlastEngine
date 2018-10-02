@@ -37,7 +37,7 @@ public:
 
     void UpdateAll(double time,float delta);
 
-    void RenderAll(Shader* shader) const;
+    void RenderAll(RenderingEngine* engine) const;
 
     MeshedEntity* AddChild(MeshedEntity* child);
 
@@ -55,19 +55,20 @@ public:
 
     void setMaterial(Material* m_material) { MeshedEntity::m_material = m_material; }
 
-    bool allow_render = true;
 protected:
     std::vector<MeshedEntity*> m_children;
+
     std::vector<EntityComponent<MeshedEntity>*> m_components;
 
-    Mesh* m_mesh;
-    Material* m_material;
+    Mesh* m_mesh = nullptr;
+
+    Material* m_material = nullptr;
 
     void ProcessInput(Input* input, float delta) override;
 
     void Update(double time, float delta) override;
 
-    void Render(Shader* shader) const;
+    void Render(RenderingEngine* engine) const;
 };
 
 

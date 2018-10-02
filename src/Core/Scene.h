@@ -46,11 +46,13 @@ public:
      * */
     void AddLightToScene(LightEntity* entity);
     void AddMeshedToScene(MeshedEntity* meshed);
+    void AddAnimatedToScene(AnimatedEntity* animated);
     void AddEffectToScene(EffectEntity* effect);
     void AddCamera(Camera *camera);
     void AddSkyBox(SkyBox *skyBox);
     void AddTerrain(Terrain *terrain);
     void AddGUI(GUIEntity *gui);
+    void AddEntity(Entity *entity);
     void AddMousePicker(MousePicker *picker);
     void AddPhysicsObject(PhysicsObject* object);
     void AddAnimatedEntity(AnimatedEntity* enitity);
@@ -71,6 +73,8 @@ public:
     const std::vector<Water *> &getWaterBodies() const;
 
     const std::vector<MeshedEntity *> &getMeshedEntities() const;
+
+    const std::vector<Entity* > & getEntities() const;
 
     const std::vector<EffectEntity *> &getEffectEntities() const;
 
@@ -101,6 +105,7 @@ protected:
     * Objects contained in the scene
     * */
     std::vector<GUIEntity*> m_guis;
+    std::vector<Entity*> m_entities;
     std::vector<AnimatedEntity*> m_animated_Entities;
     std::vector<Camera*> m_cameras;
     std::vector<SkyBox*> m_skyboxes;

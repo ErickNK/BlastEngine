@@ -10,31 +10,31 @@
 
 class TPSCamera;
 
-class TPSCameraAttachment {
+class TPSCameraAttachment : public EntityComponent<Entity>{
 public:
     TPSCameraAttachment() = default;
 
 
-    TPSCameraAttachment(MeshedEntity *meshedEntity):
-    m_meshed_entity(meshedEntity){}
+    explicit TPSCameraAttachment(Entity *entity):
+    m_entity(entity){}
 
-    TPSCameraAttachment(MeshedEntity* meshedEntity, TPSCamera* camera):
-    m_meshed_entity(meshedEntity),
+    TPSCameraAttachment(Entity* entity, TPSCamera* camera):
+    m_entity(entity),
     m_camera(camera) {}
 
-    void ProcessInput(Input *input, float delta);
+    void ProcessInput(Input *input, float delta) override;
 
-    void Update(double time, float delta);
+    void Update(double time, float delta) override;
 
-    void SetAttachment(MeshedEntity* entity);
+    void SetAttachment(Entity* entity);
 
     void SetCamera(TPSCamera *camera);
 
-    MeshedEntity *getMeshedEntity() const;
+    Entity* getEntity() const;
 
 private:
-    MeshedEntity* m_meshed_entity;
-    TPSCamera* m_camera;
+    Entity* m_entity = nullptr;
+    TPSCamera* m_camera = nullptr;
     double oldAngle_around_attachment = 0;
 };
 

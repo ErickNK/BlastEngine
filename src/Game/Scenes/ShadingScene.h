@@ -18,6 +18,8 @@
 #include "../SphereMovement.h"
 #include "../../Core/Components/Behaviours/PlayerMovement.h"
 #include "../../Rendering/Camera/TPSCamera.h"
+#include "../../Rendering/Loaders/AnimatedLoader.h"
+#include "../../Rendering/Loaders/AnimationLoader.h"
 
 class ShadingScene : public Scene{
 public:
@@ -25,6 +27,8 @@ public:
 
     void Init() override {
         m_meshed_loader = new MeshedLoader();
+        m_animated_loader = new AnimatedLoader();
+        m_animation_loader = new AnimationLoader();
         m_gui_loader = new GUILoader();
         SetupCamera();
         SetupLights();
@@ -34,14 +38,14 @@ public:
 
     void SetupCamera(){
         //CAMERA
-        auto * camera = new TPSCamera(
+        auto * camera = new Camera(
                 glm::vec3(0.0f,15.0f,10.0f),
                 glm::vec3(0.0f,1.0f,0.0f),
-                0.0f,
+//                0.0f,
                 0.0f,
                 0.0f,
                 15.0f,
-                0.0005f
+                0.05f
         );
         camera->setProjection(
                 45.0f,
@@ -50,7 +54,7 @@ public:
                 1.0f,
                 1000.0f
         );
-        camera->setAllowMovement(false);
+//        camera->setAllowMovement(false);
         this->AddCamera(camera);
         this->SetCurrentCamera(0);
     }
@@ -68,17 +72,20 @@ public:
         this->AddMeshedToScene(plane);
 
         //SPHERE
-        auto * sphere = new MeshedEntity();
+        auto * runningMan = new AnimatedEntity();
         options[Transparency] = false;
         options[FakeLighting] = false;
 
-        m_meshed_loader->LoadGameObject("../res/objects/sphere.obj",sphere,options);
-        sphere->AddComponent(new PlayerMovement());
-        ((TPSCamera*) this->getCurrentCamera())->SetAttachmentComponent(new TPSCameraAttachment(sphere));
+        m_animated_loader->LoadAnimatedObject("../res/models/runningman/model.dae",runningMan,options);
+        runningMan->setAnimations(m_animation_loader->LoadAnimations("../res/models/runningman/model.dae"));
+        runningMan->doAnimation(0);
+//        runningMan->AddComponent(new PlayerMovement());
+//        ((TPSCamera*) this->getCurrentCamera())->SetAttachmentComponent(new TPSCameraAttachment(runningMan));
 
-        sphere->getTransform().GetScale() *= 10.0f;
-        sphere->getTransform().GetPos().y = 15.0f;
-        this->AddMeshedToScene(sphere);
+        runningMan->getTransform().GetScale() *= 10.0f;
+        runningMan->getTransform().Rotate(glm::vec3(glm::radians(-90.0f),0,0));
+        runningMan->getTransform().GetPos().y  = -1.0f;
+        this->AddAnimatedToScene(runningMan);
     }
 
     void SetupLights(){
@@ -94,7 +101,7 @@ public:
         sun->getTransform().SetPos(glm::vec3(0.0f,100.0f,100.0f));
         sun->GetShadow().m_flipFaces = false;
         sun->AddComponent(new LightComponent());
-        sun->AddComponent(new LightMovement());
+//        sun->AddComponent(new LightMovement());
         sun->AddShadowComponent(new ShadowRendererComponent());
         this->AddLightToScene(sun);
     }
@@ -102,7 +109,7 @@ public:
     void CreateGUI(){
         std::map<Texture*,Transform*> textures;
 
-    textures.emplace(new Texture(sun->GetShadowMapFBO().GetTextures()[sun->GetShadowMapTexture()],GUI_TEXTURE),new Transform(glm::vec3(0.5f,0.5f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
+        textures.emplace(new Texture(sun->GetShadowMapFBO().GetTextures()[sun->GetShadowMapTexture()],GUI_TEXTURE),new Transform(glm::vec3(0.5f,0.5f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
 
         auto * guiEntity = new GUIEntity();
         guiEntity->InitMesh();
@@ -117,6 +124,8 @@ public:
 private:
     DirectionalLight* sun;
     MeshedLoader * m_meshed_loader;
+    AnimatedLoader * m_animated_loader;
+    AnimationLoader * m_animation_loader;
     GUILoader * m_gui_loader;
 };
 

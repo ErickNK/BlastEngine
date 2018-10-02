@@ -28,7 +28,7 @@ public:
 
     GUIEntity* AddChild(GUIEntity* child);
 
-    GUIEntity* AddComponent(EntityComponent<GUIEntity,RenderingEngine>* component);
+    GUIEntity* AddComponent(EntityComponent<GUIEntity>* component);
 
     GUIMesh& getGUIMesh() { return m_GUI_mesh; }
 
@@ -46,7 +46,7 @@ public:
 
 protected:
     std::vector<GUIEntity*> m_children;
-    std::vector<EntityComponent<GUIEntity,RenderingEngine>*> m_components;
+    std::vector<EntityComponent<GUIEntity>*> m_components;
 
     GUIMesh m_GUI_mesh;
     GUIMaterial m_material;

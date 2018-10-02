@@ -28,6 +28,7 @@
  */
 class KeyFrame {
 public:
+    KeyFrame() = default;
     /**
      * @param timeStamp
      *            - the time (in seconds) that this keyframe occurs during the
@@ -35,15 +36,15 @@ public:
      * @param jointKeyFrames
      *            - the local-space transforms for all the joints at this
      *            keyframe, indexed by the name of the joint that they should be
-     *            applied to.
+     *            applied to. This transforms are in relation to the parent joint.
      */
-    KeyFrame(float timeStamp, std::map<std::string, JointTransform> jointKeyFrames):
+    KeyFrame(double timeStamp, std::map<std::string, JointTransform*> jointKeyFrames):
     timeStamp(timeStamp), pose(std::move(jointKeyFrames)) {}
 
     /**
      * @return The time in seconds of the keyframe in the animation.
      */
-    float getTimeStamp() {
+    double getTimeStamp() {
         return timeStamp;
     }
 
@@ -53,14 +54,22 @@ public:
      *         they correspond to. This basically represents the "pose" at this
      *         keyframe.
      */
-    std::map<std::string, JointTransform> getJointKeyFrames() {
+    std::map<std::string, JointTransform*> getJointKeyFrames() {
         return pose;
+    }
+
+    void addJointTransform(std::string jointName, JointTransform* transform) {
+        pose[jointName] = transform;
+    }
+
+    void setTimestamp(double d) {
+        timeStamp = d;
     }
 
 private:
 
-    float timeStamp;
-    std::map<std::string, JointTransform> pose;
+    double timeStamp;
+    std::map<std::string, JointTransform*> pose;
 };
 
 

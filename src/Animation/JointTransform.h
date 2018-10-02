@@ -27,6 +27,7 @@ class JointTransform {
 
 public:
 
+    JointTransform() = default;
     /**
      *
      * @param position
@@ -39,8 +40,8 @@ public:
      *            - the rotation of the joint relative to the parent joint
      *            (bone-space) at a certain keyframe.
      */
-    JointTransform(glm::vec3 position, glm::quat rotation):
-    position(position),rotation(rotation) {}
+    JointTransform(glm::vec3 position, glm::quat rotation, glm::vec3 scale):
+    position(position),rotation(rotation),scale(scale) {}
 
     /**
      * In this method the bone-space transform matrix is constructed by
@@ -58,7 +59,9 @@ public:
 
         glm::mat4 rotMatrix = glm::mat4_cast(rotation);
 
-        return (posMatrix * rotMatrix);
+        glm::mat4 scaleMatrix = glm::scale(scale);
+
+        return (posMatrix * rotMatrix/* * scaleMatrix*/);
     }
 
     /**
@@ -82,37 +85,51 @@ public:
      *            transform somewhere in-between the two.
      * @return
      */
-    static JointTransform interpolate(JointTransform frameA, JointTransform frameB, float progression) {
-        glm::vec3 pos = interpolate(frameA.position, frameB.position, progression);
-        glm::quat rot = glm::lerp(frameA.rotation, frameB.rotation, progression);
-        return JointTransform(pos, rot);
+    static JointTransform interpolate(JointTransform* frameA, JointTransform* frameB, float progression) {
+        glm::vec3 pos = interpolate(frameA->position, frameB->position, progression);
+        glm::quat rot = glm::lerp(frameA->rotation, frameB->rotation, progression);
+        glm::vec3 scale = interpolate(frameA->scale, frameB->scale, progression);
+        return {pos, rot, scale};
     }
 
-    /**
-     * Linearly interpolates between two translations based on a "progression"
-     * value.
-     *
-     * @param start
-     *            - the start translation.
-     * @param end
-     *            - the end translation.
-     * @param progression
-     *            - a value between 0 and 1 indicating how far to interpolate
-     *            between the two translations.
-     * @return
-     */
+
+    void setPosition(glm::vec3 pos) {
+        position = pos;
+    }
+
+    void setScale(glm::vec3 scale) {
+        scale = scale;
+    }
+
+    void setRot(glm::quat quat) {
+        rotation = quat;
+    }
+
 private:
     // remember, this position and rotation are relative to the parent bone!
-    const glm::vec3 position;
-    const glm::quat rotation;
+    glm::vec3 position;
+    glm::quat rotation;
+    glm::vec3 scale;
 
+    /**
+    * Linearly interpolates between two translations based on a "progression"
+    * value.
+    *
+    * @param start
+    *            - the start translation.
+    * @param end
+    *            - the end translation.
+    * @param progression
+    *            - a value between 0 and 1 indicating how far to interpolate
+    *            between the two translations.
+    * @return
+    */
     static glm::vec3 interpolate( glm::vec3  start,  glm::vec3  end, float progression) {
         float x = start.x + (end.x - start.x) * progression;
         float y = start.y + (end.y - start.y) * progression;
         float z = start.z + (end.z - start.z) * progression;
         return glm::vec3 (x, y, z);
     }
-
 
 
 };

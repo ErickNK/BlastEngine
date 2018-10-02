@@ -31,14 +31,17 @@
  * @author Karl
  *
  */
-class AnimationComponent: public EntityComponent<AnimatedEntity,Shader>  {
+class AnimationComponent: public EntityComponent<AnimatedEntity>  {
 
 public:
+    AnimationComponent() : EntityComponent(){
+            m_type = ANIMATION_COMPONENT;
+    }
     /**
 	 * @param entity
 	 *            - the entity which will by animated by this animator.
 	 */
-    AnimationComponent(AnimatedEntity* entity) {
+    explicit AnimationComponent(AnimatedEntity* entity) {
         this->m_entity = entity;
     }
 
@@ -61,7 +64,7 @@ public:
 	 * time of the animation, and then applies that pose to all the model's
 	 * joints by setting the joint transforms.
 	 */
-    void Update(float delta) override {
+    void Update(double time, float delta) override {
         if (currentAnimation.getLength() == 0) {
             return;
         }
@@ -76,9 +79,9 @@ public:
      * reset, causing the animation to loop.
      */
     void increaseAnimationTime(float delta) {
-        animationTime += delta;
+        animationTime += delta * 0.0000001;
         if (animationTime > currentAnimation.getLength()) {
-            fmod(this->animationTime,currentAnimation.getLength());
+            this->animationTime = fmod(this->animationTime,currentAnimation.getLength());
         }
     }
 
@@ -102,7 +105,7 @@ public:
 	 *         the joint that they should be applied to.
 	 */
     std::map<std::string, glm::mat4> calculateCurrentAnimationPose() {
-        std::vector<KeyFrame> frames = getPreviousAndNextFrames();
+        std::vector<KeyFrame*> frames = getPreviousAndNextFrames();
         float progression = calculateProgression(frames[0], frames[1]);
         return interpolatePoses(frames[0], frames[1], progression);
     }
@@ -140,14 +143,14 @@ public:
      *            - the desired model-space transform of the parent joint for
      *            the pose.
      */
-     void applyPoseToJoints(std::map<std::string, glm::mat4> currentPose, Joint joint, glm::mat4 parentTransform) {
-        glm::mat4 currentLocalTransform = currentPose[joint.m_name];
+     void applyPoseToJoints(std::map<std::string, glm::mat4> currentPose, Joint* joint, glm::mat4 parentTransform) {
+        glm::mat4 currentLocalTransform = currentPose[joint->getName()];
         glm::mat4 currentTransform = parentTransform * currentLocalTransform;
-        for (const Joint &childJoint : joint.m_children) {
+        for (Joint* childJoint : joint->getChildren()) {
             applyPoseToJoints(currentPose, childJoint, currentTransform);
         }
-        currentTransform *= joint.getInverseBindTransform();
-        joint.setAnimatedTransform(currentTransform);
+        currentTransform *= joint->getInverseBindTransform();
+        joint->setAnimatedTransform(currentTransform);
     }
 
     /**
@@ -161,18 +164,18 @@ public:
      * @return The previous and next keyframes, in an array which therefore will
      *         always have a length of 2.
      */
-    std::vector<KeyFrame> getPreviousAndNextFrames() {
-        std::vector<KeyFrame> allFrames = currentAnimation.getKeyFrames();
-        KeyFrame previousFrame = allFrames[0];
-        KeyFrame nextFrame = allFrames[0];
+    std::vector<KeyFrame*> getPreviousAndNextFrames() {
+        std::vector<KeyFrame*> allFrames = currentAnimation.getKeyFrames();
+        KeyFrame* previousFrame = allFrames[0];
+        KeyFrame* nextFrame = allFrames[0];
         for (int i = 1; i < allFrames.size(); i++) {
             nextFrame = allFrames[i];
-            if (nextFrame.getTimeStamp() > animationTime) {
+            if (nextFrame->getTimeStamp() > animationTime) {
                 break;
             }
             previousFrame = allFrames[i];
         }
-        return std::vector<KeyFrame> { previousFrame, nextFrame };
+        return std::vector<KeyFrame*> { previousFrame, nextFrame };
     }
 
     /**
@@ -186,9 +189,9 @@ public:
      * @return A number between 0 and 1 indicating how far between the two
      *         keyframes the current animation time is.
      */
-     float calculateProgression(KeyFrame previousFrame, KeyFrame nextFrame) {
-        float totalTime = nextFrame.getTimeStamp() - previousFrame.getTimeStamp();
-        float currentTime = animationTime - previousFrame.getTimeStamp();
+     float calculateProgression(KeyFrame* previousFrame, KeyFrame* nextFrame) {
+        float totalTime = nextFrame->getTimeStamp() - previousFrame->getTimeStamp();
+        float currentTime = animationTime - previousFrame->getTimeStamp();
         return currentTime / totalTime;
     }
 
@@ -208,11 +211,11 @@ public:
      *         current pose. They are returned in a map, indexed by the name of
      *         the joint to which they should be applied.
      */
-    std::map<std::string, glm::mat4> interpolatePoses(KeyFrame previousFrame, KeyFrame nextFrame, float progression) {
+    std::map<std::string, glm::mat4> interpolatePoses(KeyFrame* previousFrame, KeyFrame* nextFrame, float progression) {
         std::map<std::string, glm::mat4> currentPose;
-        for (auto const& x : previousFrame.getJointKeyFrames()) {
-            JointTransform previousTransform = previousFrame.getJointKeyFrames()[x.first];
-            JointTransform nextTransform = nextFrame.getJointKeyFrames()[x.first];
+        for (auto const& x : previousFrame->getJointKeyFrames()) {
+            JointTransform* previousTransform = previousFrame->getJointKeyFrames()[x.first];
+            JointTransform* nextTransform = nextFrame->getJointKeyFrames()[x.first];
             JointTransform currentTransform = JointTransform::interpolate(previousTransform, nextTransform, progression);
             currentPose[x.first] = currentTransform.getLocalTransform();
         }

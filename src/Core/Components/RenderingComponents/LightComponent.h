@@ -10,9 +10,9 @@
 #include "../../../Rendering/Shaders/ForwardDirectionalLightShader.h"
 #include "../../CoreEngine.h"
 
-class LightComponent:public EntityComponent<Light,RenderingEngine>{
+class LightComponent:public EntityComponent<Light>{
 public:
-    virtual void Render(RenderingEngine* engine) const {
+    void Render(RenderingEngine* engine) const override {
         switch(m_entity->getType()){
             case DIRECTIONAL_LIGHT:
                 RenderDirectionalLight(engine);

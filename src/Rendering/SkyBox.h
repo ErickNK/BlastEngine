@@ -31,7 +31,7 @@ public:
 
     ~SkyBox();
 
-    SkyBox* AddComponent(EntityComponent<SkyBox,RenderingEngine>* component);
+    SkyBox* AddComponent(EntityComponent<SkyBox>* component);
 
     void Update(double time, float delta);
 
@@ -61,7 +61,7 @@ private:
 
     std::map<SkyBoxTypes, std::vector<std::string>> m_faceLocations;
 
-	std::vector<EntityComponent<SkyBox,RenderingEngine>*> m_components;
+	std::vector<EntityComponent<SkyBox>*> m_components;
 
 	float SIZE = 500.0f;
 	Mesh * m_skyMesh;

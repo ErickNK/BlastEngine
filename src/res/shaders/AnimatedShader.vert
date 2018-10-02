@@ -1,9 +1,10 @@
 #version 400
 
+const int MAX_JOINTS_PER_MESH = 50;//max joints allowed in a skeleton
+const int MAX_WEIGHTS_PER_VERTEX = 4;//max number of joints that can affect a vertex
+
 //constants --------------------------------------
 
-const int MAX_JOINTS_PER_MESH = 50;//max joints allowed in a skeleton
-const int MAX_WEIGHTS_PER_VERTEX = 3;//max number of joints that can affect a vertex
 const int MAX_CLIP_PLANES = 6;
 
 //---------------------------------------------------------
@@ -14,8 +15,8 @@ layout (location = 0) in vec3 position;
 layout (location = 1) in vec2 texCoord;
 layout (location = 2) in vec3 normal;
 layout (location = 3) in vec4 color;
-layout (location = 4) in ivec3 joint_ids;
-layout (location = 5) in vec3 weights;
+layout (location = 4) in ivec4 joint_ids;
+layout (location = 5) in vec4 weights;
 
 //---------------------------------------------------------
 
@@ -30,8 +31,8 @@ out vec4 vCol;
 out vec4 vDirectionalLightSpacePosition;
 
 out gl_PerVertex{
-    vec4 gl_Position;
-    float gl_ClipDistance[MAX_CLIP_PLANES];
+        vec4 gl_Position;
+        float gl_ClipDistance[MAX_CLIP_PLANES];
 };
 
 //---------------------------------------------------------
@@ -49,10 +50,10 @@ uniform mat4 model;
 uniform mat4 projection;
 uniform mat3 normalMatrix;
 
-uniform bool isAnimated = false;
 uniform bool hasFakeLighting;
 uniform int textureAtlasNumOfRows;
 uniform vec2 textureAtlasOffset;
+
 uniform vec4 clipPlanes[MAX_CLIP_PLANES];
 uniform mat4 jointTransforms[MAX_JOINTS_PER_MESH];
 
@@ -60,56 +61,24 @@ uniform mat4 jointTransforms[MAX_JOINTS_PER_MESH];
 
 void main(){
 
-    vec4 totalLocalPos = vec4(0.0);
-    vec4 totalNormal = vec4(0.0);
-
     /**
      * MAIN processing of our point/vertex from worldSpace -> viewSpace -> clipSpace
      * then display it.
      * */
-    if(isAnimated){
 
-//        for(int i = 0; i < MAX_WEIGHTS_PER_VERTEX ; i++){
+    vec4 totalLocalPos = vec4(0.0);
+    vec4 totalNormal = vec4(0.0);
 
-            if(joint_ids[0] >= 0) {
-                mat4 jointTransform = jointTransforms[joint_ids[0]];
+    for(int i = 0; i < MAX_WEIGHTS_PER_VERTEX ; i++){
 
-                vec4 posePosition = (jointTransform * vec4(position, 1.0)) * weights[0];
-                totalLocalPos = posePosition  + totalLocalPos;
+        mat4 jointTransform = jointTransforms[joint_ids[i]];
 
-                vec4 worldNormal = (jointTransform * vec4(normal, 0.0)) * weights[0];
-                totalNormal = worldNormal + totalNormal;
-            }
+        vec4 posePosition = jointTransform * vec4(position, 1.0);
+        totalLocalPos += posePosition * weights[i];
 
-            if(joint_ids[1] >= 0){
-                mat4 jointTransform = jointTransforms[joint_ids[1]];
+        vec4 worldNormal = jointTransform * vec4(normal, 0.0);
+        totalNormal += worldNormal * weights[i];
 
-                vec4 posePosition = (jointTransform * vec4(position, 1.0)) * weights[1];
-                totalLocalPos = posePosition  + totalLocalPos;
-
-                vec4 worldNormal = (jointTransform * vec4(normal, 0.0)) * weights[1];
-                totalNormal = worldNormal + totalNormal;
-            }
-
-            if(joint_ids[2] >= 0){
-                mat4 jointTransform = jointTransforms[joint_ids[2]];
-
-                vec4 posePosition = (jointTransform * vec4(position, 1.0)) * weights[2];
-                totalLocalPos = posePosition  + totalLocalPos;
-
-                vec4 worldNormal = (jointTransform * vec4(normal, 0.0)) * weights[2];
-                totalNormal = worldNormal + totalNormal;
-            }
-//        }
-
-    }else{
-        totalLocalPos = vec4(position, 1.0);
-        totalNormal = vec4(normal, 0.0);
-    }
-
-    if(totalLocalPos == vec4(0.0)){
-        totalLocalPos = vec4(position, 1.0);
-        totalNormal = vec4(normal, 0.0);
     }
 
     vec4 worldPosition = model * totalLocalPos;
@@ -121,12 +90,12 @@ void main(){
     /**
      * Clip planes
      * */
-     for (int i = 0; i < MAX_CLIP_PLANES; i++){
-         gl_ClipDistance[i] = dot(worldPosition,clipPlanes[i]);
-     }
+    for (int i = 0; i < MAX_CLIP_PLANES; i++){
+        gl_ClipDistance[i] = dot(worldPosition,clipPlanes[i]);
+    }
 
     //Check for fake lighting
-    vec3 actualNormal = totalNormal.xyz;
+    vec3 actualNormal = totalNormal;
     if(hasFakeLighting){
         actualNormal = vec3(0.0,1.0,0.0);
     }
@@ -139,7 +108,7 @@ void main(){
     /**
      * Directly pass the diffuse color of each vertex
      * */
-    vCol = vec4(1.0f);
+    vCol = color;
 
     /**
      * The normal is just a direction from the vertex. The position of the vertex is

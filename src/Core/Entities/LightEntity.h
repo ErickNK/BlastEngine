@@ -9,6 +9,7 @@
 #include "../Input.h"
 #include "../../Rendering/Shaders/Shader.h"
 #include "../Components/EntityComponent.h"
+#include "Entity.h"
 
 class ShadowRendererComponent;
 class CoreEngine;
@@ -16,29 +17,26 @@ class RenderingEngine;
 class Scene;
 class Light;
 
-class LightEntity {
+class LightEntity: public Entity {
 public:
 
-    void ProcessInput(Input* input, float delta);
+    void ProcessInput(Input* input, float delta) override;
 
-    void Update(double time, float delta);
+    void Update(double time, float delta) override;
 
     void RenderLight(RenderingEngine* engine) const;
 
     void RenderShadow(RenderingEngine* engine) const;
 
-    LightEntity* AddComponent(EntityComponent<Light,RenderingEngine>* component);
+    LightEntity* AddComponent(EntityComponent<Light>* component);
 
     LightEntity* AddShadowComponent(ShadowRendererComponent* component);
 
-    Transform &getTransform();
 
 protected:
-    std::vector<EntityComponent<Light,RenderingEngine>*> m_light_components;
+    std::vector<EntityComponent<Light>*> m_light_components;
 
     std::vector<ShadowRendererComponent*> m_shadow_components;
-
-    Transform m_transform;
 };
 
 

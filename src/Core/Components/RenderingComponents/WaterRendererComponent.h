@@ -10,20 +10,20 @@
 #include "../../../Rendering/RenderingEngine.h"
 #include "../../../Rendering/Shaders/WaterShader.h"
 
-class WaterRendererComponent: public EntityComponent<Water,RenderingEngine>  {
+class WaterRendererComponent: public EntityComponent<Water>  {
 public:
     void Update(double time, float delta) override {
         EntityComponent::Update(time, delta);
 
         m_entity->moveFactor += m_entity->wave_speed * delta;
 
-        fmod(m_entity->moveFactor,1.0f);
+        m_entity->moveFactor = fmod(m_entity->moveFactor,1.0f);
     }
 
     void RenderWater(RenderingEngine* engine) const {
         engine->render_water = false;
         engine->render_gui = false;
-        m_entity->allow_render = false;
+        m_entity->setAllowRender(false);
 
         //REFLECTION
         m_entity->getReflectionFBO().BindFrameBuffer();
@@ -67,7 +67,7 @@ public:
         m_entity->getRefractionFBO().UnBindFrameBuffer(engine->getWindow()->getBufferWidth(),engine->getWindow()->getBufferHeight());
 
         //RENDER
-        m_entity->allow_render = true;
+        m_entity->setAllowRender(true);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -79,7 +79,7 @@ public:
 
             shader->SetLights(engine->getCurrentScene()->getLights());
 
-            m_entity->RenderAll(shader);
+            m_entity->RenderAll(engine);
 
         engine->UnBindShader(WATER_SHADER);
 

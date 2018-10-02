@@ -87,7 +87,7 @@ void RenderingEngine::CreateShaders(){
 void RenderingEngine::RenderAmbientLight(){
     auto * ambient_light_shader = (ForwardAmbientShader*)  BindShader(FORWARD_AMBIENT_SHADER);
 
-        ambient_light_shader->setLight(glm::vec3(1,1,1),0.006f);
+        ambient_light_shader->setLight(glm::vec3(1,1,1),0.3f);
 
         RenderAllMeshed();
 
@@ -113,7 +113,14 @@ void RenderingEngine::RenderEffects() {
 void RenderingEngine::RenderAllMeshed(){
     for (auto m_meshed : m_current_scene->getMeshedEntities()) {
 
-        m_meshed->RenderAll(m_shaders[m_current_shader]);
+        m_meshed->RenderAll(this);
+
+        EnableCulling();
+    }
+
+    for (auto m_meshed : m_current_scene->getAnimatedEntities()) {
+
+        m_meshed->RenderAll(this);
 
         EnableCulling();
     }
@@ -310,4 +317,12 @@ void RenderingEngine::CleanUP() {
 
 Window *RenderingEngine::getWindow() {
     return m_window;
+}
+
+Shader *RenderingEngine::getShader(ShaderType type) {
+    return m_shaders[type];
+}
+
+ShaderType RenderingEngine::getCurrentShaderType() {
+    return m_current_shader;
 }

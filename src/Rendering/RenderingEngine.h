@@ -67,6 +67,10 @@ public:
 
     Window *getWindow();
 
+    Shader *getShader(ShaderType type);
+
+    ShaderType getCurrentShaderType();
+
 private:
     //Shaders
     Shader* m_shaders[NUM_SHADER_TYPES];

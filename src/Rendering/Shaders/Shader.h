@@ -136,6 +136,8 @@ public:
 
     void Uniform1f(const char string[27], GLfloat d);
 
+    void UniformMatrix4fv(const char* string, const glm::mat4 &x4);
+
 protected:
     /**
    * Keeps track of the last issued glabal texture unit. Global texture units
