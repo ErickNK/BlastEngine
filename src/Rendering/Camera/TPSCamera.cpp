@@ -5,26 +5,15 @@
 #include "TPSCamera.h"
 
 void TPSCamera::UpdateView() {
+    //Pitch locally
+//    glm::quat key_quat = glm::quat(glm::vec3(glm::degrees(-m_pitch),glm::degrees(-m_yaw),0));
 
-//    //Pitch locally
-//    glm::quat qPitch = glm::angleAxis(-m_pitch, m_transform.GetRight());
-//    //Yaw globally
-//    glm::quat qYaw = glm::angleAxis(-m_yaw, m_worldUp);
-//
-//    //For a FPS camera we can omit roll
-//    glm::quat orientation = qPitch * qYaw;
-//
-//    m_component->getMeshedEntity()->getTransform().SetRot(glm::normalize(orientation));
-//
-//    m_transform.SetRot(glm::normalize(orientation));
-
-    m_look_at = m_component->getEntity()->getTransform().GetPos();
-
-    m_viewMatrix = glm::lookAt(m_transform.GetPos(), m_look_at, m_component->getEntity()->getTransform().GetUp());
+//    m_transform.SetRot(glm::normalize(key_quat));
 //
 //    m_look_at = m_transform.GetPos() + m_transform.GetForward() * 1.0f;
+    m_look_at = m_component->getParent()->getTransform().GetPos();
 //
-//    m_viewMatrix = glm::lookAt(m_transform.GetPos(), m_look_at, m_transform.GetUp());
+    m_viewMatrix = glm::lookAt(m_transform.GetPos(), m_look_at, m_transform.GetUp());
 }
 
 void TPSCamera::ProcessInput(Input *input, float delta) {
@@ -43,6 +32,14 @@ void TPSCamera::CalulateZoom(Input* input) {
 void TPSCamera::CalulatePitch(Input* input) {
     auto pitchChange = static_cast<float>(input->getYChange() * pitch_angle_speed);
     m_pitch -= pitchChange;
+
+    if(m_pitch > 89.0f){
+        m_pitch = 89.0f;
+    }
+
+    if(m_pitch < -89.0f){
+        m_pitch = -89.0f;
+    }
 }
 
 void TPSCamera::CalulateAngleAround(Input* input) {

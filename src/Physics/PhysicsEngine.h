@@ -13,10 +13,11 @@ class PhysicsEngine {
 public:
 	PhysicsEngine() = default;
 
+    void Initialize();
+
 	void Simulate(double time, float delta, Scene* scene);
 
 	void HandleCollisions(Scene* scene);
-
 };
 
 #endif

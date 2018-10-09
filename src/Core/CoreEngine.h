@@ -23,7 +23,7 @@ public:
             m_physicsEngine(physicsEngine),
             m_game(game) {}
 
-    void Init();
+    bool Init();
     void Start();
     void Run();
     void Stop();

@@ -9,17 +9,14 @@
 #include <GLFW/glfw3.h>
 #include "../EntityComponent.h"
 #include "../../../Physics/Objects/RigidBody.h"
+#include "../Attachment/TPSCameraAttachment.h"
+#include "../../../Rendering/Camera/TPSCamera.h"
 
 class PlayerMovement : public EntityComponent<MeshedEntity>{
 public:
     void ProcessInput(Input* input, float delta) override {
         mainForce->setAmount(glm::vec3(0,0,0));
         this->handleKeys(input->getKeys(),delta);
-        this->handleMouse(input->getXChange(),input->getYChange());
-    }
-
-    void Update(double time, float delta) override {
-
     }
 
     virtual void handleKeys(const bool *keys, GLfloat deltaTime) {
@@ -57,16 +54,6 @@ public:
         }
     }
 
-    void handleMouse(double xChange, double yChange) {
-//        xChange *= m_turn_speed;
-//        m_yaw += xChange;
-//
-//        //Yaw globally
-//        glm::quat qYaw = glm::angleAxis(-m_yaw, glm::vec3(0, 1, 0));
-//        glm::quat orientation =  qYaw;
-//        m_entity->getTransform().SetRot(glm::normalize(orientation));
-    }
-
     void SetParent(MeshedEntity *entity) override {
         EntityComponent::SetParent(entity);
         getRigidBody();
@@ -90,7 +77,8 @@ private:
     RigidBody* m_parent_body = nullptr;
     Force* mainForce = new Force();
 
-    float m_yaw;
+    TPSCameraAttachment* m_TPS_component = nullptr;
+
 };
 
 

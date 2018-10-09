@@ -7,7 +7,7 @@
 
 #include <string>
 #include <GL/glew.h>
-#include "../Rendering/stb_image.h"
+#include <stb_image.h>
 
 const int
 	MAX_MATERIALS_TEXTURES = 3, 
@@ -39,6 +39,8 @@ enum ShaderType{
     TERRAIN_SHADER,
     GUI_SHADER,
     POST_PROCESSING_SCREEN_SHADER,
+
+    NO_SHADER,
 
 	NUM_SHADER_TYPES
 };

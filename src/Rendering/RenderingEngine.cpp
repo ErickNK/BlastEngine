@@ -30,10 +30,10 @@
 #include "Shaders/PostProcessingScreenShader.h"
 #include "Shaders/WaterShader.h"
 
-RenderingEngine::RenderingEngine(Window* window): m_window(window) {
+void RenderingEngine::Initialize(){
     CreateShaders();
-    for(int i = 0; i < MAX_CLIP_PLANES; i++){
-        m_activated_clipping_Planes[i] = false;
+    for (bool &m_activated_clipping_Plane : m_activated_clipping_Planes) {
+        m_activated_clipping_Plane = false;
     }
 }
 
@@ -325,4 +325,8 @@ Shader *RenderingEngine::getShader(ShaderType type) {
 
 ShaderType RenderingEngine::getCurrentShaderType() {
     return m_current_shader;
+}
+
+void RenderingEngine::setWindow(Window *window) {
+    m_window = window;
 }

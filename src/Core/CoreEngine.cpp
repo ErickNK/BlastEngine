@@ -5,20 +5,36 @@
 #include "CoreEngine.h"
 #include "../Common/Time.h"
 
-void CoreEngine::Init() {
+bool CoreEngine::Init() {
+    if(m_window == nullptr
+    || m_game == nullptr
+    || m_renderingEngine == nullptr
+    || m_physicsEngine == nullptr) return false;
+
+    m_window->Initialize();
+
+    m_renderingEngine->setWindow(m_window);
+    m_renderingEngine->Initialize();
+
+    m_physicsEngine->Initialize();
+
     m_game->SetEngine(this);
     m_game->Init();
+
+    return true;
 }
 
 void CoreEngine::Start() {
-    if(m_isRunning) { return; }
-    Run();
+    if(m_isRunning) { //If already running
+        return;
+    } else {
+        m_isRunning = true;
+        Run();
+    }
 }
 
 void CoreEngine::Run() {
-    m_isRunning = true;
-
-    double lastTime = Time::GetTime(); //Current time at the start of the Engine
+    double lastTime = Time::GetTime(); //Current time at the start of the BlastEngine
     double unProcessedTime = 0; //Amount of passed time that the engine hasn't accounted for
 
     double FPSDisplayTimer = 0;           //Total passed time since last frame counter display
@@ -106,12 +122,11 @@ void CoreEngine::Run() {
 
 
 void CoreEngine::Stop() {
-    if(!m_isRunning)
-    {
+    if(!m_isRunning) { //IF NOT RUNNING
         return;
+    }else{
+        m_isRunning = false;
+        m_shouldRender = false;
     }
-
-    m_isRunning = false;
-    m_shouldRender = false;
 }
 

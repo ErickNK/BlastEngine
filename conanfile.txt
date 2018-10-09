@@ -1,0 +1,13 @@
+[requires]
+boost/1.68.0@conan/stable
+Assimp/4.1.0@jacmoe/stable
+# SDL2/2.0.5@lasote/stable
+# SDL2_image/2.0.1@lasote/stable
+# SDL2_mixer/2.0.1@a_teammate/testing
+glew/2.1.0@bincrafters/stable
+glm/0.9.8.5@bincrafters/stable
+glfw/3.2.1@bincrafters/stable
+
+[generators]
+txt
+cmake

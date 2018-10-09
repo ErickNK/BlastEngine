@@ -259,3 +259,17 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+# Ignore the build and lib dir
+build/**
+cmake-build-debug/**
+lib/**
+
+# Ignore any executable
+bin/**
+
+# Ignore the test game
+test/TestGame/**
+
+# Ignore Mac specific files
+.DS_store/**

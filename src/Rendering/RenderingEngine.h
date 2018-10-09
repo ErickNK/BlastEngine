@@ -20,11 +20,11 @@ class GameObject;
 
 class RenderingEngine {
 public:
-    explicit RenderingEngine(Window* window);
+    RenderingEngine() = default;
+
+    void Initialize();
 
     inline double DisplayRenderTime(double dividend) { return m_renderProfileTimer.DisplayAndReset("Render Time: ", dividend); }
-
-//    inline double DisplayWindowSyncTime(double dividend) { return m_windowSyncProfileTimer.DisplayAndReset("Window Sync Time: ", dividend); }
 
     Shader* BindShader(ShaderType type);
 
@@ -67,24 +67,25 @@ public:
 
     Window *getWindow();
 
+    void setWindow(Window * window);
+
     Shader *getShader(ShaderType type);
 
     ShaderType getCurrentShaderType();
 
 private:
     //Shaders
-    Shader* m_shaders[NUM_SHADER_TYPES];
-    ShaderType m_current_shader;
+    Shader* m_shaders[NUM_SHADER_TYPES] {};
+    ShaderType m_current_shader = NO_SHADER;
 
     //Profilers
     ProfileTimer m_renderProfileTimer;
-//    ProfileTimer m_windowSyncProfileTimer;
 
     Scene * m_current_scene = nullptr;
     Window* m_window = nullptr;
 
-    glm::vec4 m_clipping_Planes [MAX_CLIP_PLANES];
-    bool m_activated_clipping_Planes [MAX_CLIP_PLANES];
+    glm::vec4 m_clipping_Planes [MAX_CLIP_PLANES] {};
+    bool m_activated_clipping_Planes [MAX_CLIP_PLANES] {};
 
     void RenderShadows();
     void RenderSkybox();

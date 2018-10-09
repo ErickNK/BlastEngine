@@ -15,12 +15,14 @@ public:
     TPSCameraAttachment() = default;
 
 
-    explicit TPSCameraAttachment(Entity *entity):
-    m_entity(entity){}
+    explicit TPSCameraAttachment(Entity *entity){
+        m_entity = entity;
+    }
 
     TPSCameraAttachment(Entity* entity, TPSCamera* camera):
-    m_entity(entity),
-    m_camera(camera) {}
+    m_camera(camera) {
+        m_entity = entity;
+    }
 
     void ProcessInput(Input *input, float delta) override;
 
@@ -30,10 +32,9 @@ public:
 
     void SetCamera(TPSCamera *camera);
 
-    Entity* getEntity() const;
+    TPSCamera* getCamera();
 
 private:
-    Entity* m_entity = nullptr;
     TPSCamera* m_camera = nullptr;
     double oldAngle_around_attachment = 0;
 };

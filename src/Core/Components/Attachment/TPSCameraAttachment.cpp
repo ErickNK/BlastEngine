@@ -35,7 +35,6 @@ void TPSCameraAttachment::SetCamera(TPSCamera *camera) {
     m_camera = camera;
 }
 
-Entity *TPSCameraAttachment::getEntity() const {
-    return m_entity;
+TPSCamera *TPSCameraAttachment::getCamera() {
+    return m_camera;
 }
-

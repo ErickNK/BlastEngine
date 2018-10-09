@@ -19,7 +19,6 @@ public:
     void UpdateView() override;
     void ProcessInput(Input* input, float delta) override;
 
-
     void Attach(MeshedEntity* meshedEntity);
 
     void CalulateZoom(Input* input);
@@ -28,6 +27,7 @@ public:
     float CalculateHorizontalDistance();
     float CalculateVerticalDistnace();
 
+    glm::vec3 getDirection();
 
     float distance_from_attachment = 50;
     float angle_around_attachment = 0;

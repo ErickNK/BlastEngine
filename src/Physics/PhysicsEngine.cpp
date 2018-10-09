@@ -1,5 +1,8 @@
 #include "PhysicsEngine.h"
 
+void PhysicsEngine::Initialize() {
+
+}
 
 void PhysicsEngine::Simulate(double time, float delta, Scene* scene)
 {
