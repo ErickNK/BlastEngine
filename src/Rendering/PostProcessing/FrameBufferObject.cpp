@@ -165,9 +165,6 @@ bool FrameBufferObject::Generate(GLuint &id, GLuint width, GLuint height, GLenum
             status = checkForErrors();
         }
 
-        glReadBuffer(GL_COLOR_ATTACHMENT0 + m_current_reading_unit);
-        glDrawBuffer(GL_COLOR_ATTACHMENT0 + m_current_drawing_unit);
-
     glBindFramebuffer(GL_FRAMEBUFFER, 0); //unBind shadow buffer.
     return status;
 }
@@ -200,7 +197,7 @@ void FrameBufferObject::UseTexture(int id, GLenum textureUnit) const {
     assert( someError == GL_NO_ERROR);
 }
 
-void FrameBufferObject::setForReading(bool color, int unit) const {
+void FrameBufferObject::setForReading(bool color, int unit) {
     checkForErrors();
 
     if (!color) {
@@ -210,12 +207,27 @@ void FrameBufferObject::setForReading(bool color, int unit) const {
 
     assert(unit >= 0 && unit < GL_MAX_COLOR_ATTACHMENTS);
 
-    if(m_current_reading_unit != unit) glReadBuffer(GL_COLOR_ATTACHMENT0 + unit);
+    glReadBuffer(GL_COLOR_ATTACHMENT0 + unit);
+
+    m_current_reading_unit = unit;
 
     checkForErrors();
 }
 
-void FrameBufferObject::setForDrawing(bool color, int unit) const {
+void FrameBufferObject::setForReading(bool color, GLenum unit) const {
+    checkForErrors();
+
+    if (!color) {
+        glReadBuffer(GL_NONE); //Read from depth attachment
+        return;
+    }
+
+    glReadBuffer(unit);
+
+    checkForErrors();
+}
+
+void FrameBufferObject::setForDrawing(bool color, std::vector<GLenum>& buffers) const {
     checkForErrors();
 
     if (!color) {
@@ -223,9 +235,9 @@ void FrameBufferObject::setForDrawing(bool color, int unit) const {
         return;
     }
 
-    assert(unit >= 0 && unit < GL_MAX_COLOR_ATTACHMENTS);
+    this->m_current_drawing_units = buffers;
 
-    if(m_current_drawing_unit != unit) glDrawBuffer(GL_COLOR_ATTACHMENT0 + unit);
+    glDrawBuffers(buffers.size(),&buffers[0]);
 
     checkForErrors();
 }

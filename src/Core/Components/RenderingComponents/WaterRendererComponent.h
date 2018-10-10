@@ -27,7 +27,9 @@ public:
 
         //REFLECTION
         m_entity->getReflectionFBO().BindFrameBuffer();
-        m_entity->getReflectionFBO().setForDrawing(true,0);
+
+        std::vector<GLenum> reflectionBuffers {GL_COLOR_ATTACHMENT0};
+        m_entity->getReflectionFBO().setForDrawing(true,reflectionBuffers);
 
             glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -53,7 +55,9 @@ public:
 
         //REFRACTION
         m_entity->getRefractionFBO().BindFrameBuffer();
-        m_entity->getRefractionFBO().setForDrawing(true,0);
+
+        std::vector<GLenum> refractionBuffers {GL_COLOR_ATTACHMENT0};
+        m_entity->getRefractionFBO().setForDrawing(true,refractionBuffers);
 
             glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

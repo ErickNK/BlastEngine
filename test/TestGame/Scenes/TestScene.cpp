@@ -43,19 +43,19 @@ void TestScene::Init() {
 void TestScene::SetupSkyBox() {
     std::map<SkyBoxTypes, std::vector<std::string>> faceLocations;
 
-    faceLocations[DAY_SKYBOX].emplace_back("../res/textures/skybox/cloudtop_lf.tga");
-    faceLocations[DAY_SKYBOX].emplace_back("../res/textures/skybox/cloudtop_rt.tga");
-    faceLocations[DAY_SKYBOX].emplace_back("../res/textures/skybox/cloudtop_up.tga");
-    faceLocations[DAY_SKYBOX].emplace_back("../res/textures/skybox/cloudtop_dn.tga");
-    faceLocations[DAY_SKYBOX].emplace_back("../res/textures/skybox/cloudtop_ft.tga");
-    faceLocations[DAY_SKYBOX].emplace_back("../res/textures/skybox/cloudtop_bk.tga");
+    faceLocations[DAY_SKYBOX].emplace_back("../test/TestGame/res/textures/skybox/cloudtop_lf.tga");
+    faceLocations[DAY_SKYBOX].emplace_back("../test/TestGame/res/textures/skybox/cloudtop_rt.tga");
+    faceLocations[DAY_SKYBOX].emplace_back("../test/TestGame/res/textures/skybox/cloudtop_up.tga");
+    faceLocations[DAY_SKYBOX].emplace_back("../test/TestGame/res/textures/skybox/cloudtop_dn.tga");
+    faceLocations[DAY_SKYBOX].emplace_back("../test/TestGame/res/textures/skybox/cloudtop_ft.tga");
+    faceLocations[DAY_SKYBOX].emplace_back("../test/TestGame/res/textures/skybox/cloudtop_bk.tga");
 
-    faceLocations[NIGHT_SKYBOX].emplace_back("../res/textures/skybox/night_lf.png");
-    faceLocations[NIGHT_SKYBOX].emplace_back("../res/textures/skybox/night_rt.png");
-    faceLocations[NIGHT_SKYBOX].emplace_back("../res/textures/skybox/night_up.png");
-    faceLocations[NIGHT_SKYBOX].emplace_back("../res/textures/skybox/night_dn.png");
-    faceLocations[NIGHT_SKYBOX].emplace_back("../res/textures/skybox/night_ft.png");
-    faceLocations[NIGHT_SKYBOX].emplace_back("../res/textures/skybox/night_bk.png");
+    faceLocations[NIGHT_SKYBOX].emplace_back("../test/TestGame/res/textures/skybox/night_lf.png");
+    faceLocations[NIGHT_SKYBOX].emplace_back("../test/TestGame/res/textures/skybox/night_rt.png");
+    faceLocations[NIGHT_SKYBOX].emplace_back("../test/TestGame/res/textures/skybox/night_up.png");
+    faceLocations[NIGHT_SKYBOX].emplace_back("../test/TestGame/res/textures/skybox/night_dn.png");
+    faceLocations[NIGHT_SKYBOX].emplace_back("../test/TestGame/res/textures/skybox/night_ft.png");
+    faceLocations[NIGHT_SKYBOX].emplace_back("../test/TestGame/res/textures/skybox/night_bk.png");
 
     auto * skybox = new SkyBox(100.f,faceLocations);
     skybox->AddComponent(new SkyBoxRendererComponent())
@@ -112,12 +112,12 @@ void TestScene::CreateTerrain(){
 
     //Create Terrain
     std::map<TextureTypeEnum, std::string> terrainTextures;
-    terrainTextures[BACKGROUND_TEXTURE] = "../res/textures/terrain/grassy2.png";
-    terrainTextures[R_TEXTURE] = "../res/textures/terrain/mud.png";
-    terrainTextures[G_TEXTURE] = "../res/textures/terrain/pinkFlowers.png";
-    terrainTextures[B_TEXTURE] = "../res/textures/terrain/path.png";
-    terrainTextures[BLEND_MAP_TEXTURE] = "../res/textures/terrain/blendMap.png";
-    terrainTextures[HEIGHT_MAP_TEXTURE] = "../res/textures/terrain/heightmap.png";
+    terrainTextures[BACKGROUND_TEXTURE] = "../test/TestGame/res/textures/terrain/grassy2.png";
+    terrainTextures[R_TEXTURE] = "../test/TestGame/res/textures/terrain/mud.png";
+    terrainTextures[G_TEXTURE] = "../test/TestGame/res/textures/terrain/pinkFlowers.png";
+    terrainTextures[B_TEXTURE] = "../test/TestGame/res/textures/terrain/path.png";
+    terrainTextures[BLEND_MAP_TEXTURE] = "../test/TestGame/res/textures/terrain/blendMap.png";
+    terrainTextures[HEIGHT_MAP_TEXTURE] = "../test/TestGame/res/textures/terrain/heightmap.png";
 
     Terrain* terrain = new Terrain(0,0,terrainTextures);
     auto * terrainBody = new TerrainBody();
@@ -125,11 +125,11 @@ void TestScene::CreateTerrain(){
     this->AddPhysicsObject(terrainBody);
     this->AddTerrain(terrain);
 
-    std::map<TextureTypeEnum, std::string> waterTextures;
-    waterTextures[DU_DV_MAP] = "../res/textures/terrain/waterDUDV.png";
-    waterTextures[NORMAL_MAP] = "../res/textures/terrain/matchingNormalMap.png";
-    auto * water = new Water(1,1,-5,waterTextures);
-    this->AddWaterBody(water);
+//    std::map<TextureTypeEnum, std::string> waterTextures;
+//    waterTextures[DU_DV_MAP] = "../test/TestGame/res/textures/terrain/waterDUDV.png";
+//    waterTextures[NORMAL_MAP] = "../test/TestGame/res/textures/terrain/matchingNormalMap.png";
+//    auto * water = new Water(1,1,-5,waterTextures);
+//    this->AddWaterBody(water);
 
     //Trees
     int spice = 1;
@@ -137,12 +137,12 @@ void TestScene::CreateTerrain(){
         auto *tree = new MeshedEntity();
 
         std::map<TextureTypeEnum, std::string> treeTextures;
-        treeTextures[DIFFUSE_TEXTURE] = "../res/textures/terrain/tree.png";
+        treeTextures[DIFFUSE_TEXTURE] = "../test/TestGame/res/textures/terrain/tree.png";
 
         options[Transparency] = false;
         options[FakeLighting] = false;
 
-        m_meshed_loader->LoadGameObject("../res/textures/terrain/tree.obj", treeTextures, tree, options);
+        m_meshed_loader->LoadGameObject("../test/TestGame/res/textures/terrain/tree.obj", treeTextures, tree, options);
 
         std::mt19937 rng;
         rng.seed(std::random_device()());
@@ -170,13 +170,13 @@ void TestScene::CreateTerrain(){
         std::uniform_int_distribution<std::mt19937::result_type> dist4(0, 4); // distribution in range [1, 100]
 
         std::map<TextureTypeEnum, std::string*> grassTextures;
-        std::string atlasDetails[3] = {"../res/textures/terrain/fern.png",std::to_string(dist4(rng)),"2"};
+        std::string atlasDetails[3] = {"../test/TestGame/res/textures/terrain/fern.png",std::to_string(dist4(rng)),"2"};
         grassTextures[DIFFUSE_TEXTURE_ATLAS] = atlasDetails;
 
         options[Transparency] = true;
         options[FakeLighting] = true;
 
-        m_meshed_loader->LoadGameObject("../res/textures/terrain/fern.obj", grassTextures, fern, options);
+        m_meshed_loader->LoadGameObject("../test/TestGame/res/textures/terrain/fern.obj", grassTextures, fern, options);
 
         std::uniform_int_distribution<std::mt19937::result_type> dist6(5, 500); // distribution in range [1, 100]
 
@@ -198,7 +198,7 @@ void TestScene::CreateCharacters() {
     options[Transparency] = false;
     options[FakeLighting] = false;
 
-    m_meshed_loader->LoadGameObject("../res/models/nanosuit/nanosuit.obj",nanosuit,options);
+    m_meshed_loader->LoadGameObject("../test/TestGame/res/models/nanosuit/nanosuit.obj",nanosuit,options);
 
     auto * rigidBody = new RigidBody(new Point(),glm::vec3(0,0,0),100.0f);
     nanosuit->AddComponent(reinterpret_cast<EntityComponent<MeshedEntity> *>(rigidBody));
@@ -210,16 +210,19 @@ void TestScene::CreateCharacters() {
 }
 
 void TestScene::CreateLighting() {
-    DirectionalLight* directionalLight = new DirectionalLight(
+    sun = new DirectionalLight(
             glm::vec3(1.0f,1.0f,1.0f),
-            glm::vec3(0.0f,-1.0,-1.0f),
+            glm::vec3(0.0f,-1.0,1.0f),
             0.0f, 0.9f,
             2018, 2018,
-            glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 1000.0f));
+            glm::ortho(-200.0f, 200.0f, -200.0f, 200.0f, 1.0f, 10000.0f));
 
-    directionalLight->AddComponent(new LightComponent());
-    directionalLight->AddShadowComponent(new ShadowRendererComponent());
-    this->AddLightToScene(directionalLight);
+    sun->getTransform().SetPos(glm::vec3(0.0f,100.0f,0.0f));
+    sun->getTransform().LookAt(glm::vec3(0.0f,-1.0,1.0f));
+    sun->GetShadow().m_flipFaces = false;
+    sun->AddComponent(new LightComponent());
+    sun->AddShadowComponent(new ShadowRendererComponent());
+    this->AddLightToScene(sun);
 
 //    PointLight* pointLight = new PointLight(
 //            glm::vec3(0.0f,1.0f,1.0f), /*Color*/
@@ -249,6 +252,7 @@ void TestScene::CreateGUI(){
 //    textures.emplace(this->m_waters[0]->getReflectionFBO().GetTexture(this->m_waters[0]->getReflectionTexture()),new Transform(glm::vec3(-0.5f,0.5f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
 //    textures.emplace(this->m_waters[0]->getRefractionFBO().GetTexture(this->m_waters[0]->getRefractionTexture()),new Transform(glm::vec3(0.5f,0.5f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
 //    textures.emplace(new Texture("../res/textures/gui/health.png",GUI_TEXTURE),new Transform(glm::vec3(-0.75f,-0.9f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
+    textures.emplace(new Texture(sun->GetShadowMapFBO().GetTextures()[sun->GetShadowMapTexture()],GUI_TEXTURE),new Transform(glm::vec3(0.5f,0.5f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
 
     auto * guiEntity = new GUIEntity();
     guiEntity->InitMesh();

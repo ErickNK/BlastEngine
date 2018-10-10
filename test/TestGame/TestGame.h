@@ -7,6 +7,7 @@
 
 
 #include "Scenes/ShadingScene.h"
+#include "Scenes/TestScene.h"
 
 class TestGame: public Game{
 

@@ -23,7 +23,10 @@ public:
         auto * shader = (DirectionalLightShadowMapShader*) engine->BindShader(DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER);
 
             m_entity->GetShadowMapFBO().BindFrameBuffer(); //Begin writing
-            m_entity->GetShadowMapFBO().setForDrawing(true,0);
+
+            std::vector<GLenum> buffers {GL_COLOR_ATTACHMENT0};
+            m_entity->GetShadowMapFBO().setForDrawing(true,buffers);
+
             if(m_entity->GetShadow().m_flipFaces) glCullFace(GL_FRONT);
 
                 glClearColor(0.0f, 0.0f, 0.0f, 0.0f);

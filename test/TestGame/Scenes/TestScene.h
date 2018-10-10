@@ -32,6 +32,7 @@ public:
 private:
     MeshedLoader * m_meshed_loader;
     GUILoader * m_gui_loader;
+    DirectionalLight* sun;
 };
 
 

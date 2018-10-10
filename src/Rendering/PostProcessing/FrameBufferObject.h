@@ -7,6 +7,7 @@
 
 
 #include <stdio.h>
+#include <vector>
 #include "GL/glew.h"
 #include "../../Common/CommonValues.h"
 #include "../Texture.h"
@@ -20,9 +21,12 @@ public:
 
     virtual bool Generate(GLuint &id, GLuint width, GLuint height, GLenum* options);
 
-    virtual void setForReading(bool color, int unit) const;
+    virtual void setForReading(bool color, int unit);
 
-    virtual void setForDrawing(bool color, int unit) const;
+    virtual void setForReading(bool color, GLenum unit) const;
+
+    virtual void setForDrawing(bool color, std::vector<GLenum>& buffers) const;
+
 
     bool checkForErrors() const;
 
@@ -55,6 +59,8 @@ protected:
     GLenum m_render_buffer_options[32][NUM_FBO_OPTIONS];
     int m_texture_count = -1, m_render_buffer_count = -1;
     int m_current_drawing_unit = 0, m_current_reading_unit = 0;
+    mutable std::vector<GLenum> m_current_drawing_units;
+    mutable std::vector<GLenum> m_current_reading_units;
     GLuint m_texture_test;
 
     virtual void setOverlayFilter();
