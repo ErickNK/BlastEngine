@@ -15,7 +15,7 @@ public:
     TestGame() = default;
 
     void Init() override{
-        auto * scene = new ShadingScene(this);
+        auto * scene = new TestScene(this);
         scene->Init();
         this->SetCurrentScene(scene);
     }

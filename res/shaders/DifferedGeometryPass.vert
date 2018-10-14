@@ -1,12 +1,6 @@
 #version 400
 
-//constants --------------------------------------
-
-const int MAX_JOINTS_PER_MESH = 50;//max joints allowed in a skeleton
-const int MAX_WEIGHTS_PER_VERTEX = 3;//max number of joints that can affect a vertex
-const int MAX_CLIP_PLANES = 6;
-
-//---------------------------------------------------------
+#include "constants.vert"
 
 //Attribute Pointers --------------------------------------
 
@@ -26,19 +20,23 @@ out vec3 vNormal;
 out vec3 vFragPos;
 out vec4 vCol;
 
-/* Position of the fragment relative to the light */
-out vec4 vDirectionalLightSpacePosition;
+///*
+// * Position of the fragment relative to the light.
+// * Organized relative to there id.
+// * */
+//out vec4 vDirectionalLightSpacePosition[MAX_DIRECTIONAL_LIGHTS];
 
 out gl_PerVertex{
-    vec4 gl_Position;
-    float gl_ClipDistance[MAX_CLIP_PLANES];
+        vec4 gl_Position;
+        float gl_ClipDistance[MAX_CLIP_PLANES];
 };
 
 //---------------------------------------------------------
 
 //Lighting ------------------------------------------------
 
-uniform mat4 directionalLightSpace;
+//Organized relative to there id
+//uniform mat4 directionalLightSpace[MAX_DIRECTIONAL_LIGHTS];
 
 //---------------------------------------------------------
 
@@ -52,9 +50,19 @@ uniform mat3 normalMatrix;
 uniform bool isAnimated = false;
 uniform bool hasFakeLighting;
 uniform int textureAtlasNumOfRows;
+uniform int directionalLightCount;
+uniform int pointLightCount;
+uniform int spotLightCount;
+
 uniform vec2 textureAtlasOffset;
 uniform vec4 clipPlanes[MAX_CLIP_PLANES];
 uniform mat4 jointTransforms[MAX_JOINTS_PER_MESH];
+
+//---------------------------------------------------------
+
+//Other varibles-----------------------------------------
+
+
 
 //---------------------------------------------------------
 
@@ -71,35 +79,35 @@ void main(){
 
 //        for(int i = 0; i < MAX_WEIGHTS_PER_VERTEX ; i++){
 
-            if(joint_ids[0] >= 0) {
-                mat4 jointTransform = jointTransforms[joint_ids[0]];
+        if(joint_ids[0] >= 0) {
+            mat4 jointTransform = jointTransforms[joint_ids[0]];
 
-                vec4 posePosition = (jointTransform * vec4(position, 1.0)) * weights[0];
-                totalLocalPos = posePosition  + totalLocalPos;
+            vec4 posePosition = (jointTransform * vec4(position, 1.0)) * weights[0];
+            totalLocalPos = posePosition  + totalLocalPos;
 
-                vec4 worldNormal = (jointTransform * vec4(normal, 0.0)) * weights[0];
-                totalNormal = worldNormal + totalNormal;
-            }
+            vec4 worldNormal = (jointTransform * vec4(normal, 0.0)) * weights[0];
+            totalNormal = worldNormal + totalNormal;
+        }
 
-            if(joint_ids[1] >= 0){
-                mat4 jointTransform = jointTransforms[joint_ids[1]];
+        if(joint_ids[1] >= 0){
+            mat4 jointTransform = jointTransforms[joint_ids[1]];
 
-                vec4 posePosition = (jointTransform * vec4(position, 1.0)) * weights[1];
-                totalLocalPos = posePosition  + totalLocalPos;
+            vec4 posePosition = (jointTransform * vec4(position, 1.0)) * weights[1];
+            totalLocalPos = posePosition  + totalLocalPos;
 
-                vec4 worldNormal = (jointTransform * vec4(normal, 0.0)) * weights[1];
-                totalNormal = worldNormal + totalNormal;
-            }
+            vec4 worldNormal = (jointTransform * vec4(normal, 0.0)) * weights[1];
+            totalNormal = worldNormal + totalNormal;
+        }
 
-            if(joint_ids[2] >= 0){
-                mat4 jointTransform = jointTransforms[joint_ids[2]];
+        if(joint_ids[2] >= 0){
+            mat4 jointTransform = jointTransforms[joint_ids[2]];
 
-                vec4 posePosition = (jointTransform * vec4(position, 1.0)) * weights[2];
-                totalLocalPos = posePosition  + totalLocalPos;
+            vec4 posePosition = (jointTransform * vec4(position, 1.0)) * weights[2];
+            totalLocalPos = posePosition  + totalLocalPos;
 
-                vec4 worldNormal = (jointTransform * vec4(normal, 0.0)) * weights[2];
-                totalNormal = worldNormal + totalNormal;
-            }
+            vec4 worldNormal = (jointTransform * vec4(normal, 0.0)) * weights[2];
+            totalNormal = worldNormal + totalNormal;
+        }
 //        }
 
     }else{
@@ -121,9 +129,9 @@ void main(){
     /**
      * Clip planes
      * */
-     for (int i = 0; i < MAX_CLIP_PLANES; i++){
-         gl_ClipDistance[i] = dot(worldPosition,clipPlanes[i]);
-     }
+    for (int i = 0; i < MAX_CLIP_PLANES; i++){
+        gl_ClipDistance[i] = dot(worldPosition,clipPlanes[i]);
+    }
 
     //Check for fake lighting
     vec3 actualNormal = totalNormal.xyz;
@@ -167,5 +175,7 @@ void main(){
     *(thus its lightSpaceTransform).
     *
     * */
-    vDirectionalLightSpacePosition = directionalLightSpace * model * totalLocalPos;
+//    for (int j = 0; j < directionalLightCount; ++j) {
+//        vDirectionalLightSpacePosition[j] = directionalLightSpace[j] * model * totalLocalPos;
+//    }
 }

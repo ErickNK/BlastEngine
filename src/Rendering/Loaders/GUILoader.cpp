@@ -44,7 +44,6 @@ bool GUILoader::LoadGUI(std::map<Texture*,Transform*> textures, GUIEntity *root)
 bool GUILoader::LoadGUI(std::string directory, GUIEntity *root) {
     GUILoader::directory = std::move(directory);
 
-
     this->processNode(root);
 
     Clean();
@@ -95,6 +94,7 @@ std::vector<Texture *> GUILoader::loadTextures() {
 
             //TODO: configure Texture class
             if (!skip) { //If not loaded
+                //TODO: generalize texture loading
                 Texture* texture = new Texture("../res/textures/gui/health.png",GUI_TEXTURE);;
                 textures.push_back(texture);
 

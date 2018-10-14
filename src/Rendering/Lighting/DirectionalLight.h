@@ -5,11 +5,11 @@
 #ifndef MORDEROPENGLUDEMYTUTORIAL_DIRECTIONALLIGHT_H
 #define MORDEROPENGLUDEMYTUTORIAL_DIRECTIONALLIGHT_H
 
-#include "Light.h"
 #include <map>
 #include "../../Common/CommonValues.h"
+#include "../../Core/Entities/LightEntity.h"
 
-class DirectionalLight : public Light {
+class DirectionalLight : public LightEntity {
 
 public:
     DirectionalLight();
@@ -23,7 +23,7 @@ public:
 
     ~DirectionalLight() override;
 
-	void UseLight(std::map<std::string, GLint>& m_uniforms, int shadowTextureUnit);
+	void UseLight(Shader* shader) override;
 	
     static void SetupUniforms(std::map<std::string, GLint>& m_uniforms,GLuint shaderProgram);
 

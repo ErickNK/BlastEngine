@@ -39,7 +39,28 @@ void Scene::Update(double time, float delta) {
     }
 }
 
-void Scene::AddLightToScene(LightEntity* light) { m_lights.push_back(light); }
+void Scene::AddLightToScene(LightEntity* light) {
+    switch(light->getType()){
+        case DIRECTIONAL_LIGHT:
+            directionalLightsCount++;
+            light->setId(directionalLightsCount - 1);
+            break;
+
+        case POINT_LIGHT:
+            pointLightsCount++;
+            light->setId(pointLightsCount - 1);
+            break;
+
+        case SPOT_LIGHT:
+            spotLightsCount++;
+            light->setId(spotLightsCount - 1);
+            break;
+
+        case NUM_LIGHT_TYPES:break;
+        default: break;
+    }
+    m_lights.push_back(light);
+}
 void Scene::AddMeshedToScene(MeshedEntity* meshed) { m_meshed_Entities.push_back(meshed);}
 void Scene::AddAnimatedToScene(AnimatedEntity* animated) { m_animated_Entities.push_back(animated);}
 void Scene::AddEffectToScene(EffectEntity* effect) { m_effect_Entities.push_back(effect);}
@@ -134,4 +155,16 @@ const std::vector<Water *> &Scene::getWaterBodies() const {
 
 void Scene::AddEntity(Entity *entity) {
     m_entities.push_back(entity);
+}
+
+int Scene::getSpotLightsCount() {
+    return spotLightsCount;
+}
+
+int Scene::getPointLightsCount() {
+    return pointLightsCount;
+}
+
+int Scene::getDirectionalLightsCount() {
+    return directionalLightsCount;
 }

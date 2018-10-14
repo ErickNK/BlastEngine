@@ -249,10 +249,10 @@ void TestScene::CreateLighting() {
 void TestScene::CreateGUI(){
     std::map<Texture*,Transform*> textures;
 
-//    textures.emplace(this->m_waters[0]->getReflectionFBO().GetTexture(this->m_waters[0]->getReflectionTexture()),new Transform(glm::vec3(-0.5f,0.5f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
-//    textures.emplace(this->m_waters[0]->getRefractionFBO().GetTexture(this->m_waters[0]->getRefractionTexture()),new Transform(glm::vec3(0.5f,0.5f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
+//    textures.emplace(new Texture(this->m_waters[0]->getReflectionFBO().GetTextures()[this->m_waters[0]->getReflectionTexture()],GUI_TEXTURE),new Transform(glm::vec3(-0.5f,0.5f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
+//    textures.emplace(new Texture(this->m_waters[0]->getRefractionFBO().GetTextures()[this->m_waters[0]->getRefractionTexture()],GUI_TEXTURE),new Transform(glm::vec3(0.5f,0.5f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
 //    textures.emplace(new Texture("../res/textures/gui/health.png",GUI_TEXTURE),new Transform(glm::vec3(-0.75f,-0.9f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
-    textures.emplace(new Texture(sun->GetShadowMapFBO().GetTextures()[sun->GetShadowMapTexture()],GUI_TEXTURE),new Transform(glm::vec3(0.5f,0.5f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
+//    textures.emplace(new Texture(sun->GetShadowMapFBO().GetTextures()[sun->GetShadowMapTexture()],GUI_TEXTURE),new Transform(glm::vec3(0.5f,-0.5f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
 
     auto * guiEntity = new GUIEntity();
     guiEntity->InitMesh();

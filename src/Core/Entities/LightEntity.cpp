@@ -3,8 +3,26 @@
 //
 
 #include "LightEntity.h"
-#include "../../Rendering/Lighting/Light.h"
 #include "../Components/RenderingComponents/ShadowRendererComponent.h"
+
+LightEntity::LightEntity(LightType lightType):
+        m_type(lightType),
+        color(glm::vec3(1.0f,1.0f,1.0f)),
+        ambientIntensity(1.0f),
+        diffuseIntensity(0.0f) {}
+
+LightEntity::LightEntity(
+        LightType lightType,
+        glm::vec3 color,
+        GLfloat ambientIntensity, GLfloat diffuseIntensity,
+        GLfloat shadowWidth, GLfloat shadowHeight) :
+        m_type(lightType),
+        color(color),
+        ambientIntensity(ambientIntensity),
+        diffuseIntensity(diffuseIntensity)
+{}
+
+LightEntity::~LightEntity() {}
 
 void LightEntity::ProcessInput(Input* input, float delta)
 {
@@ -40,15 +58,43 @@ void LightEntity::RenderShadow(RenderingEngine* engine) const
     }
 }
 
-
-LightEntity *LightEntity::AddComponent(EntityComponent<Light> *component) {
+LightEntity *LightEntity::AddComponent(EntityComponent<LightEntity> *component) {
     m_light_components.push_back(component);
-    component->SetParent((Light *)(this));
+    component->SetParent(this);
     return this;
 }
 
 LightEntity* LightEntity::AddShadowComponent(ShadowRendererComponent *component) {
     m_shadow_components.push_back(component);
-    component->SetParent((Light *)(this));
+    component->SetParent(this);
     return this;
 }
+
+const glm::vec3 &LightEntity::getColor() const {
+    return color;
+}
+
+GLfloat LightEntity::getAmbientIntensity() const {
+    return ambientIntensity;
+}
+
+LightType LightEntity::getType() const {
+    return m_type;
+}
+
+bool LightEntity::isCellShadingOn() const {
+    return m_allow_cell_shading;
+}
+
+void LightEntity::setAllowCellShading(bool m_allow_cell_shading) {
+    LightEntity::m_allow_cell_shading = m_allow_cell_shading;
+}
+
+int LightEntity::getId() const {
+    return m_id;
+}
+
+void LightEntity::setId(int id) {
+    LightEntity::m_id = id;
+}
+

@@ -14,7 +14,6 @@ set(SOURCE_FILES
         src/Rendering/SkyBox.cpp
         src/Rendering/Camera/Camera.cpp
         src/Rendering/Lighting/DirectionalLight.cpp
-        src/Rendering/Lighting/Light.cpp
         src/Rendering/Material.cpp
         src/Rendering/Mesh.cpp
         src/Rendering/Lighting/PointLight.cpp
@@ -35,7 +34,6 @@ set(SOURCE_FILES
         src/Rendering/Camera/Camera.h
         src/Common/CommonValues.h
         src/Rendering/Lighting/DirectionalLight.h
-        src/Rendering/Lighting/Light.h
         src/Rendering/Material.h
         src/Rendering/Mesh.h
         src/Rendering/Lighting/PointLight.h
@@ -169,7 +167,7 @@ set(SOURCE_FILES
         src/Core/Components/Attachment/Attachment.h
         include/stb_image.h
         include/stb_image.c
-        src/BlastEngine.h) # which files should be compiled
+        src/BlastEngine.h src/Core/Components/RenderingComponents/DifferedRenderingComponent.h src/Rendering/Shaders/DifferedShader.h src/Rendering/DifferedRendering/DifferedScreen.cpp src/Rendering/DifferedRendering/DifferedScreen.h) # which files should be compiled
 
 set(TEST_FILES
         test/TestGame/Scenes/TestScene.cpp

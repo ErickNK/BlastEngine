@@ -7,7 +7,7 @@
 
 
 #include "Shader.h"
-#include "../Lighting/Light.h"
+#include "../../Core/Entities/LightEntity.h"
 
 class ForwardAmbientShader : public Shader {
 public:
@@ -15,7 +15,7 @@ public:
 
     void CreateUniforms() override;
 
-    void setLight(Light* light);
+    void setLight(LightEntity* light);
     void setLight(glm::vec3 color,float ambientIntensity);
 
 private:

@@ -23,10 +23,6 @@ public:
 
     void InitScreenMesh();
 
-    void Bind() const;
-
-    void UnBind() const;
-
 private:
     std::vector<glm::vec2> positions;
 };
@@ -53,7 +49,7 @@ public:
 
     void SetTexture(Texture* texture);
 
-    void Render(RenderingEngine *engine);
+    void Render(RenderingEngine *engine) override;
 
 protected:
     std::vector<EntityComponent<MeshedEntity>> m_components;

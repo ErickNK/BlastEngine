@@ -17,5 +17,5 @@ void ForwardPointLightShader::CreateUniforms() {
 }
 
 void ForwardPointLightShader::setLight(PointLight * pLight) {
-    pLight->UseLight(m_uniforms,getAvailableGlobalTextureUnit());
+    pLight->UseLight(this);
 }

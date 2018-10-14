@@ -22,7 +22,7 @@ public:
 
     ~SpotLight() override;
 
-    void UseLight(std::map<std::string, GLint>& m_uniforms, int shadowTextureUnit) override;
+	void UseLight(Shader* shader) override;
 
     void SetAsFlashLight(const Camera& camera);
 

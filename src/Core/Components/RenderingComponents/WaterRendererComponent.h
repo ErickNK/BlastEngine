@@ -28,8 +28,9 @@ public:
         //REFLECTION
         m_entity->getReflectionFBO().BindFrameBuffer();
 
-        std::vector<GLenum> reflectionBuffers {GL_COLOR_ATTACHMENT0};
-        m_entity->getReflectionFBO().setForDrawing(true,reflectionBuffers);
+            //TODO: Fix water textures not being rendered.
+            std::vector<GLenum> reflectionBuffers {GL_COLOR_ATTACHMENT0};
+            m_entity->getReflectionFBO().setForDrawing(true,reflectionBuffers);
 
             glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -38,16 +39,20 @@ public:
 
             Camera* camera = engine->getCurrentScene()->getCurrentCamera();
             float distance = 2 * (camera->getTransform().GetPos().y - m_entity->getHeight());
-//
-            camera->getTransform().GetPos().y -= distance;
-            camera->invertPitch();
-            camera->UpdateView();
 
-            engine->RenderScene();
+            {
+                camera->getTransform().GetPos().y -= distance;
+                camera->invertPitch();
+                camera->UpdateView();
+            }
 
-            camera->getTransform().GetPos().y += distance;
-            camera->invertPitch();
-            camera->UpdateView();
+                engine->RenderScene();
+
+            {
+                camera->getTransform().GetPos().y += distance;
+                camera->invertPitch();
+                camera->UpdateView();
+            }
 
             engine->DeactivateClipPlane(0);
 
@@ -56,15 +61,15 @@ public:
         //REFRACTION
         m_entity->getRefractionFBO().BindFrameBuffer();
 
-        std::vector<GLenum> refractionBuffers {GL_COLOR_ATTACHMENT0};
-        m_entity->getRefractionFBO().setForDrawing(true,refractionBuffers);
+            std::vector<GLenum> refractionBuffers {GL_COLOR_ATTACHMENT0};
+            m_entity->getRefractionFBO().setForDrawing(true,refractionBuffers);
 
             glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             engine->ActivateClipPlane(0,*new glm::vec4(0,-1,0,m_entity->getHeight() + 1.0f));
 
-            engine->RenderScene();
+                engine->RenderScene();
 
             engine->DeactivateClipPlane(0);
 
@@ -73,21 +78,25 @@ public:
         //RENDER
         m_entity->setAllowRender(true);
 
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-        glBlendEquation(GL_FUNC_ADD);
+        {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glBlendEquation(GL_FUNC_ADD);
+        }
 
-        auto * shader = (WaterShader*) engine->BindShader(WATER_SHADER);
+            auto * shader = (WaterShader*) engine->BindShader(WATER_SHADER);
 
-            shader->SetWater(m_entity);
+                shader->SetWater(m_entity);
 
-            shader->SetLights(engine->getCurrentScene()->getLights());
+                shader->SetLights(engine->getCurrentScene()->getLights());
 
-            m_entity->RenderAll(engine);
+                m_entity->RenderAll(engine);
 
-        engine->UnBindShader(WATER_SHADER);
+            engine->UnBindShader(WATER_SHADER);
 
-        glDisable(GL_BLEND);
+        {
+            glDisable(GL_BLEND);
+        }
 
         engine->render_gui = true;
         engine->render_water = true;

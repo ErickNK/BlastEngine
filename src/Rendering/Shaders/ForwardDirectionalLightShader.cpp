@@ -18,5 +18,5 @@ void ForwardDirectionalLightShader::CreateUniforms() {
 }
 
 void ForwardDirectionalLightShader::setLight(DirectionalLight * dLight) {
-    dLight->UseLight(m_uniforms,getAvailableGlobalTextureUnit());
+    dLight->UseLight(this);
 }

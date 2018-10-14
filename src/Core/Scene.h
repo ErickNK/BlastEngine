@@ -88,6 +88,12 @@ public:
 
     GUIEntity *getCurrentGUI();
 
+    int getDirectionalLightsCount();
+
+    int getPointLightsCount();
+
+    int getSpotLightsCount();
+
 protected:
 
     /**
@@ -109,13 +115,16 @@ protected:
     std::vector<AnimatedEntity*> m_animated_Entities;
     std::vector<Camera*> m_cameras;
     std::vector<SkyBox*> m_skyboxes;
-    std::vector<LightEntity*> m_lights;
     std::vector<Terrain*> m_terrains;
     std::vector<Water*> m_waters;
     std::vector<MeshedEntity*> m_meshed_Entities;
     std::vector<EffectEntity*> m_effect_Entities;
     std::vector<PhysicsObject*> m_physics_object;
 
+    std::vector<LightEntity*> m_lights;
+    int directionalLightsCount = 0;
+    int pointLightsCount = 0;
+    int spotLightsCount = 0;
 };
 
 

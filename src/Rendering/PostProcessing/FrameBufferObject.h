@@ -23,7 +23,7 @@ public:
 
     virtual void setForReading(bool color, int unit);
 
-    virtual void setForReading(bool color, GLenum unit) const;
+    virtual void setForReading(bool color, GLenum unit);
 
     virtual void setForDrawing(bool color, std::vector<GLenum>& buffers) const;
 

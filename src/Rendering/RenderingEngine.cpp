@@ -29,12 +29,21 @@
 #include "Shaders/SkyBoxShader.h"
 #include "Shaders/PostProcessingScreenShader.h"
 #include "Shaders/WaterShader.h"
+#include "Shaders/DifferedShader.h"
+#include "../Core/Components/RenderingComponents/DifferedRenderingComponent.h"
 
 void RenderingEngine::Initialize(){
     CreateShaders();
+    this->differedRenderingComponent = new DifferedRenderingComponent;
+    this->differedRenderingComponent->setRenderingEngine(this);
+    this->differedRenderingComponent->Init();
+
     for (bool &m_activated_clipping_Plane : m_activated_clipping_Planes) {
         m_activated_clipping_Plane = false;
     }
+
+    GLenum someError = glGetError();
+    assert( someError == GL_NO_ERROR);
 }
 
 void RenderingEngine::CreateShaders(){
@@ -82,6 +91,14 @@ void RenderingEngine::CreateShaders(){
     auto  * waterShader = new WaterShader();
     waterShader->Init();
     m_shaders[WATER_SHADER] = waterShader;
+
+    auto  * differedGeometryPassShader = new DifferedGeometryPassShader();
+    differedGeometryPassShader->Init();
+    m_shaders[DIFFERED_GEOMETRYPASS_RENDERING_SHADER] = differedGeometryPassShader;
+
+    auto  * differedLightPassShader = new DifferedLightPassShader();
+    differedLightPassShader->Init();
+    m_shaders[DIFFERED_LIGHTPASS_RENDERING_SHADER] = differedLightPassShader;
 }
 
 void RenderingEngine::RenderAmbientLight(){
@@ -216,22 +233,7 @@ void RenderingEngine::RenderScene() {
 
     m_renderProfileTimer.StartInvocation();
 
-        RenderShadows();
-
-        RenderSkybox();
-
-        //TODO: make a component of the scene
-        RenderAmbientLight();
-
-        RenderLights();
-
-        RenderTerrain();
-
-        RenderEffects();
-
-        RenderWater();
-
-        RenderGUI();
+        differedRenderingComponent->RenderScene();
 
     m_renderProfileTimer.StopInvocation();
 

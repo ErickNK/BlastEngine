@@ -5,11 +5,11 @@
 #ifndef MORDEROPENGLUDEMYTUTORIAL_POINTLIGHT_H
 #define MORDEROPENGLUDEMYTUTORIAL_POINTLIGHT_H
 
-#include "Light.h"
 #include <map>
 #include "../../Common/CommonValues.h"
+#include "../../Core/Entities/LightEntity.h"
 
-class PointLight : public Light {
+class PointLight : public LightEntity {
 
 public:
     PointLight();
@@ -23,7 +23,7 @@ public:
 
     void CalculateRange();
 
-    virtual void UseLight(std::map<std::string, GLint>& m_uniforms, int shadowTextureUnit);
+	void UseLight(Shader* shader) override;
 
 	static void SetupUniforms(std::map<std::string, GLint>& m_uniforms, GLuint shaderProgram);
 

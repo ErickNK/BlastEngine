@@ -61,7 +61,7 @@ void FrameBufferObject::setTextureData() {
                 m_width, m_height,
                 0,
                 m_texture_options[m_texture_count][EXTERNAL_COMPONENT_FORMAT],
-                GL_UNSIGNED_BYTE,
+                m_texture_options[m_texture_count][DATA_VALUE_FORMAT],
                 nullptr
         );
     }else if( m_texture_options[m_texture_count][TEXTURE_TYPE] == GL_TEXTURE_CUBE_MAP){
@@ -74,7 +74,7 @@ void FrameBufferObject::setTextureData() {
                     m_width, m_height,
                     0,
                     m_texture_options[m_texture_count][EXTERNAL_COMPONENT_FORMAT],
-                    GL_UNSIGNED_BYTE,
+                    m_texture_options[m_texture_count][DATA_VALUE_FORMAT],
                     nullptr
             );
         }
@@ -165,6 +165,9 @@ bool FrameBufferObject::Generate(GLuint &id, GLuint width, GLuint height, GLenum
             status = checkForErrors();
         }
 
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0); //unBind shadow buffer.
     return status;
 }
@@ -214,7 +217,7 @@ void FrameBufferObject::setForReading(bool color, int unit) {
     checkForErrors();
 }
 
-void FrameBufferObject::setForReading(bool color, GLenum unit) const {
+void FrameBufferObject::setForReading(bool color, GLenum unit) {
     checkForErrors();
 
     if (!color) {
@@ -223,6 +226,8 @@ void FrameBufferObject::setForReading(bool color, GLenum unit) const {
     }
 
     glReadBuffer(unit);
+
+    m_current_reading_unit = unit - GL_COLOR_ATTACHMENT0;
 
     checkForErrors();
 }

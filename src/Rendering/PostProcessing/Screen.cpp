@@ -5,6 +5,7 @@
 #include "Screen.h"
 #include "../Shaders/PostProcessingScreenShader.h"
 
+
 ScreenMesh::ScreenMesh(std::vector<glm::vec2> pos, unsigned int numVertices) {
 
     for (unsigned int i = 0; i < numVertices ; i++){
@@ -81,7 +82,7 @@ void Screen::Render(RenderingEngine *engine)
 
         m_screen_mesh.Draw();
 
-    engine->UnBindShader(TERRAIN_SHADER);
+    engine->UnBindShader(POST_PROCESSING_SCREEN_SHADER);
     glEnable(GL_DEPTH_TEST);
 
 }

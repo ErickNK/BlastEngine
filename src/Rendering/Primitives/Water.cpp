@@ -70,6 +70,7 @@ void Water::InitFBOs() {
     options[INTERNAL_COMPONENT_FORMAT] = GL_RGB;
     options[EXTERNAL_COMPONENT_FORMAT] = GL_RGB;
     options[ATTACHMENT_TYPE] = GL_COLOR_ATTACHMENT0;
+    options[DATA_VALUE_FORMAT] = GL_UNSIGNED_BYTE;
     options[ENABLE_WRAP_FILTER] = GL_FALSE;
     options[ENABLE_OVERLAY_FILTER] = GL_FALSE;
     reflection_fbo.Generate(reflectionTexture, REFLECTION_WIDTH,REFLECTION_HEIGHT,options);
@@ -79,6 +80,7 @@ void Water::InitFBOs() {
     options[INTERNAL_COMPONENT_FORMAT] = GL_DEPTH_COMPONENT;
     options[EXTERNAL_COMPONENT_FORMAT] = GL_DEPTH_COMPONENT;
     options[ATTACHMENT_TYPE] = GL_DEPTH_ATTACHMENT;
+    options[DATA_VALUE_FORMAT] = GL_UNSIGNED_BYTE;
     options[ENABLE_WRAP_FILTER] = GL_FALSE;
     options[ENABLE_OVERLAY_FILTER] = GL_FALSE;
     reflection_fbo.Generate(reflectionDepthBuffer, REFLECTION_WIDTH,REFLECTION_HEIGHT,options);
@@ -88,6 +90,7 @@ void Water::InitFBOs() {
     options[INTERNAL_COMPONENT_FORMAT] = GL_RGB;
     options[EXTERNAL_COMPONENT_FORMAT] = GL_RGB;
     options[ATTACHMENT_TYPE] = GL_COLOR_ATTACHMENT0;
+    options[DATA_VALUE_FORMAT] = GL_UNSIGNED_BYTE;
     options[ENABLE_WRAP_FILTER] = GL_FALSE;
     options[ENABLE_OVERLAY_FILTER] = GL_FALSE;
     refraction_fbo.Generate(refractionTexture, REFRACTION_WIDTH,REFRACTION_HEIGHT,options);
@@ -97,6 +100,7 @@ void Water::InitFBOs() {
     options[INTERNAL_COMPONENT_FORMAT] = GL_DEPTH_COMPONENT32;
     options[EXTERNAL_COMPONENT_FORMAT] = GL_DEPTH_COMPONENT;
     options[ATTACHMENT_TYPE] = GL_DEPTH_ATTACHMENT;
+    options[DATA_VALUE_FORMAT] = GL_UNSIGNED_BYTE;
     options[ENABLE_WRAP_FILTER] = GL_FALSE;
     options[ENABLE_OVERLAY_FILTER] = GL_FALSE;
     refraction_fbo.Generate(refractionDepthTexture, REFRACTION_WIDTH,REFRACTION_HEIGHT,options);
@@ -120,11 +124,11 @@ void Water::RenderWater(RenderingEngine *engine) {
     if(allow_render) waterRendererComponent->RenderWater(engine);
 }
 
-const FrameBufferObject &Water::getReflectionFBO() const {
+FrameBufferObject &Water::getReflectionFBO() {
     return reflection_fbo;
 }
 
-const FrameBufferObject &Water::getRefractionFBO() const {
+FrameBufferObject &Water::getRefractionFBO() {
     return refraction_fbo;
 }
 

@@ -39,9 +39,9 @@ public:
 public:
     void RenderWater(RenderingEngine *engine);
 
-    const FrameBufferObject &getReflectionFBO() const;
+    FrameBufferObject &getReflectionFBO();
 
-    const FrameBufferObject &getRefractionFBO() const;
+    FrameBufferObject &getRefractionFBO();
 
     int getReflectionTexture() const {
         return reflectionTexture;

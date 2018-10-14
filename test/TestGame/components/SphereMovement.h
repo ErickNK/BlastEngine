@@ -8,10 +8,9 @@
 #define MORDEROPENGLUDEMYTUTORIAL_SPHEREMOVEMENT_H
 
 
-#include "../../../src/Rendering/Lighting/Light.h"
 #include "../../../src/Rendering/Lighting/DirectionalLight.h"
 
-class LightMovement : public EntityComponent<Light> {
+class LightMovement : public EntityComponent<LightEntity> {
 public:
     void Update(double time, float delta) override {
 

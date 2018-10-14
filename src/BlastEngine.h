@@ -24,7 +24,7 @@ public:
         coreEngine.setPhysicsEngine(&physicsEngine);
         coreEngine.setRenderingEngine(&renderingEngine);
         coreEngine.setGame(&game);
-        coreEngine.setFrameTimeLimit(1.0/1000.0);
+        coreEngine.setFrameTimeLimit(1.0/100.0);
 
         //TODO: Add error checking in initialization
         if(coreEngine.Init()){

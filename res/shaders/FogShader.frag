@@ -8,7 +8,7 @@ in float vVisibility;
 
 //output variables ------------------------------------------
 
-out vec4 colour;
+layout(location = 0) out vec4 colour;
 
 // ----------------------------------------------------------
 

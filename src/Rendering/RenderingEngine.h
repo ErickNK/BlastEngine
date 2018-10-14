@@ -17,6 +17,7 @@
 #include "../Core/Scene.h"
 
 class GameObject;
+class DifferedRenderingComponent;
 
 class RenderingEngine {
 public:
@@ -46,7 +47,15 @@ public:
 
     void RenderTerrain();
 
+    void RenderShadows();
+
+    void RenderSkybox();
+
+    void RenderWater();
+
     void RenderGUI();
+
+    void RenderEntities();
 
     void SetCurrentScene(Scene * scene);
 
@@ -62,6 +71,7 @@ public:
     bool render_gui = true;
     bool render_effects = true;
     bool render_shadows = true;
+    bool render_entities = true;
 
     void CleanUP();
 
@@ -78,6 +88,8 @@ private:
     Shader* m_shaders[NUM_SHADER_TYPES] {};
     ShaderType m_current_shader = NO_SHADER;
 
+    DifferedRenderingComponent *differedRenderingComponent = nullptr;
+
     //Profilers
     ProfileTimer m_renderProfileTimer;
 
@@ -87,9 +99,6 @@ private:
     glm::vec4 m_clipping_Planes [MAX_CLIP_PLANES] {};
     bool m_activated_clipping_Planes [MAX_CLIP_PLANES] {};
 
-    void RenderShadows();
-    void RenderSkybox();
-    void RenderWater();
     Shader* UpdateShader(Shader* shader);
     void CreateShaders();
     void StartAlphaBlending();

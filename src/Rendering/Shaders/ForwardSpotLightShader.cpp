@@ -18,5 +18,5 @@ void ForwardSpotLightShader::CreateUniforms() {
 }
 
 void ForwardSpotLightShader::setLight(SpotLight * sLight) {
-    sLight->UseLight(m_uniforms,getAvailableGlobalTextureUnit());
+    sLight->UseLight(this);
 }

@@ -8,7 +8,7 @@
 #include "../../Core/CoreEngine.h"
 
 DirectionalLight::DirectionalLight() :
-    Light(DIRECTIONAL_LIGHT),
+    LightEntity(DIRECTIONAL_LIGHT),
     direction(glm::vec3(0.0f,-1.0f,0.0f))
 {
     m_transform.LookAt(glm::vec3(0.0f,-1.0f,0.0f));
@@ -22,7 +22,7 @@ DirectionalLight::DirectionalLight(
         GLfloat ambientIntensity, GLfloat diffuseIntensity,
         GLfloat shadowWidth, GLfloat shadowHeight,
         glm::mat4 lightProj) :
-    Light(DIRECTIONAL_LIGHT,color,ambientIntensity,diffuseIntensity,shadowWidth,shadowHeight),
+    LightEntity(DIRECTIONAL_LIGHT,color,ambientIntensity,diffuseIntensity,shadowWidth,shadowHeight),
     direction(glm::normalize(direction))
 {
 
@@ -37,6 +37,7 @@ DirectionalLight::DirectionalLight(
     options[TEXTURE_TYPE] = GL_TEXTURE_2D;
     options[INTERNAL_COMPONENT_FORMAT] = GL_RG32F;
     options[EXTERNAL_COMPONENT_FORMAT] = GL_RGBA;
+    options[DATA_VALUE_FORMAT] = GL_FLOAT;
     options[ATTACHMENT_TYPE] = GL_COLOR_ATTACHMENT0;
     options[ENABLE_OVERLAY_FILTER] = GL_TRUE;
     options[ENABLE_WRAP_FILTER] = GL_TRUE;
@@ -50,39 +51,52 @@ DirectionalLight::DirectionalLight(
 
 DirectionalLight::~DirectionalLight() = default;
 
-void DirectionalLight::UseLight(std::map<std::string, GLint>& m_uniforms,int shadowTextureUnit) {
-
+void DirectionalLight::UseLight(Shader* shader) {
+    //Get lights direction
     glm::vec3 forward = m_transform.GetForward();
 
+    //Get light space
     m_shadow.lightSpace = m_shadow.biasMatrix //Convert to 0-1 range. Which is what depth range is
                           * m_shadow.m_shadow_camera.getProjection()
                           * m_shadow.m_shadow_camera.getViewMatrix();
 
     //Start using Lights shadow map
+    auto shadowTextureUnit = static_cast<GLuint>(shader->getAvailableGlobalTextureUnit());
     m_shadow.shadow_map_fbo.UseTexture(m_shadow.shadow_map_texture,shadowTextureUnit);
 
+    char locBuff[100] = {'\0'};
+
     //Set shadowTextureUnit
-    glUniform1i(m_uniforms["directionalLight.shadowMap"], shadowTextureUnit);
+    snprintf(locBuff, sizeof(locBuff), "directionalLight[%d].shadowMap",m_id);
+    shader->Uniform1i(locBuff, shadowTextureUnit);
 
     //Set Light Space
-    glUniformMatrix4fv(m_uniforms["directionalLightSpace"], 1, GL_FALSE, glm::value_ptr(m_shadow.lightSpace));
+    snprintf(locBuff, sizeof(locBuff), "directionalLightSpace[%d]",m_id);
+    shader->UniformMatrix4fv(locBuff, m_shadow.lightSpace);
 
     //Set Light Direction
-    glUniform3f(m_uniforms["directionalLight.direction"],forward.x,forward.y,forward.z);
+    snprintf(locBuff, sizeof(locBuff), "directionalLight[%d].direction",m_id);
+    shader->Uniform3f(locBuff,forward.x,forward.y,forward.z);
 
     //Set Light Color
-    glUniform3f(m_uniforms["directionalLight.base.colour"],color.x,color.y,color.z);
+    snprintf(locBuff, sizeof(locBuff), "directionalLight[%d].base.colour",m_id);
+    shader->Uniform3f(locBuff,color.x,color.y,color.z);
 
     //Set Ambient Intensity
-    glUniform1f(m_uniforms["directionalLight.base.ambientIntensity"],ambientIntensity);
+    snprintf(locBuff, sizeof(locBuff), "directionalLight[%d].base.ambientIntensity",m_id);
+    shader->Uniform1f(locBuff,ambientIntensity);
 
     //Set Diffuse Intensity
-    glUniform1f(m_uniforms["directionalLight.base.diffuseIntensity"],diffuseIntensity);
+    snprintf(locBuff, sizeof(locBuff), "directionalLight[%d].base.diffuseIntensity",m_id);
+    shader->Uniform1f(locBuff,diffuseIntensity);
 
-    //Cell shading
-    glUniform1i(m_uniforms["allowCellShading"],m_allow_cell_shading);
+    //Enable/Disable cell shading
+    snprintf(locBuff, sizeof(locBuff), "directionalLight[%d].base.allowCellShading",m_id);
+    shader->Uniform1i(locBuff,m_allow_cell_shading);
 
-    glUniform1i(m_uniforms["cellShadingLevels"],m_cell_shading_level);
+    //Cell shading levels
+    snprintf(locBuff, sizeof(locBuff), "directionalLight[%d].base.cellShadingLevels",m_id);
+    shader->Uniform1i(locBuff,m_cell_shading_level);
 
     GLenum someError = glGetError();
     assert( someError == GL_NO_ERROR);
@@ -90,29 +104,36 @@ void DirectionalLight::UseLight(std::map<std::string, GLint>& m_uniforms,int sha
 
 void DirectionalLight::SetupUniforms(std::map<std::string, GLint>& m_uniforms,GLuint shaderProgram) {
 
-    m_uniforms["cellShadingLevels"] =
-            glGetUniformLocation(shaderProgram, "cellShadingLevels");
+    m_uniforms["directionalLightCount"] = glGetUniformLocation(shaderProgram, "directionalLightCount");
 
-    m_uniforms["allowCellShading"] =
-            glGetUniformLocation(shaderProgram, "allowCellShading");
+    for(int i = 0; i < MAX_DIRECTIONAL_LIGHTS; i++){
+        char locBuff[100] = {'\0'};
 
-    m_uniforms["directionalLightSpace"] =
-			glGetUniformLocation(shaderProgram, "directionalLightSpace");
+        snprintf(locBuff, sizeof(locBuff), "directionalLight[%d].base.cellShadingLevels",i);
+        m_uniforms[locBuff] = glGetUniformLocation(shaderProgram, locBuff);
 
-    m_uniforms["directionalLight.shadowMap"] =
-			glGetUniformLocation(shaderProgram, "directionalLight.shadowMap");
+        snprintf(locBuff, sizeof(locBuff), "directionalLight[%d].base.allowCellShading",i);
+        m_uniforms[locBuff] = glGetUniformLocation(shaderProgram, locBuff);
 
-    m_uniforms["directionalLight.direction"] =
-            glGetUniformLocation(shaderProgram, "directionalLight.direction");
+        snprintf(locBuff, sizeof(locBuff), "directionalLightSpace[%d]",i);
+        m_uniforms[locBuff] = glGetUniformLocation(shaderProgram, locBuff);
 
-    m_uniforms["directionalLight.base.colour"] =
-            glGetUniformLocation(shaderProgram, "directionalLight.base.colour");
+        snprintf(locBuff, sizeof(locBuff), "directionalLight[%d].shadowMap",i);
+        m_uniforms[locBuff] = glGetUniformLocation(shaderProgram, locBuff);
 
-    m_uniforms["directionalLight.base.ambientIntensity"] =
-            glGetUniformLocation(shaderProgram, "directionalLight.base.ambientIntensity");
+        snprintf(locBuff, sizeof(locBuff), "directionalLight[%d].direction",i);
+        m_uniforms[locBuff] = glGetUniformLocation(shaderProgram, locBuff);
 
-    m_uniforms["directionalLight.base.diffuseIntensity"] =
-            glGetUniformLocation(shaderProgram, "directionalLight.base.diffuseIntensity");
+        snprintf(locBuff, sizeof(locBuff), "directionalLight[%d].base.colour",i);
+        m_uniforms[locBuff] = glGetUniformLocation(shaderProgram, locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "directionalLight[%d].base.ambientIntensity",i);
+        m_uniforms[locBuff] = glGetUniformLocation(shaderProgram, locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "directionalLight[%d].base.diffuseIntensity",i);
+        m_uniforms[locBuff] = glGetUniformLocation(shaderProgram, locBuff);
+
+    }
 
     GLenum someError = glGetError();
     assert( someError == GL_NO_ERROR);

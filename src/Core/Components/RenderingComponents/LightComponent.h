@@ -5,12 +5,10 @@
 #ifndef MORDEROPENGLUDEMYTUTORIAL_LIGHTCOMPONENT_H
 #define MORDEROPENGLUDEMYTUTORIAL_LIGHTCOMPONENT_H
 
-
-#include "../../../Rendering/Lighting/Light.h"
 #include "../../../Rendering/Shaders/ForwardDirectionalLightShader.h"
 #include "../../CoreEngine.h"
 
-class LightComponent:public EntityComponent<Light>{
+class LightComponent:public EntityComponent<LightEntity>{
 public:
     void Render(RenderingEngine* engine) const override {
         switch(m_entity->getType()){
@@ -31,7 +29,7 @@ public:
         }
     }
 
-    virtual void SetParent(Light* parent) { m_entity = parent; }
+    virtual void SetParent(LightEntity* parent) { m_entity = parent; }
 
 protected:
     virtual void RenderDirectionalLight(RenderingEngine* engine) const{

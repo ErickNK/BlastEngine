@@ -4,7 +4,6 @@
 
 #include "ForwardAmbientShader.h"
 #include "../Material.h"
-#include "../Lighting/Light.h"
 
 ForwardAmbientShader::ForwardAmbientShader() : Shader(FORWARD_AMBIENT_SHADER){
     m_shaderFiles[GL_VERTEX_SHADER] = "BasicShader.vert";
@@ -18,7 +17,7 @@ void ForwardAmbientShader::CreateUniforms() {
     Material::SetupUniforms(m_uniforms,m_program);
 }
 
-void ForwardAmbientShader::setLight(Light * light) {
+void ForwardAmbientShader::setLight(LightEntity * light) {
 
     //Set Ambient Intensity
     glUniform3f(m_uniforms["light.colour"],light->getColor().x,light->getColor().y,light->getColor().z);

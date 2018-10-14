@@ -32,36 +32,53 @@ SpotLight::SpotLight(
 
 SpotLight::~SpotLight() {}
 
-void SpotLight::UseLight(std::map<std::string, GLint>& m_uniforms, int shadowTextureUnit) {
+void SpotLight::UseLight(Shader* shader) {
 
 		//Start using Lights shadow map
+        auto shadowTextureUnit = static_cast<GLuint>(shader->getAvailableGlobalTextureUnit());
         m_shadow.shadow_map_fbo.UseTexture(m_shadow.shadow_map_texture,shadowTextureUnit);
 
+        char locBuff[100] = {'\0'};
+
 		//Set shadowTextureUnit
-		glUniform1i(m_uniforms["spotLight.shadowMap"], shadowTextureUnit);
+        snprintf(locBuff, sizeof(locBuff), "spotLight[%d].shadowMap",m_id);
+        shader->Uniform1i(locBuff, shadowTextureUnit);
 
-        glUniform3f(m_uniforms["spotLight.base.position"],m_transform.GetPos().x,m_transform.GetPos().y,m_transform.GetPos().z);
+        snprintf(locBuff, sizeof(locBuff), "spotLight[%d].base.position",m_id);
+        shader->Uniform3f(locBuff,m_transform.GetPos().x,m_transform.GetPos().y,m_transform.GetPos().z);
 
-        glUniform3f(m_uniforms["spotLight.dir"],direction.x,direction.y,direction.z);
+        snprintf(locBuff, sizeof(locBuff), "spotLight[%d].dir",m_id);
+        shader->Uniform3f(locBuff,direction.x,direction.y,direction.z);
 
-        glUniform1f(m_uniforms["spotLight.edge"],procEdge);
+        snprintf(locBuff, sizeof(locBuff), "spotLight[%d].edge",m_id);
+        shader->Uniform1f(locBuff,procEdge);
 
-        glUniform1f(m_uniforms["spotLight.base.attenuationConstant"],m_attenuation.z);
+        snprintf(locBuff, sizeof(locBuff), "spotLight[%d].base.attenuationConstant",m_id);
+        shader->Uniform1f(locBuff,m_attenuation.z);
 
-        glUniform1f(m_uniforms["spotLight.base.attenuationLinear"],m_attenuation.y);
+        snprintf(locBuff, sizeof(locBuff), "spotLight[%d].base.attenuationLinear",m_id);
+        shader->Uniform1f(locBuff,m_attenuation.y);
 
-        glUniform1f(m_uniforms["spotLight.base.attenuationQuadratic"],m_attenuation.x);
+        snprintf(locBuff, sizeof(locBuff), "spotLight[%d].base.attenuationQuadratic",m_id);
+        shader->Uniform1f(locBuff,m_attenuation.x);
 
-        glUniform3f(m_uniforms["spotLight.base.base.colour"],color.x,color.y,color.z);
+        snprintf(locBuff, sizeof(locBuff), "spotLight[%d].base.base.colour",m_id);
+        shader->Uniform3f(locBuff,color.x,color.y,color.z);
 
-        glUniform1f(m_uniforms["spotLight.base.base.ambientIntensity"],ambientIntensity);
+        snprintf(locBuff, sizeof(locBuff), "spotLight[%d].base.base.ambientIntensity",m_id);
+        shader->Uniform1f(locBuff,ambientIntensity);
 
-        glUniform1f(m_uniforms["spotLight.base.base.diffuseIntensity"] ,diffuseIntensity);
+        snprintf(locBuff, sizeof(locBuff), "spotLight[%d].base.base.diffuseIntensity",m_id);
+        shader->Uniform1f(locBuff ,diffuseIntensity);
 
-        glUniform1f(m_uniforms["spotLight.base.range"],m_range);
+        snprintf(locBuff, sizeof(locBuff), "spotLight[%d].base.range",m_id);
+        shader->Uniform1f(locBuff,m_range);
 
-        glUniform1i(m_uniforms["allowCellShading"],m_allow_cell_shading);
-        glUniform1i(m_uniforms["cellShadingLevels"],m_cell_shading_level);
+        snprintf(locBuff, sizeof(locBuff), "spotLight[%d].base.base.allowCellShading",m_id);
+        shader->Uniform1i(locBuff,m_allow_cell_shading);
+
+        snprintf(locBuff, sizeof(locBuff), "spotLight[%d].base.base.cellShadingLevels",m_id);
+        shader->Uniform1i(locBuff,m_cell_shading_level);
 
 }
 
@@ -71,9 +88,12 @@ void SpotLight::SetAsFlashLight(const Camera& camera) {
 }
 
 void SpotLight::SetupUniforms(std::map<std::string, GLint>& m_uniforms, GLuint shaderProgram) {
-    m_uniforms["allowCellShading"] = glGetUniformLocation(shaderProgram, "allowCellShading");
 
-    m_uniforms["cellShadingLevels"] = glGetUniformLocation(shaderProgram, "cellShadingLevels");
+    m_uniforms["spotLightCount"] = glGetUniformLocation(shaderProgram, "spotLightCount");
+
+    m_uniforms["spotLight.base.base.allowCellShading"] = glGetUniformLocation(shaderProgram, "spotLight.base.base.allowCellShading");
+
+    m_uniforms["spotLight.base.base.cellShadingLevels"] = glGetUniformLocation(shaderProgram, "spotLight.base.base.cellShadingLevels");
 
     m_uniforms["spotLight.shadowMap"] = glGetUniformLocation(shaderProgram, "spotLight.shadowMap");
 

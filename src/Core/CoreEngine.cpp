@@ -13,13 +13,13 @@ bool CoreEngine::Init() {
 
     m_window->Initialize();
 
+    m_game->SetEngine(this);
+    m_game->Init();
+
     m_renderingEngine->setWindow(m_window);
     m_renderingEngine->Initialize();
 
     m_physicsEngine->Initialize();
-
-    m_game->SetEngine(this);
-    m_game->Init();
 
     return true;
 }
