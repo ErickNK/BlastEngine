@@ -17,6 +17,10 @@ class FrameBufferObject {
 public:
     FrameBufferObject();
 
+    FrameBufferObject(GLuint width, GLuint height);
+
+    FrameBufferObject(GLuint id, GLuint width, GLuint height);
+
     ~FrameBufferObject();
 
     virtual bool Generate(GLuint &id, GLuint width, GLuint height, GLenum* options);
@@ -36,6 +40,8 @@ public:
     */
     virtual void BindFrameBuffer() const;
     virtual void UnBindFrameBuffer(GLuint displayWidth, GLuint displayHeight) const;
+    void setAllowClear(bool allow);
+    void ClearFBO() const;
 
     /*
     * Sets the shadow-map to be used for drawing shadows.
@@ -61,7 +67,7 @@ protected:
     int m_current_drawing_unit = 0, m_current_reading_unit = 0;
     mutable std::vector<GLenum> m_current_drawing_units;
     mutable std::vector<GLenum> m_current_reading_units;
-    GLuint m_texture_test;
+    bool m_allowClear = true;
 
     virtual void setOverlayFilter();
 

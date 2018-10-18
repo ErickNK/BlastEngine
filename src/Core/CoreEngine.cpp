@@ -13,13 +13,13 @@ bool CoreEngine::Init() {
 
     m_window->Initialize();
 
-    m_game->SetEngine(this);
-    m_game->Init();
-
     m_renderingEngine->setWindow(m_window);
     m_renderingEngine->Initialize();
 
     m_physicsEngine->Initialize();
+
+    m_game->SetEngine(this);
+    m_game->Init();
 
     return true;
 }
@@ -58,9 +58,9 @@ void CoreEngine::Run() {
             double totalTime = ((1000.0 * FPSDisplayTimer)/((double)FPSFrameCounter));
             double totalMeasuredTime = 0.0;
 
-            totalMeasuredTime += m_game->DisplayInputTime((double)FPSFrameCounter);
-            totalMeasuredTime += m_game->DisplayUpdateTime((double)FPSFrameCounter);
-            totalMeasuredTime += m_renderingEngine->DisplayRenderTime((double)FPSFrameCounter);
+            totalMeasuredTime += m_inputTimer.DisplayAndReset("Input Time: ", (double)FPSFrameCounter);
+            totalMeasuredTime += m_updateTimer.DisplayAndReset("Update Time: ", (double)FPSFrameCounter);
+            totalMeasuredTime += m_renderProfileTimer.DisplayAndReset("Render Time: ", (double)FPSFrameCounter);
             totalMeasuredTime += m_sleepTimer.DisplayAndReset("Sleep Time: ", (double)FPSFrameCounter);
             totalMeasuredTime += m_swapBufferTimer.DisplayAndReset("Buffer Swap Time: ", (double)FPSFrameCounter);
 //            totalMeasuredTime += m_renderingEngine->DisplayWindowSyncTime((double)FPSFrameCounter);
@@ -87,8 +87,14 @@ void CoreEngine::Run() {
             //new game actions, the game also needs to be updated immediately
             //afterwards.
             glfwPollEvents(); //Update input system
-            m_game->ProcessInput(m_window->getInput(), (float)m_frameTimeLimit);
-            m_game->Update(m_time_since_start, (float)m_frameTimeLimit);
+
+            m_inputTimer.StartInvocation();
+                m_game->ProcessInput(m_window->getInput(), (float)m_frameTimeLimit);
+            m_inputTimer.StopInvocation();
+
+            m_updateTimer.StartInvocation();
+                m_game->Update(m_time_since_start, (float)m_frameTimeLimit);
+            m_updateTimer.StopInvocation();
 
             //The scene has been updated therefore rerender the scene.
             m_shouldRender = true;
@@ -101,19 +107,22 @@ void CoreEngine::Run() {
             m_window->Clear(0.0f, 0.0f, 0.0f, 0.0f);
 
             //Render game
-            m_game->Render();
+            m_renderProfileTimer.StartInvocation();
+                m_game->Render();
+            m_renderProfileTimer.StopInvocation();
+
 
             //The newly rendered image will be in the window's backbuffer,
             //so the buffers must be swapped to display the new image.
             m_swapBufferTimer.StartInvocation();
-            m_window->Update();
+                m_window->Update();
             m_swapBufferTimer.StopInvocation();
             FPSFrameCounter++;
         } else {
             //If no rendering is needed, sleep for some time so the OS
             //can use the processor for other tasks.
             m_sleepTimer.StartInvocation();
-            Util::Sleep(1);
+                Util::Sleep(1);
             m_sleepTimer.StopInvocation();
         }
 

@@ -11,6 +11,15 @@
 class TerrainRendererComponent;
 class RenderingEngine;
 
+class TerrainMaterial: public Material{
+public:
+
+    TerrainMaterial(GLfloat d, GLfloat d1, std::vector<Texture *> vector);
+
+    void UseMaterial(Shader *shader) override;
+
+};
+
 //TODO: create a loader class to handle loading the terrain
 class Terrain : public MeshedEntity{
 
@@ -53,6 +62,9 @@ private:
     float getPixelHeight(int x, int y);
 
     glm::vec3 calculateNormal(int x, int y);
+
+protected:
+    void Render(RenderingEngine *engine) const override;
 };
 
 

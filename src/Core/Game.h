@@ -48,17 +48,9 @@ public:
     * */
     inline void SetEngine(CoreEngine* engine) { m_core_engine = engine; }
     void SetCurrentScene(Scene* scene);
-
-    CoreEngine *getCoreEngine() const;
     Scene *getCurrentScene() const;
-
-    //PROFILING
-    inline double DisplayInputTime(double dividend) { return m_inputTimer.DisplayAndReset("Input Time: ", dividend); }
-    inline double DisplayUpdateTime(double dividend) { return m_updateTimer.DisplayAndReset("Update Time: ", dividend); }
-
+    CoreEngine *getCoreEngine() const;
 private:
-    ProfileTimer m_updateTimer;
-    ProfileTimer m_inputTimer;
 
     CoreEngine* m_core_engine;
     Scene* m_currentScene;

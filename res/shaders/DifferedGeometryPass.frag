@@ -87,7 +87,7 @@ void main(){
 
     //Check transparency
     if(material.hasTransparency && ((totalDiffuseTexture).a < 0.1 && (totalSpecularTexture).a < 0.1)){
-//        discard;
+        discard;
     }
 
     out_position = vFragPos;

@@ -11,8 +11,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "../../Core/Input.h"
 #include "../Transform.h"
+#include "../../Core/Entities/Entity.h"
 
-class Camera {
+class Camera : public Entity{
 
 public:
     Camera();
@@ -25,9 +26,7 @@ public:
 
     virtual ~Camera();
 
-	virtual void ProcessInput(Input* input, float delta);
-
-    virtual void Update(float delta){};
+	void ProcessInput(Input* input, float delta) override;
 
 	virtual void handleKeys(const bool *keys, GLfloat deltaTime);
 
@@ -72,7 +71,6 @@ protected:
     GLfloat m_movementSpeed;
     GLfloat m_turnSpeed;
 
-    Transform m_transform = Transform();
 	glm::mat4 m_viewMatrix;
 
 	bool allow_move = true;

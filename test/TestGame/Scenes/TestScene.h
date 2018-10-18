@@ -23,6 +23,8 @@ public:
 
     void CreateTerrain();
 
+    void CreateWater();
+
     void SetupCamera();
 
     void SetupSkyBox();

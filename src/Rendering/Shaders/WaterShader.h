@@ -14,8 +14,8 @@
 class WaterShader: public Shader  {
 public:
     WaterShader() : Shader(WATER_SHADER){
-        m_shaderFiles[GL_VERTEX_SHADER] = "WaterShader.vert";
-        m_shaderFiles[GL_FRAGMENT_SHADER] = "WaterShader.frag";
+        m_shaderFiles[GL_VERTEX_SHADER] = "DifferedWaterShader.vert";
+        m_shaderFiles[GL_FRAGMENT_SHADER] = "DifferedWaterShader.frag";
     }
 
     void CreateUniforms() override {
@@ -29,23 +29,14 @@ public:
         m_uniforms["moveFactor"] = glGetUniformLocation(m_program, "moveFactor");
         m_uniforms["waveStrength"] = glGetUniformLocation(m_program, "waveStrength");
         m_uniforms["waveTiling"] = glGetUniformLocation(m_program, "waveTiling");
-        m_uniforms["lightColor"] = glGetUniformLocation(m_program, "lightColor");
-        m_uniforms["lightDirection"] = glGetUniformLocation(m_program, "lightDirection");
+        m_uniforms["colorTint"] = glGetUniformLocation(m_program, "colorTint");
     }
 
     void SetWater(Water* water){
         Uniform1f("waveTiling",water->wave_tiling);
         Uniform1f("waveStrength",water->wave_strength);
         Uniform1f("moveFactor",water->moveFactor);
-    }
-
-    void SetLights(const std::vector<LightEntity *> &vector) {
-        Uniform4f("lightColor",1,1,1,1);
-        Uniform3f("lightDirection",0,-1,-1);
-//        glm::vec4 totalLight;
-//        for (LightEntity *const & light: vector){
-//            totalLight += light->
-//        }
+        Uniform1f("colorTint",water->colorTint);
     }
 };
 

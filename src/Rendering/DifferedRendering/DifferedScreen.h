@@ -12,7 +12,12 @@
 #include "../Texture.h"
 #include "../Mesh.h"
 #include "../RenderingEngine.h"
-
+/*--------------------------------------
+ *
+ *  DifferedScreenMesh
+ *
+ *--------------------------------------
+ * */
 class DifferedScreenMesh : public Mesh{
 public:
     DifferedScreenMesh() = default;
@@ -27,22 +32,27 @@ private:
     std::vector<glm::vec2> positions;
 };
 
-class DifferedScreenMaterial{
+/*--------------------------------------
+ *
+ *  DifferedScreenMaterial
+ *
+ *--------------------------------------
+ * */
+class DifferedScreenMaterial : public Material{
 public:
-    DifferedScreenMaterial() = default;
+    DifferedScreenMaterial();
 
     explicit DifferedScreenMaterial(std::vector<Texture*>& textures);
 
-    void AddTexture(Texture* texture);
-
-    void SetTextures(std::vector<Texture*> texs);
-
-    void UseMaterial(Shader * shader);
-
-private:
-    std::vector<Texture*> textures;
+    void UseMaterial(Shader * shader) override;
 };
 
+/*--------------------------------------
+ *
+ *  DifferedScreen
+ *
+ *--------------------------------------
+ * */
 class DifferedScreen : public MeshedEntity{
 public:
     DifferedScreen();
@@ -51,15 +61,13 @@ public:
 
     void SetTextures(std::vector<Texture*> texs);
 
-    void Render(RenderingEngine *engine) override;
+    void Render(RenderingEngine *engine) const override;
 
     void AddTexture(Texture *texture);
 
 protected:
-    std::vector<EntityComponent<MeshedEntity>> m_components;
-
-    DifferedScreenMesh m_screen_mesh;
-    DifferedScreenMaterial m_screen_material;
+    mutable DifferedScreenMesh m_screen_mesh;
+    mutable DifferedScreenMaterial m_screen_material;
 };
 
 

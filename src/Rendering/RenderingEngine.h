@@ -5,7 +5,7 @@
 #ifndef MORDEROPENGLUDEMYTUTORIAL_RENDERINGENGINE_H
 #define MORDEROPENGLUDEMYTUTORIAL_RENDERINGENGINE_H
 
-
+#include <stack>
 #include "Shaders/DirectionalLightShadowMapShader.h"
 #include "../Core/Window.h"
 #include "Shaders/ForwardAmbientShader.h"
@@ -16,7 +16,6 @@
 #include "../Common/ProfileTimer.h"
 #include "../Core/Scene.h"
 
-class GameObject;
 class DifferedRenderingComponent;
 
 class RenderingEngine {
@@ -25,11 +24,29 @@ public:
 
     void Initialize();
 
-    inline double DisplayRenderTime(double dividend) { return m_renderProfileTimer.DisplayAndReset("Render Time: ", dividend); }
-
     Shader* BindShader(ShaderType type);
 
     void UnBindShader(ShaderType type);
+
+    Shader* PushShader(ShaderType type);
+
+    void PopShader();
+
+    void ReplaceTopFBO(FrameBufferObject* fbo);
+
+    void ResetTopToOriginalFBO();
+
+    void PushFBO(FrameBufferObject* fbo);
+
+    void PopFBO();
+
+    void PushRenderingComponent(int id);
+
+    void PopRenderingComponent();
+
+    void RequestRenderingComponent(int &id);
+
+    int RequestRenderingComponent();
 
     void EnableCulling();
 
@@ -55,8 +72,6 @@ public:
 
     void RenderGUI();
 
-    void RenderEntities();
-
     void SetCurrentScene(Scene * scene);
 
     Scene *getCurrentScene() const;
@@ -64,6 +79,8 @@ public:
     void ActivateClipPlane(int id, glm::vec4& plane);
 
     void DeactivateClipPlane(int id);
+
+    void DeactivateAllClipPlanes();
 
     bool render_terrain = true;
     bool render_water = true;
@@ -86,12 +103,14 @@ public:
 private:
     //Shaders
     Shader* m_shaders[NUM_SHADER_TYPES] {};
-    ShaderType m_current_shader = NO_SHADER;
+    std::stack<ShaderType> m_current_shader;
 
-    DifferedRenderingComponent *differedRenderingComponent = nullptr;
+    //FBOs
+    std::vector<FrameBufferObject*> m_current_fbos;
 
-    //Profilers
-    ProfileTimer m_renderProfileTimer;
+    //Rendering Components
+    std::map<int,DifferedRenderingComponent*> m_renderingComponents;
+    std::vector<int> m_current_renderingComponents_ids;
 
     Scene * m_current_scene = nullptr;
     Window* m_window = nullptr;
@@ -103,6 +122,8 @@ private:
     void CreateShaders();
     void StartAlphaBlending();
     void EndAlphaBlending();
+    Shader* BindShader();
+    void BindFBO();
 };
 
 

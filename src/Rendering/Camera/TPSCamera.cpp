@@ -75,5 +75,5 @@ void TPSCamera::Attach(MeshedEntity* meshedEntity) {
 
 void TPSCamera::SetAttachmentComponent(TPSCameraAttachment *pAttachment) {
     m_component = pAttachment;
-    m_component->SetCamera(this);
+    m_component->SetParent(this);
 }

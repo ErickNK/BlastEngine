@@ -13,8 +13,8 @@ class RenderingEngine;
 template <class Entity>
 class EntityComponent {
 public:
-    EntityComponent() = default;
-    explicit EntityComponent(Entity* entity) : m_entity(entity),m_type(NONE) {}
+    explicit EntityComponent(ComponentTypes type): m_type(type) {}
+    explicit EntityComponent(Entity* entity, ComponentTypes type) : m_entity(entity),m_type(type) {}
     virtual void ProcessInput(Input* input, float delta) {}
     virtual void Update(double time, float delta) {}
     virtual void Render(RenderingEngine* engine) const {};

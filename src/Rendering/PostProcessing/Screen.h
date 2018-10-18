@@ -49,13 +49,13 @@ public:
 
     void SetTexture(Texture* texture);
 
-    void Render(RenderingEngine *engine) override;
+    void Render(RenderingEngine *engine) const override;
 
 protected:
     std::vector<EntityComponent<MeshedEntity>> m_components;
 
-    ScreenMesh m_screen_mesh;
-    ScreenMaterial m_screen_material;
+    mutable ScreenMesh m_screen_mesh;
+    mutable ScreenMaterial m_screen_material;
 };
 
 

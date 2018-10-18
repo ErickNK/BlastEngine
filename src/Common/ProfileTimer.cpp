@@ -26,11 +26,11 @@ void ProfileTimer::StartInvocation()
 
 void ProfileTimer::StopInvocation()
 {
-//	if(m_startTime == 0)
-//	{
-//		std::cout << "Error: StopInvocation called without matching start invocation" << std::endl;
-//		assert(m_startTime != 0);
-//	}
+	if(m_startTime == 0)
+	{
+		std::cout << "Error: StopInvocation called without matching start invocation" << std::endl;
+		assert(m_startTime != 0);
+	}
 	
 	m_numInvocations++;
 	m_totalTime += (Time::GetTime() - m_startTime);

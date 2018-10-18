@@ -61,12 +61,13 @@ void Terrain::InitTerrain() {
         }
 
         m_mesh = new Mesh(vertices, vertices.size(), indices, indices.size());
+
         for (auto const &x : m_textureLocations) {
             textures.push_back(new Texture(x.second, x.first));
         }
-        m_material = new Material(0.0, 0.0, textures);
-        m_transform = Transform();
+        m_material = new TerrainMaterial(0.0, 0.0, textures);
 
+        m_transform = Transform();
         m_transform.GetPos().x = x;
         m_transform.GetPos().z = z;
 
@@ -102,6 +103,16 @@ void Terrain::AddComponents(){
 
 void Terrain::RenderTerrain(RenderingEngine *engine) {
     m_terrain_renderer->Render(engine);
+}
+
+void Terrain::Render(RenderingEngine *engine) const {
+    //Change current shader
+    engine->PushShader(TERRAIN_SHADER);
+
+        MeshedEntity::Render(engine);
+
+    //Change back
+    engine->PopShader();
 }
 
 float Terrain::getPixelHeight(int x, int y) {
@@ -163,7 +174,56 @@ float Terrain::getTerrainHeight(float x, float z) const{
     return answer;
 }
 
+TerrainMaterial::TerrainMaterial(GLfloat d, GLfloat d1, std::vector<Texture *> vector) : Material(d,d1,vector){}
 
+void TerrainMaterial::UseMaterial(Shader *shader) {
+    Material::UseMaterial(shader);
 
+    shader->Uniform1i("backgroundTexture", 0);
+    shader->Uniform1i("rTexture", 0);
+    shader->Uniform1i("gTexture", 0);
+    shader->Uniform1i("bTexture", 0);
+    shader->Uniform1i("blendMap", 0);
 
+    for (unsigned int i = 0; i < textures.size(); i++) {
+        switch (textures[i]->GetTextureType()) {
+            case R_TEXTURE: {
+                int textureUnit = shader->getAvailableDrawingTextureUnit();
+                shader->Uniform1i("rTexture", textureUnit);
+                textures[i]->Bind(textureUnit);
+                break;
+            }
 
+            case G_TEXTURE: {
+                int textureUnit = shader->getAvailableDrawingTextureUnit();
+                shader->Uniform1i("gTexture", textureUnit);
+                textures[i]->Bind(textureUnit);
+                break;
+            }
+
+            case B_TEXTURE: {
+                int textureUnit = shader->getAvailableDrawingTextureUnit();
+                shader->Uniform1i("bTexture", textureUnit);
+                textures[i]->Bind(textureUnit);
+                break;
+            }
+
+            case BACKGROUND_TEXTURE: {
+                int textureUnit = shader->getAvailableDrawingTextureUnit();
+                shader->Uniform1i("backgroundTexture", textureUnit);
+                textures[i]->Bind(textureUnit);
+                break;
+            }
+
+            case BLEND_MAP_TEXTURE: {
+                int textureUnit = shader->getAvailableDrawingTextureUnit();
+                shader->Uniform1i("blendMap", textureUnit);
+                textures[i]->Bind(textureUnit);
+                break;
+            }
+        }
+    }
+
+    GLenum someError = glGetError();
+    assert( someError == GL_NO_ERROR);
+}

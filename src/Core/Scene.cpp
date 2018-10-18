@@ -35,7 +35,7 @@ void Scene::Update(double time, float delta) {
     if(m_current_skybox != nullptr) m_current_skybox->Update(time,delta);
 
     for(Water* water: m_waters){
-        water->Update(time, delta);
+        water->UpdateAll(time, delta);
     }
 }
 
@@ -71,7 +71,7 @@ void Scene::AddTerrain(Terrain *terrain) {
     m_terrains.push_back(terrain);
 }
 void Scene::AddWaterBody(Water *water) {
-//    m_meshed_Entities.push_back(water);
+    m_meshed_Entities.push_back(water);
     m_waters.push_back(water);
 }
 void Scene::AddMousePicker(MousePicker *picker) { m_current_mouse = picker; }

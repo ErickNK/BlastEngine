@@ -167,7 +167,12 @@ set(SOURCE_FILES
         src/Core/Components/Attachment/Attachment.h
         include/stb_image.h
         include/stb_image.c
-        src/BlastEngine.h src/Core/Components/RenderingComponents/DifferedRenderingComponent.h src/Rendering/Shaders/DifferedShader.h src/Rendering/DifferedRendering/DifferedScreen.cpp src/Rendering/DifferedRendering/DifferedScreen.h) # which files should be compiled
+        src/BlastEngine.h
+        src/Core/Components/RenderingComponents/DifferedRenderingComponent.h
+        src/Rendering/Shaders/DifferedShader.h
+        src/Rendering/DifferedRendering/DifferedScreen.cpp
+        src/Rendering/DifferedRendering/DifferedScreen.h
+        src/Common/Helpers.h) # which files should be compiled
 
 set(TEST_FILES
         test/TestGame/Scenes/TestScene.cpp

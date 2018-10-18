@@ -10,15 +10,18 @@
 #include "../EntityComponent.h"
 
 class FogComponent : public EntityComponent<EffectEntity> {
+public:
+
+    FogComponent(): EntityComponent(FOG_COMPONENT) {}
 
     void Render(RenderingEngine *engine) const override {
-        auto * shader = (FogShader*) engine->BindShader(FOG_SHADER);
+        auto * shader = (FogShader*) engine->PushShader(FOG_SHADER);
 
             shader->SetFog(reinterpret_cast<Fog *>(m_entity));
 
             engine->RenderAllMeshed();
 
-        engine->UnBindShader(FOG_SHADER);
+        engine->PopShader();
     }
 };
 

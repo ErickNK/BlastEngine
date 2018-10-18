@@ -22,7 +22,8 @@ public:
 	*                   object. Should be in allocated memory.
 	* @param velocity How fast this object is moving and in what direction.
 	*/
-    PhysicsObject(float mass, const glm::vec3& initialVelocity, Collider* collider) :
+    PhysicsObject(ComponentTypes type, float mass, const glm::vec3& initialVelocity, Collider* collider) :
+    EntityComponent(type),
     mass(mass),
     velocity(initialVelocity),
     collider(collider) { collider->SetParent(this); }

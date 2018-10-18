@@ -51,9 +51,13 @@ private:
     PhysicsEngine* m_physicsEngine = nullptr; //Used to simulate physics.
     Game* m_game = nullptr;            //The game itself. Stored as pointer so the user can pass in a derived class.
 
+    //Profilers
     ProfileTimer m_sleepTimer;
     ProfileTimer m_swapBufferTimer;
     ProfileTimer m_windowUpdateTimer;
+    ProfileTimer m_renderProfileTimer;
+    ProfileTimer m_updateTimer;
+    ProfileTimer m_inputTimer;
 };
 
 

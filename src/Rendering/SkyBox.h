@@ -16,7 +16,7 @@
 class RenderingEngine;
 class Fog;
 
-class SkyBox {
+class SkyBox : public Entity {
 public:
 	SkyBox();
 	SkyBox(float size,std::map<SkyBoxTypes, std::vector<std::string>> faceLocations);
@@ -27,13 +27,11 @@ public:
 
 	GLuint* getTextures();
 
-    Transform& getTransform();
-
     ~SkyBox();
 
     SkyBox* AddComponent(EntityComponent<SkyBox>* component);
 
-    void Update(double time, float delta);
+    void Update(double time, float delta) override;
 
 	void Render(RenderingEngine *engine);
 
@@ -66,7 +64,6 @@ private:
 	float SIZE = 500.0f;
 	Mesh * m_skyMesh;
 	GLuint m_textures[NUM_SKYBOX_TYPES];
-    Transform m_transform;
     float blend_factor = 0;
     float rotationSpeed = 0.1f;
 

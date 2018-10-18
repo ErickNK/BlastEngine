@@ -31,10 +31,10 @@ void Water::InitWater() {
     std::vector<GLuint> indices;
     std::vector<Texture*> textures;
 
-    vertices.emplace_back(glm::vec3(-1,0,-1) * TILE_SIZE,glm::vec2(),glm::vec3(0,1,0),glm::vec3(),glm::vec4(0,0,0,0));
-    vertices.emplace_back(glm::vec3(-1,0,1) * TILE_SIZE,glm::vec2(),glm::vec3(0,1,0),glm::vec3(),glm::vec4(0,0,0,0));
-    vertices.emplace_back(glm::vec3(1,0,1) * TILE_SIZE,glm::vec2(),glm::vec3(0,1,0),glm::vec3(),glm::vec4(0,0,0,0));
-    vertices.emplace_back(glm::vec3(1,0,-1) * TILE_SIZE,glm::vec2(),glm::vec3(0,1,0),glm::vec3(),glm::vec4(0,0,0,0));
+    vertices.emplace_back(glm::vec3(-1,0,-1) * TILE_SIZE,glm::vec2(),glm::vec3(0,1,0),glm::vec3(),color);
+    vertices.emplace_back(glm::vec3(-1,0,1) * TILE_SIZE,glm::vec2(),glm::vec3(0,1,0),glm::vec3(),color);
+    vertices.emplace_back(glm::vec3(1,0,1) * TILE_SIZE,glm::vec2(),glm::vec3(0,1,0),glm::vec3(),color);
+    vertices.emplace_back(glm::vec3(1,0,-1) * TILE_SIZE,glm::vec2(),glm::vec3(0,1,0),glm::vec3(),color);
 
     indices.push_back(0);
     indices.push_back(1);
@@ -71,8 +71,10 @@ void Water::InitFBOs() {
     options[EXTERNAL_COMPONENT_FORMAT] = GL_RGB;
     options[ATTACHMENT_TYPE] = GL_COLOR_ATTACHMENT0;
     options[DATA_VALUE_FORMAT] = GL_UNSIGNED_BYTE;
-    options[ENABLE_WRAP_FILTER] = GL_FALSE;
-    options[ENABLE_OVERLAY_FILTER] = GL_FALSE;
+    options[ENABLE_OVERLAY_FILTER] = GL_TRUE;
+    options[ENABLE_WRAP_FILTER] = GL_TRUE;
+    options[WRAP_FILTER] = GL_CLAMP_TO_BORDER;
+    options[OVERLAY_FILTER] = GL_LINEAR;
     reflection_fbo.Generate(reflectionTexture, REFLECTION_WIDTH,REFLECTION_HEIGHT,options);
 
     options[TYPE] = GL_RENDERBUFFER;
@@ -81,8 +83,10 @@ void Water::InitFBOs() {
     options[EXTERNAL_COMPONENT_FORMAT] = GL_DEPTH_COMPONENT;
     options[ATTACHMENT_TYPE] = GL_DEPTH_ATTACHMENT;
     options[DATA_VALUE_FORMAT] = GL_UNSIGNED_BYTE;
-    options[ENABLE_WRAP_FILTER] = GL_FALSE;
-    options[ENABLE_OVERLAY_FILTER] = GL_FALSE;
+    options[ENABLE_OVERLAY_FILTER] = GL_TRUE;
+    options[ENABLE_WRAP_FILTER] = GL_TRUE;
+    options[WRAP_FILTER] = GL_CLAMP_TO_BORDER;
+    options[OVERLAY_FILTER] = GL_LINEAR;
     reflection_fbo.Generate(reflectionDepthBuffer, REFLECTION_WIDTH,REFLECTION_HEIGHT,options);
 
     options[TYPE] = GL_TEXTURE;
@@ -91,8 +95,10 @@ void Water::InitFBOs() {
     options[EXTERNAL_COMPONENT_FORMAT] = GL_RGB;
     options[ATTACHMENT_TYPE] = GL_COLOR_ATTACHMENT0;
     options[DATA_VALUE_FORMAT] = GL_UNSIGNED_BYTE;
-    options[ENABLE_WRAP_FILTER] = GL_FALSE;
-    options[ENABLE_OVERLAY_FILTER] = GL_FALSE;
+    options[ENABLE_OVERLAY_FILTER] = GL_TRUE;
+    options[ENABLE_WRAP_FILTER] = GL_TRUE;
+    options[WRAP_FILTER] = GL_CLAMP_TO_BORDER;
+    options[OVERLAY_FILTER] = GL_LINEAR;
     refraction_fbo.Generate(refractionTexture, REFRACTION_WIDTH,REFRACTION_HEIGHT,options);
 
     options[TYPE] = GL_TEXTURE;
@@ -101,8 +107,10 @@ void Water::InitFBOs() {
     options[EXTERNAL_COMPONENT_FORMAT] = GL_DEPTH_COMPONENT;
     options[ATTACHMENT_TYPE] = GL_DEPTH_ATTACHMENT;
     options[DATA_VALUE_FORMAT] = GL_UNSIGNED_BYTE;
-    options[ENABLE_WRAP_FILTER] = GL_FALSE;
-    options[ENABLE_OVERLAY_FILTER] = GL_FALSE;
+    options[ENABLE_OVERLAY_FILTER] = GL_TRUE;
+    options[ENABLE_WRAP_FILTER] = GL_TRUE;
+    options[WRAP_FILTER] = GL_CLAMP_TO_BORDER;
+    options[OVERLAY_FILTER] = GL_LINEAR;
     refraction_fbo.Generate(refractionDepthTexture, REFRACTION_WIDTH,REFRACTION_HEIGHT,options);
 
 }
@@ -111,9 +119,6 @@ void Water::AddComponents(){
     //ADD COMPONENTS
     auto * renderer = new MeshedRendererComponent();
     this->AddComponent(renderer);
-
-    this->waterRendererComponent = new WaterRendererComponent();
-    this->waterRendererComponent->SetParent(this);
 }
 
 void Water::setTILE_SIZE(float TILE_SIZE) {
@@ -121,7 +126,11 @@ void Water::setTILE_SIZE(float TILE_SIZE) {
 }
 
 void Water::RenderWater(RenderingEngine *engine) {
-    if(allow_render) waterRendererComponent->RenderWater(engine);
+    if(allow_render) getComponent(WATER_RENDERER_COMPONENT)->Render(engine);
+}
+
+void Water::Render(RenderingEngine *engine) const {
+    if(allow_render) getComponent(WATER_RENDERER_COMPONENT)->Render(engine);
 }
 
 FrameBufferObject &Water::getReflectionFBO() {
@@ -136,10 +145,6 @@ float Water::getHeight() {
     return height;
 }
 
-void Water::Update(double time, float delta) {
-    MeshedEntity::Update(time, delta);
-    waterRendererComponent->Update(time, delta);
-}
 
 void WaterMaterial::UseMaterial(Shader *shader) {
     Material::UseMaterial(shader);

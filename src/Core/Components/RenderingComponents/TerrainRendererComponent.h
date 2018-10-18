@@ -12,16 +12,14 @@
 
 class TerrainRendererComponent: public EntityComponent<Terrain> {
 public:
+    TerrainRendererComponent() : EntityComponent(TERRAIN_RENDERER_COMPONENT) {}
+
     void Render(RenderingEngine* engine) const override {
-        auto * shader = (TerrainShader*) engine->BindShader(TERRAIN_SHADER);
-
-            shader->setTerrain(m_entity);
-
-            shader->UpdateCamera(*engine->getCurrentScene()->getCurrentCamera());
+        auto * shader = (TerrainShader*) engine->PushShader(TERRAIN_SHADER);
 
             m_entity->RenderAll(engine);
 
-        engine->UnBindShader(TERRAIN_SHADER);
+        engine->PopShader();
     }
 };
 

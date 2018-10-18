@@ -10,6 +10,7 @@
 #include "../../../src/Rendering/Terrain/Terrain.h"
 #include "../../../src/Core/Components/RenderingComponents/LightComponent.h"
 #include "../../../src/Core/Components/RenderingComponents/MeshedRendererComponent.h"
+#include "../../../src/Core/Components/RenderingComponents/WaterRendererComponent.h"
 #include "../../../src/Rendering/Loaders/MeshedLoader.h"
 #include "../../../src/Rendering/Fog.h"
 #include "../../../src/Core/Components/RenderingComponents/FogComponent.h"
@@ -36,6 +37,7 @@ void TestScene::Init() {
     SetupCamera();
     CreateLighting();
     CreateTerrain();
+    CreateWater();
     CreateCharacters();
     CreateGUI();
 }
@@ -125,12 +127,6 @@ void TestScene::CreateTerrain(){
     this->AddPhysicsObject(terrainBody);
     this->AddTerrain(terrain);
 
-//    std::map<TextureTypeEnum, std::string> waterTextures;
-//    waterTextures[DU_DV_MAP] = "../test/TestGame/res/textures/terrain/waterDUDV.png";
-//    waterTextures[NORMAL_MAP] = "../test/TestGame/res/textures/terrain/matchingNormalMap.png";
-//    auto * water = new Water(1,1,-5,waterTextures);
-//    this->AddWaterBody(water);
-
     //Trees
     int spice = 1;
     for(int i = 0; i < 50; i++) {
@@ -191,6 +187,17 @@ void TestScene::CreateTerrain(){
     }
 }
 
+void TestScene::CreateWater(){
+    std::map<TextureTypeEnum, std::string> waterTextures;
+    waterTextures[DU_DV_MAP] = "../test/TestGame/res/textures/terrain/waterDUDV.png";
+    waterTextures[NORMAL_MAP] = "../test/TestGame/res/textures/terrain/matchingNormalMap.png";
+    auto * water = new Water(1,1,-5,waterTextures);
+    water->AddComponent(
+            reinterpret_cast<EntityComponent<MeshedEntity> *>(new WaterRendererComponent(this->getGame()->getCoreEngine()->GetRenderingEngine()->RequestRenderingComponent()))
+    );
+    this->AddWaterBody(water);
+}
+
 void TestScene::CreateCharacters() {
     bool options[Num_Options];
 
@@ -213,12 +220,12 @@ void TestScene::CreateLighting() {
     sun = new DirectionalLight(
             glm::vec3(1.0f,1.0f,1.0f),
             glm::vec3(0.0f,-1.0,1.0f),
-            0.0f, 0.9f,
+            0.1f, 0.4f,
             2018, 2018,
             glm::ortho(-200.0f, 200.0f, -200.0f, 200.0f, 1.0f, 10000.0f));
 
-    sun->getTransform().SetPos(glm::vec3(0.0f,100.0f,0.0f));
-    sun->getTransform().LookAt(glm::vec3(0.0f,-1.0,1.0f));
+    sun->getTransform().SetPos(glm::vec3(0.0f,100.0f,100.0f));
+    sun->getTransform().LookAt(glm::vec3(0.0f,-1.0,-1.0f));
     sun->GetShadow().m_flipFaces = false;
     sun->AddComponent(new LightComponent());
     sun->AddShadowComponent(new ShadowRendererComponent());

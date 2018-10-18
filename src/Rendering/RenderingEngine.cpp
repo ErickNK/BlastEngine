@@ -33,15 +33,25 @@
 #include "../Core/Components/RenderingComponents/DifferedRenderingComponent.h"
 
 void RenderingEngine::Initialize(){
-    CreateShaders();
-    this->differedRenderingComponent = new DifferedRenderingComponent;
-    this->differedRenderingComponent->setRenderingEngine(this);
-    this->differedRenderingComponent->Init();
 
+    //Setup Shaders
+    CreateShaders();
+    m_current_shader.push(NO_SHADER);
+
+    //Setup FBOs
+    PushFBO(new FrameBufferObject(0,m_window->getBufferWidth(),m_window->getBufferHeight()));
+
+    //Setup Rendering Components
+    int id = static_cast<int>(m_renderingComponents.size());
+    m_renderingComponents[id] = new DifferedRenderingComponent(id,this);
+    m_current_renderingComponents_ids.push_back(id);
+
+    //Setup clip planes
     for (bool &m_activated_clipping_Plane : m_activated_clipping_Planes) {
         m_activated_clipping_Plane = false;
     }
 
+    //Check errors
     GLenum someError = glGetError();
     assert( someError == GL_NO_ERROR);
 }
@@ -231,32 +241,69 @@ void RenderingEngine::RenderWater(){
 void RenderingEngine::RenderScene() {
     this->EnableCulling();
 
-    m_renderProfileTimer.StartInvocation();
-
-        differedRenderingComponent->RenderScene();
-
-    m_renderProfileTimer.StopInvocation();
+    if(!m_current_renderingComponents_ids.empty()){
+        m_renderingComponents[m_current_renderingComponents_ids.back()]->RenderScene();
+    }else{
+        //TODO raise exception
+    }
 
     GLenum someError = glGetError();
     assert( someError == GL_NO_ERROR);
 }
 
 Shader* RenderingEngine::BindShader(ShaderType type) {
-    //Set current shader
-    m_current_shader = type;
+    //Replace previous
+    m_current_shader.top() = type;
 
-    //Bind for use
-    m_shaders[type]->Bind();
+    return BindShader();
+}
 
-    //Update the shader
-    UpdateShader(m_shaders[type]);
+Shader *RenderingEngine::BindShader() {
+    if(!m_current_shader.empty()) { //If not empty
+        if(m_current_shader.top() != NO_SHADER) { //If its not the base shader
+            //Bind for use
+            m_shaders[m_current_shader.top()]->Bind();
 
-    return m_shaders[type];
+            //Update the shader
+            UpdateShader(m_shaders[m_current_shader.top()]);
+
+            return m_shaders[m_current_shader.top()];
+        }else{
+            //TODO raise exception
+            return nullptr;
+        }
+    }else{
+        //TODO raise exception
+        return nullptr;
+    }
 }
 
 void RenderingEngine::UnBindShader(ShaderType type) {
     //UnBind for use
     m_shaders[type]->UnBind();
+}
+
+Shader *RenderingEngine::PushShader(ShaderType type) {
+    if(m_current_shader.top() != NO_SHADER) { //If its not the base shader
+
+        //UnBind previous
+        m_shaders[m_current_shader.top()]->UnBind();
+
+    }
+    //New shader
+    m_current_shader.push(type);
+
+    return BindShader();
+}
+
+void RenderingEngine::PopShader() {
+    //UnBind previous
+    m_shaders[m_current_shader.top()]->UnBind();
+
+    //Back to previous
+    m_current_shader.pop();
+
+    BindShader();
 }
 
 void RenderingEngine::SetCurrentScene(Scene * scene) {
@@ -301,16 +348,10 @@ Shader* RenderingEngine::UpdateShader(Shader *shader) {
 void RenderingEngine::ActivateClipPlane(int id, glm::vec4& plane) {
     m_activated_clipping_Planes[id] = true;
     m_clipping_Planes[id] = plane;
-
-    GLenum someError = glGetError();
-    assert( someError == GL_NO_ERROR);
 }
 
 void RenderingEngine::DeactivateClipPlane(int id) {
     m_activated_clipping_Planes[id] = false;
-
-    GLenum someError = glGetError();
-    assert( someError == GL_NO_ERROR);
 }
 
 void RenderingEngine::CleanUP() {
@@ -326,9 +367,85 @@ Shader *RenderingEngine::getShader(ShaderType type) {
 }
 
 ShaderType RenderingEngine::getCurrentShaderType() {
-    return m_current_shader;
+    return m_current_shader.top();
 }
 
 void RenderingEngine::setWindow(Window *window) {
     m_window = window;
 }
+
+void RenderingEngine::BindFBO() {
+    if(!m_current_fbos.empty()) {
+
+        glBindFramebuffer(GL_FRAMEBUFFER, m_current_fbos.back()->GetFrameBuffer()); //Bind shadow buffer.
+
+        glViewport(0, 0, m_current_fbos.back()->GetWidth(), m_current_fbos.back()->GetHeight());
+
+    }
+    //TODO raise exception
+}
+
+void RenderingEngine::ReplaceTopFBO(FrameBufferObject* fbo) {
+
+    m_current_fbos.back() = fbo;
+
+    BindFBO();
+}
+
+void RenderingEngine::ResetTopToOriginalFBO() {
+
+    m_current_fbos.back() = new FrameBufferObject(0,m_window->getBufferWidth(),m_window->getBufferHeight());
+
+    BindFBO();
+}
+
+void RenderingEngine::PopFBO() {
+
+    m_current_fbos.pop_back();
+
+    BindFBO();
+}
+
+void RenderingEngine::PushFBO(FrameBufferObject* fbo) {
+    if(std::find(m_current_fbos.begin(), m_current_fbos.end(), fbo) == m_current_fbos.end()){ //Not found
+
+        m_current_fbos.push_back(fbo);
+
+        BindFBO();
+
+    }else{ //FBO is already in use
+        //TODO: raise an exception.
+    }
+}
+
+void RenderingEngine::PushRenderingComponent(int id) {
+    m_current_renderingComponents_ids.push_back(id);
+}
+
+void RenderingEngine::PopRenderingComponent() {
+    m_current_renderingComponents_ids.pop_back();
+}
+
+void RenderingEngine::RequestRenderingComponent(int &id) {
+    id = static_cast<int>(m_renderingComponents.size());
+    m_renderingComponents[id] = new DifferedRenderingComponent(id,this);
+}
+
+int RenderingEngine::RequestRenderingComponent() {
+    int id = static_cast<int>(m_renderingComponents.size());
+    m_renderingComponents[id] = new DifferedRenderingComponent(id,this);
+
+    return id;
+}
+
+void RenderingEngine::DeactivateAllClipPlanes() {
+    //Setup clip planes
+    for(int i = 0; i < MAX_CLIP_PLANES; i++){
+        glDisable(GL_CLIP_DISTANCE0 + i);
+    }
+
+    GLenum someError = glGetError();
+    assert( someError == GL_NO_ERROR);
+}
+
+

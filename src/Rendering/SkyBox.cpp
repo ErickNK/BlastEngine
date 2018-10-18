@@ -177,10 +177,6 @@ float SkyBox::getRotationSpeed() {
 	return rotationSpeed;
 }
 
-Transform &SkyBox::getTransform() {
-	return m_transform;
-}
-
 void SkyBox::setBlendFactor(float blend_factor) {
     SkyBox::blend_factor = blend_factor;
 }

@@ -11,10 +11,19 @@
 #include "../../../Rendering/PostProcessing/Screen.h"
 #include "../../../Rendering/DifferedRendering/DifferedScreen.h"
 #include "../../../Rendering/Loaders/GUILoader.h"
+#include "../../../Common/Helpers.h"
 
+/**
+ * A component that performs a differed rendering. By itself it acts as a
+ * G-Buffer.
+ * */
 class DifferedRenderingComponent {
-
 public:
+
+    DifferedRenderingComponent(int id, RenderingEngine* engine): m_id(id), m_renderingEngine(engine){
+        Init();
+    }
+
     void Init(){
         m_screen = new DifferedScreen();
 
@@ -107,10 +116,8 @@ public:
 
 //        RenderShadows();
 
-        m_renderingEngine->RenderSkybox();
-
     //GEOMETRY PASS
-        m_differedFBO.BindFrameBuffer();
+        m_renderingEngine->PushFBO(&m_differedFBO);
 
             std::vector<GLenum> buffers {
                 GL_COLOR_ATTACHMENT0, //Position
@@ -121,43 +128,32 @@ public:
             };
             m_differedFBO.setForDrawing(true,buffers);
 
-            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            m_differedFBO.ClearFBO();
 
-            if(m_renderingEngine->render_entities){
-                auto * shader = (DifferedGeometryPassShader*) m_renderingEngine->BindShader(DIFFERED_GEOMETRYPASS_RENDERING_SHADER);
+            auto * differedGeometryPassShader = (DifferedGeometryPassShader*) m_renderingEngine->PushShader(DIFFERED_GEOMETRYPASS_RENDERING_SHADER);
 
-                    m_renderingEngine->RenderAllMeshed();
+                m_renderingEngine->RenderAllMeshed();
 
-                m_renderingEngine->UnBindShader(DIFFERED_GEOMETRYPASS_RENDERING_SHADER);
-            }
+            m_renderingEngine->PopShader();
 
-        m_differedFBO.UnBindFrameBuffer(m_renderingEngine->getWindow()->getBufferWidth(),m_renderingEngine->getWindow()->getBufferHeight());
+        m_renderingEngine->PopFBO();
     //END GEOMETRY PASS
 
     //LIGHT PASS
-        if(m_renderingEngine->render_lights){
-            auto * shader = (DifferedLightPassShader*) m_renderingEngine->BindShader(DIFFERED_LIGHTPASS_RENDERING_SHADER);
+        auto * differedLightPassShader = (DifferedLightPassShader*) m_renderingEngine->PushShader(DIFFERED_LIGHTPASS_RENDERING_SHADER);
 
-                //Set counts
-                shader->Uniform1i("directionalLightCount",m_renderingEngine->getCurrentScene()->getDirectionalLightsCount());
-                shader->Uniform1i("pointLightCount",m_renderingEngine->getCurrentScene()->getPointLightsCount());
-                shader->Uniform1i("spotLightCount",m_renderingEngine->getCurrentScene()->getSpotLightsCount());
+            differedLightPassShader->SetEngine(m_renderingEngine);
 
-                //Set lights
-                shader->SetLights(m_renderingEngine->getCurrentScene()->getLights());
+            m_screen->Render(m_renderingEngine);
 
-                m_screen->Render(m_renderingEngine);
-
-            m_renderingEngine->UnBindShader(DIFFERED_LIGHTPASS_RENDERING_SHADER);
-        }
+        m_renderingEngine->PopShader();
     //END LIGHT PASS
 
-//        m_renderingEngine->RenderTerrain();
-//
 //        m_renderingEngine->RenderEffects();
-//
+
 //        m_renderingEngine->RenderWater();
+
+//        m_renderingEngine->RenderSkybox();
 
         m_renderingEngine->RenderGUI();
 
@@ -169,12 +165,16 @@ public:
         this->m_renderingEngine = engine;
     }
 
+    void ReRenderScene() {
+
+    }
+
 private:
+    int m_id;
     RenderingEngine * m_renderingEngine = nullptr;
     DifferedScreen * m_screen = nullptr;
     FrameBufferObject m_differedFBO;
     GLuint positionTexture, normalTexture, diffuseTexture, specularTexture, materialTexture, depthTexture;
-    GUILoader* m_gui_loader = new GUILoader();
 };
 
 

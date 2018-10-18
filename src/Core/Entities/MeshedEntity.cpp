@@ -34,19 +34,23 @@ MeshedEntity* MeshedEntity::AddComponent(EntityComponent<MeshedEntity>* componen
 
 void MeshedEntity::ProcessInputAll(Input* input, float delta)
 {
-    ProcessInput(input, delta);
+    if(allow_input) {
+        ProcessInput(input, delta);
 
-    for (auto &i : m_children) {
-        i->ProcessInputAll(input, delta);
+        for (auto &i : m_children) {
+            i->ProcessInputAll(input, delta);
+        }
     }
 }
 
 void MeshedEntity::UpdateAll(double time, float delta)
 {
-    Update(time, delta);
+    if(allow_update) {
+        Update(time, delta);
 
-    for (auto &i : m_children) {
-        i->UpdateAll(time, delta);
+        for (auto &i : m_children) {
+            i->UpdateAll(time, delta);
+        }
     }
 }
 
@@ -86,6 +90,15 @@ void MeshedEntity::Render(RenderingEngine* engine) const
 
 std::vector<EntityComponent<MeshedEntity> *> &MeshedEntity::getComponents() {
     return m_components;
+}
+
+EntityComponent<MeshedEntity> *MeshedEntity::getComponent(ComponentTypes type) const {
+    for (auto * component: m_components) {
+        if(component->getType() == type){
+            return component;
+        }
+    }
+    return nullptr;
 }
 
 //std::vector<GameObject*> MeshedEntity::GetAllAttached()

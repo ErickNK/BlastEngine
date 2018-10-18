@@ -112,7 +112,7 @@ void Shader::ActivateClipPlane(int id, const glm::vec4& plane){
     char locBuff[100] = {'\0'};
     snprintf(locBuff, sizeof(locBuff), "clipPlanes[%d]",id);
 
-    if(m_uniforms[locBuff] != -1){
+    if(m_uniforms.find(locBuff) != m_uniforms.end() && m_uniforms[locBuff] != -1){
         glEnable(GL_CLIP_DISTANCE0 + id);
         glUniform4f(m_uniforms[locBuff],plane.x,plane.y,plane.z,plane.w);
     }else{
@@ -127,7 +127,7 @@ void Shader::DeactivateClipPlane(int id){
     char locBuff[100] = {'\0'};
     snprintf(locBuff, sizeof(locBuff), "clipPlanes[%d]",id);
 
-    if(m_uniforms[locBuff] != -1){
+    if(m_uniforms.find(locBuff) != m_uniforms.end() && m_uniforms[locBuff] != -1){
         glDisable(GL_CLIP_DISTANCE0 + id);
         glUniform4f(m_uniforms[locBuff],0.0f,-1.0f,0.0f,100000000.0f);
     }

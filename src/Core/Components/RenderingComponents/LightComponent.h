@@ -10,6 +10,8 @@
 
 class LightComponent:public EntityComponent<LightEntity>{
 public:
+    LightComponent(): EntityComponent(LIGHT_COMPONENT){}
+
     void Render(RenderingEngine* engine) const override {
         switch(m_entity->getType()){
             case DIRECTIONAL_LIGHT:
@@ -33,33 +35,33 @@ public:
 
 protected:
     virtual void RenderDirectionalLight(RenderingEngine* engine) const{
-        auto * directional_light_shader = (ForwardDirectionalLightShader*) engine->BindShader(FORWARD_DIRECTIONAL_LIGHT_SHADER);
+        auto * directional_light_shader = (ForwardDirectionalLightShader*) engine->PushShader(FORWARD_DIRECTIONAL_LIGHT_SHADER);
 
             directional_light_shader->setLight(dynamic_cast<DirectionalLight *>(m_entity));
 
             engine->RenderAllMeshed();
 
-        engine->UnBindShader(FORWARD_DIRECTIONAL_LIGHT_SHADER);
+        engine->PopShader();
     }
 
     virtual void RenderPointLight(RenderingEngine* engine) const {
-        auto * point_light_shader = (ForwardPointLightShader*) engine->BindShader(FORWARD_POINT_LIGHT_SHADER);
+        auto * point_light_shader = (ForwardPointLightShader*) engine->PushShader(FORWARD_POINT_LIGHT_SHADER);
 
             point_light_shader->setLight(dynamic_cast<PointLight *>(m_entity));
 
             engine->RenderAllMeshed();
 
-        engine->UnBindShader(FORWARD_POINT_LIGHT_SHADER);
+        engine->PopShader();
     }
 
     virtual void RenderSpotLight(RenderingEngine* engine) const {
-        auto * spot_light_shader = (ForwardSpotLightShader*) engine->BindShader(FORWARD_SPOT_LIGHT_SHADER);
+        auto * spot_light_shader = (ForwardSpotLightShader*) engine->PushShader(FORWARD_SPOT_LIGHT_SHADER);
 
             spot_light_shader->setLight(dynamic_cast<SpotLight *>(m_entity));
 
             engine->RenderAllMeshed();
 
-        engine->UnBindShader(FORWARD_SPOT_LIGHT_SHADER);
+        engine->PopShader();
     }
 };
 

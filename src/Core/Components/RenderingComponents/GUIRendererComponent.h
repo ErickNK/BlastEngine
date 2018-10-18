@@ -14,8 +14,10 @@
 
 class GUIRendererComponent : public EntityComponent<GUIEntity>{
 public:
+    GUIRendererComponent() : EntityComponent(GUI_RENDERER_COMPONENT) {}
+
     void Render(RenderingEngine* engine) const override {
-        auto * shader = (GUIShader*) engine->BindShader(GUI_SHADER);
+        auto * shader = (GUIShader*) engine->PushShader(GUI_SHADER);
 
             //Draw one by one.
             m_entity->getGUIMesh().Bind();
@@ -29,7 +31,7 @@ public:
             m_entity->getGUIMesh().UnBind();
 
 
-        engine->UnBindShader(GUI_SHADER);
+        engine->PopShader();
 
     };
 };

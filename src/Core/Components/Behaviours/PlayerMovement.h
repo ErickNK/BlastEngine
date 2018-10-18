@@ -14,6 +14,8 @@
 
 class PlayerMovement : public EntityComponent<MeshedEntity>{
 public:
+    PlayerMovement() : EntityComponent(PLAYER_MOVEMENT) {}
+
     void ProcessInput(Input* input, float delta) override {
         mainForce->setAmount(glm::vec3(0,0,0));
         this->handleKeys(input->getKeys(),delta);

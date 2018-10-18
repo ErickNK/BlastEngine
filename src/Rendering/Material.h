@@ -31,11 +31,15 @@ public:
 
 	std::vector<Texture*> &getTextures();
 
+	void setTextures(std::vector<Texture*> texs);
+
+	void addTexture(Texture *texture);
+
+	Texture* getTexture(int position);
+
 	void setHasTransparency(bool hasTransparency);
 
     bool& isHasTransparency();
-
-    void AddTexture(Texture *texture);
 
 private:
 	GLfloat specularIntensity;

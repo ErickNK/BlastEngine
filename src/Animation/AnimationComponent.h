@@ -34,16 +34,7 @@
 class AnimationComponent: public EntityComponent<AnimatedEntity>  {
 
 public:
-    AnimationComponent() : EntityComponent(){
-            m_type = ANIMATION_COMPONENT;
-    }
-    /**
-	 * @param entity
-	 *            - the entity which will by animated by this animator.
-	 */
-    explicit AnimationComponent(AnimatedEntity* entity) {
-        this->m_entity = entity;
-    }
+    AnimationComponent() : EntityComponent(ANIMATION_COMPONENT) {}
 
     /**
      * Indicates that the entity should carry out the given animation. Resets

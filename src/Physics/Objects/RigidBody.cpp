@@ -7,8 +7,7 @@
 
 
 RigidBody::RigidBody(Collider *collider, const glm::vec3 &initVelocity, float mass)  :
-        PhysicsObject(mass,initVelocity,collider){
-    this->m_type = RIGID_BODY_COMPONENT;
+        PhysicsObject(RIGID_BODY_COMPONENT,mass,initVelocity,collider){
     //Add gravity
     auto * force = new Force;
     force->setAcceleration(glm::vec3(0,-9180,0));

@@ -19,7 +19,7 @@ public:
 
     void UseMaterial(Shader *shader) override;
 
-    GLfloat fresnelIntensity = 1.0f;
+    GLfloat fresnelIntensity = 0.5f;
 
 };
 
@@ -34,9 +34,6 @@ public:
 
     void setTILE_SIZE(float TILE_SIZE);
 
-    void Update(double time, float delta) override;
-
-public:
     void RenderWater(RenderingEngine *engine);
 
     FrameBufferObject &getReflectionFBO();
@@ -65,6 +62,8 @@ public:
     GLfloat wave_strength = 0.2f;
     GLfloat wave_speed = 0.03f;
     GLfloat moveFactor = 0.0f;
+    GLfloat colorTint = 0.1f;
+    glm::vec4 color = glm::vec4(0.0,0.3,0.5,1.0);
 private:
     float TILE_SIZE = 400, x = 0, z = 0, height = 0;
 
@@ -78,8 +77,6 @@ private:
     FrameBufferObject reflection_fbo;
     FrameBufferObject refraction_fbo;
 
-    WaterRendererComponent* waterRendererComponent;
-
     GLuint reflectionTexture, reflectionDepthBuffer, refractionTexture, refractionDepthTexture;
 
     void InitWater();
@@ -87,6 +84,9 @@ private:
     void InitFBOs();
 
     void AddComponents();
+
+protected:
+    void Render(RenderingEngine *engine) const override;
 };
 
 

@@ -11,9 +11,7 @@
 
 class AnimatedRendererComponent: public EntityComponent<AnimatedEntity>  {
 public:
-    AnimatedRendererComponent(): EntityComponent(){
-        m_type = ANIMATED_RENDERER_COMPONENT;
-    }
+    AnimatedRendererComponent(): EntityComponent(ANIMATED_RENDERER_COMPONENT){}
 
     void Render(RenderingEngine* engine) const override {
         auto * shader = engine->getShader(engine->getCurrentShaderType());

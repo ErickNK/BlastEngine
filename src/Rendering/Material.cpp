@@ -30,18 +30,22 @@ Material::Material(float specularIntensity, float shininess, std::vector<Texture
 Material::~Material() {}
 
 void Material::UseMaterial(Shader * shader) {
+    //DEFAULTS
     unsigned int diffuseNr = 0;
     unsigned int specularNr = 0;
     shader->Uniform1i("material.diffuseTextureCount", 0);
     shader->Uniform1i("material.specularTextureCount", 0);
+    shader->Uniform1i("textureAtlasNumOfRows",1);
+    shader->Uniform2f("textureAtlasOffset",0.0f,0.0f);
 
     for (unsigned int i = 0; i < textures.size(); i++)
     {
-        auto textureUnit = static_cast<unsigned int>(shader->getAvailableDrawingTextureUnit());
         TextureTypeEnum type = textures[i]->GetTextureType();
         char locBuff[100] = { '\0' };
 
         if (type == DIFFUSE_TEXTURE) {
+            auto textureUnit = static_cast<unsigned int>(shader->getAvailableDrawingTextureUnit());
+
             if (diffuseNr == MAX_MATERIALS_TEXTURES) return;
 
             //Set Diffuse texture texture-unit
@@ -54,9 +58,14 @@ void Material::UseMaterial(Shader * shader) {
             //DEFAULTS
             shader->Uniform1i("textureAtlasNumOfRows",1);
             shader->Uniform2f("textureAtlasOffset",0.0f,0.0f);
+
+            //Bind texture to texture-unit i
+            textures[i]->Bind(textureUnit);
         }
         else if (type == SPECULAR_TEXTURE)
         {
+            auto textureUnit = static_cast<unsigned int>(shader->getAvailableDrawingTextureUnit());
+
             if (specularNr == MAX_MATERIALS_TEXTURES) return;
 
             //Set Diffuse texture texture-unit
@@ -70,7 +79,11 @@ void Material::UseMaterial(Shader * shader) {
             shader->Uniform1i("textureAtlasNumOfRows",1);
             shader->Uniform2f("textureAtlasOffset",0.0f,0.0f);
 
+            //Bind texture to texture-unit i
+            textures[i]->Bind(textureUnit);
+
         }else if (type == DIFFUSE_TEXTURE_ATLAS){
+            auto textureUnit = static_cast<unsigned int>(shader->getAvailableDrawingTextureUnit());
 
             if (diffuseNr == MAX_MATERIALS_TEXTURES) return;
 
@@ -86,7 +99,11 @@ void Material::UseMaterial(Shader * shader) {
             shader->Uniform2f("textureAtlasOffset",
                     ((TextureAtlas*)(textures[i]))->getTextureXOffset(),
                     ((TextureAtlas*)(textures[i]))->getTextureYOffset());
+
+            //Bind texture to texture-unit i
+            textures[i]->Bind(textureUnit);
         }else if (type == SPECULAR_TEXTURE_ATLAS){
+            auto textureUnit = static_cast<unsigned int>(shader->getAvailableDrawingTextureUnit());
 
             if (specularNr == MAX_MATERIALS_TEXTURES) return;
 
@@ -102,10 +119,11 @@ void Material::UseMaterial(Shader * shader) {
             shader->Uniform2f("textureAtlasOffset",
                         ((TextureAtlas*)(textures[i]))->getTextureXOffset(),
                         ((TextureAtlas*)(textures[i]))->getTextureYOffset());
+
+            //Bind texture to texture-unit i
+            textures[i]->Bind(textureUnit);
         }
 
-        //Bind texture to texture-unit i
-        textures[i]->Bind(textureUnit);
     }
 
     //Set Specular Intensity
@@ -175,15 +193,24 @@ std::vector<Texture*> &Material::getTextures() {
     return textures;
 }
 
+void Material::addTexture(Texture *texture) {
+    textures.push_back(texture);
+}
+
+void Material::setTextures(std::vector<Texture*> texs){
+    textures = std::move(texs);
+}
+
+Texture* Material::getTexture(int position) {
+    return textures[position];
+}
+
+
 void Material::setHasTransparency(bool hasTransparency) {
     Material::hasTransparency = hasTransparency;
 }
 
 bool& Material::isHasTransparency() {
     return hasTransparency;
-}
-
-void Material::AddTexture(Texture *texture) {
-    textures.push_back(texture);
 }
 

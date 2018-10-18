@@ -10,6 +10,16 @@ FrameBufferObject::FrameBufferObject() :
         m_width(0),
         m_height(0){ glGenFramebuffers(1, &m_frameBufferObject); }
 
+FrameBufferObject::FrameBufferObject(GLuint id, GLuint width, GLuint height) :
+        m_frameBufferObject(id),
+        m_width(width),
+        m_height(height){ }
+
+FrameBufferObject::FrameBufferObject(GLuint width, GLuint height) :
+        m_frameBufferObject(0),
+        m_width(width),
+        m_height(height){ glGenFramebuffers(1, &m_frameBufferObject);  }
+
 FrameBufferObject::~FrameBufferObject()
 {
 //    if (m_frameBufferObject) glDeleteFramebuffers(1, &m_frameBufferObject);
@@ -259,4 +269,15 @@ bool FrameBufferObject::checkForErrors() const {
     }
 
     return true;
+}
+
+void FrameBufferObject::setAllowClear(bool allow) {
+    m_allowClear = allow;
+}
+
+void FrameBufferObject::ClearFBO() const {
+    if(m_allowClear){
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
 }

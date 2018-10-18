@@ -12,9 +12,7 @@
 
 class MeshedRendererComponent: public EntityComponent<MeshedEntity> {
 public:
-    MeshedRendererComponent(): EntityComponent(){
-        m_type = MESHED_RENDERER_COMPONENT;
-    }
+    MeshedRendererComponent(): EntityComponent(MESHED_RENDERER_COMPONENT){}
 
     void Render(RenderingEngine* engine) const override {
         auto * shader = engine->getShader(engine->getCurrentShaderType());
@@ -22,8 +20,7 @@ public:
         shader->UpdateModel(m_entity->getTransform());
 
         if (shader->getType() != OMNI_DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER &&
-            shader->getType() != DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER &&
-            shader->getType() != TERRAIN_SHADER) {
+            shader->getType() != DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER) {
 
 
             if (m_entity->getTransform().isNonUnformScaled()) {

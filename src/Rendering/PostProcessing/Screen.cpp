@@ -73,7 +73,7 @@ Screen::Screen() {
     m_screen_material = *new ScreenMaterial();
 }
 
-void Screen::Render(RenderingEngine *engine)
+void Screen::Render(RenderingEngine *engine) const
 {
     glDisable(GL_DEPTH_TEST);
     auto * shader = (PostProcessingScreenShader*) engine->BindShader(POST_PROCESSING_SCREEN_SHADER);

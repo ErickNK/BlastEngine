@@ -1,7 +1,5 @@
 #include <utility>
 
-#include <utility>
-
 //
 // Created by erick on 10/10/18.
 //
@@ -9,6 +7,7 @@
 #include "DifferedScreen.h"
 #include "../Shaders/PostProcessingScreenShader.h"
 #include "../Shaders/DifferedShader.h"
+#include "../../Core/Components/RenderingComponents/MeshedRendererComponent.h"
 
 DifferedScreenMesh::DifferedScreenMesh(std::vector<glm::vec2> pos, unsigned int numVertices) {
 
@@ -23,7 +22,7 @@ DifferedScreenMesh::DifferedScreenMesh(std::vector<glm::vec2> pos, unsigned int 
 
 void DifferedScreenMesh::Draw() {
     glBindVertexArray(m_vertexArrayObject);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, m_drawCount); //Draw
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, m_drawCount); //Draw
     glBindVertexArray(0);
 
 }
@@ -55,16 +54,9 @@ void DifferedScreenMesh::InitDifferedScreenMesh() {
     glBindVertexArray(0);
 }
 
-DifferedScreenMaterial::DifferedScreenMaterial(std::vector<Texture*>& textures)
-        : textures(textures){}
+DifferedScreenMaterial::DifferedScreenMaterial() : Material() {}
 
-void DifferedScreenMaterial::AddTexture(Texture* texture) {
-    textures.push_back(texture);
-}
-
-void DifferedScreenMaterial::SetTextures(std::vector<Texture*> texs){
-    textures = std::move(texs);
-}
+DifferedScreenMaterial::DifferedScreenMaterial(std::vector<Texture*>& textures) : Material(0,0,textures){}
 
 void DifferedScreenMaterial::UseMaterial(Shader *shader) {
 
@@ -119,22 +111,19 @@ DifferedScreen::DifferedScreen() {
     positions.emplace_back(-1,-1);
     positions.emplace_back(1,1);
     positions.emplace_back(1,-1);
-    m_screen_mesh = *new DifferedScreenMesh(positions, positions.size());
-    m_screen_material = *new DifferedScreenMaterial();
+    m_mesh = new DifferedScreenMesh(positions, positions.size());
+    m_material = new DifferedScreenMaterial();
+
+    //ADD COMPONENTS
+    auto * renderer = new MeshedRendererComponent();
+    this->AddComponent(renderer);
 }
 
-void DifferedScreen::Render(RenderingEngine *engine)
+void DifferedScreen::Render(RenderingEngine *engine) const
 {
     glDisable(GL_DEPTH_TEST);
-        auto * shader = engine->getShader(engine->getCurrentShaderType());
 
-        shader->UpdateModel(m_transform);
-
-        m_screen_material.UseMaterial(shader);
-
-        shader->resetDrawingTextureUnits();
-
-        m_screen_mesh.Draw();
+        MeshedEntity::Render(engine);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -145,9 +134,9 @@ DifferedScreen::~DifferedScreen() {
 }
 
 void DifferedScreen::SetTextures(std::vector<Texture*> texs) {
-    m_screen_material.SetTextures(std::move(texs));
+    m_material->setTextures(std::move(texs));
 }
 
 void DifferedScreen::AddTexture(Texture *texture) {
-    m_screen_material.AddTexture(texture);
+    m_material->addTexture(texture);
 }

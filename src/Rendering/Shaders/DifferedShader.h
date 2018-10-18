@@ -11,6 +11,7 @@
 #include "../Lighting/DirectionalLight.h"
 #include "../Lighting/PointLight.h"
 #include "../Lighting/SpotLight.h"
+#include "../RenderingEngine.h"
 
 class DifferedGeometryPassShader : public Shader{
 public:
@@ -44,8 +45,14 @@ public:
         m_uniforms["materialTexture"] = glGetUniformLocation(m_program, "materialTexture");
     }
 
-    void SetLights(std::vector<LightEntity*> lights){
-        for(LightEntity* lightEntity: lights){
+    void SetEngine(RenderingEngine* engine){
+        //Set counts
+        Uniform1i("directionalLightCount",engine->getCurrentScene()->getDirectionalLightsCount());
+        Uniform1i("pointLightCount",engine->getCurrentScene()->getPointLightsCount());
+        Uniform1i("spotLightCount",engine->getCurrentScene()->getSpotLightsCount());
+
+        //Set lights
+        for(LightEntity* lightEntity: engine->getCurrentScene()->getLights()){
             lightEntity->UseLight(this);
         }
     }

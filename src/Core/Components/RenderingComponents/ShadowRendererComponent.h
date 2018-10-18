@@ -11,6 +11,8 @@
 
 class ShadowRendererComponent : public LightComponent{
 public:
+    ShadowRendererComponent() : LightComponent() {}
+
     void Update(double time, float delta) override {
         EntityComponent::Update(time, delta);
 
@@ -20,7 +22,7 @@ public:
     }
 
     void RenderDirectionalLight(RenderingEngine* engine) const override {
-        auto * shader = (DirectionalLightShadowMapShader*) engine->BindShader(DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER);
+        auto * shader = (DirectionalLightShadowMapShader*) engine->PushShader(DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER);
 
             m_entity->GetShadowMapFBO().BindFrameBuffer(); //Begin writing
 
@@ -29,17 +31,17 @@ public:
 
             if(m_entity->GetShadow().m_flipFaces) glCullFace(GL_FRONT);
 
-                glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                m_entity->GetShadowMapFBO().ClearFBO();
 
                 shader->UpdateCamera(m_entity->GetShadow().m_shadow_camera);
 
                 engine->RenderAllMeshed();
 
             if(m_entity->GetShadow().m_flipFaces) glCullFace(GL_BACK);
+
             m_entity->GetShadowMapFBO().UnBindFrameBuffer(engine->getWindow()->getBufferWidth(),engine->getWindow()->getBufferHeight()); //stop writing
 
-        engine->UnBindShader(DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER);
+        engine->PopShader();
 
         GLenum someError = glGetError();
         assert( someError == GL_NO_ERROR);

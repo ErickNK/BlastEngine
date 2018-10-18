@@ -43,6 +43,8 @@ public:
 
     MeshedEntity* AddComponent(EntityComponent<MeshedEntity>* component);
 
+    EntityComponent<MeshedEntity>* getComponent(ComponentTypes type) const;
+
     std::vector<EntityComponent<MeshedEntity> *> &getComponents();
 
 //    std::vector<MeshedEntity*> GetAllAttached();
@@ -68,7 +70,7 @@ protected:
 
     void Update(double time, float delta) override;
 
-    void Render(RenderingEngine* engine) const;
+    void Render(RenderingEngine* engine) const override;
 };
 
 
