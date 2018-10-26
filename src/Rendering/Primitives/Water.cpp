@@ -187,8 +187,8 @@ void WaterMaterial::UseMaterial(Shader *shader) {
     //Set Fresnel intensity
     shader->Uniform1f("material.fresnelIntensity",fresnelIntensity);
 
-    GLenum someError = glGetError();
-    assert( someError == GL_NO_ERROR);
+    glCheckError();
+
 }
 
 WaterMaterial::WaterMaterial(GLfloat d, GLfloat d1, std::vector<Texture *> vector) : Material(d,d1,vector){}

@@ -1,10 +1,11 @@
-#version 400
+#version 440 core
 
 #include "constants.vert"
+#include "Sampling.frag"
 
 //Input variables ------------------------------------------
 
-in vec2 vTexCoord;
+layout (location = 0) in vec2 vTexCoord;
 
 // ---------------------------------------------------------
 
@@ -25,15 +26,15 @@ struct Light{
 };
 
 struct DirectionalLight{
+    int id;
     Light base;
     vec3 direction;
-
-    sampler2D shadowMap;
 };
 
 struct PointLight{
     Light base;
     vec3 position;
+    float range;
     float attenuationConstant;
     float attenuationLinear;
     float attenuationQuadratic;
@@ -65,6 +66,8 @@ uniform sampler2D diffuseTexture;
 uniform sampler2D specularTexture;
 uniform sampler2D materialTexture;
 uniform sampler2D depthTexture;
+uniform sampler2DArray shadowMapTextureArray;
+uniform sampler2DArray lightSpacePositionTextureArray;
 
 // -----------------------------------------------------------
 
@@ -79,7 +82,36 @@ float vDepth;
 
 // -----------------------------------------------------------
 
-vec4 CalcLightByDirection(Light light, vec3 lightDirection){
+float CalcDirectionalLightShadowFactor(DirectionalLight directionalLight){
+
+    //Get lightSpacePositions
+    vec4 vLightSpacePosition = texture(lightSpacePositionTextureArray, vec3(vTexCoord, directionalLight.id));
+
+    //Convert into normalized device coordinates (-1,1)
+    vec3 projCoords = vLightSpacePosition.xyz / vLightSpacePosition.w;
+
+    //Get how far (forwards and backwards) from the light this fragment is.
+    float currentDepth = projCoords.z;
+
+//    Deal with shadow acne
+    vec3 normalizedNormal = normalize(vNormal);
+    vec3 normalizedLightDir = normalize(-directionalLight.direction);
+    float bias = max(0.05 * (1 - dot(normalizedNormal,normalizedLightDir)), 0.0005);
+
+    //PCF`
+    float shadow = 0.0f;
+    vec3 texelSize = 1.0 / textureSize(shadowMapTextureArray, 0); //find out how big a unit texel is.
+
+    shadow = SampleShadowMapArrayPCF(shadowMapTextureArray, vec3(projCoords.xy, directionalLight.id),currentDepth - bias,texelSize,1);
+
+    if(currentDepth > 1.0){ //For points beyond the light space/ beyond the far plane
+        shadow = 0.0; //Disable shadow and just say there is total light.
+    }
+
+    return shadow;
+}
+
+vec4 CalcLightByDirection(Light light, vec3 lightDirection, float shadowFactor){
 
     //CellShading
     float actualAmbientIntensity = light.ambientIntensity;
@@ -130,7 +162,7 @@ vec4 CalcLightByDirection(Light light, vec3 lightDirection){
     /**
      * MAIN fragment colouring
      * */
-    return (ambient + /*(1.0 - shadowFactor) **/ (diffuse + specular));
+    return (ambient + (1.0 - shadowFactor) * (diffuse + specular));
 
 }
 
@@ -141,13 +173,21 @@ vec4 CalcLightByPoint(PointLight pLight){
 
     lightDirection = normalize(lightDirection); //For a qualified unit vector
 
-    vec4 col = CalcLightByDirection(pLight.base, lightDirection);
+    if(distance < pLight.range){
 
-    float attenuation = pLight.attenuationQuadratic * distance * distance +
-                        pLight.attenuationLinear * distance +
-                        pLight.attenuationConstant;
+        vec4 col = CalcLightByDirection(pLight.base, lightDirection, 0);
 
-    return (col / attenuation);
+        float attenuation = pLight.attenuationQuadratic * distance * distance +
+                            pLight.attenuationLinear * distance +
+                            pLight.attenuationConstant;
+
+        return (col / attenuation);
+
+    }else{ //Not within range just show ambience
+
+        return (vec4(pLight.base.colour, 1.0f) * pLight.base.ambientIntensity) * vDiffuse;
+
+    }
 }
 
 vec4 CalcLightBySpot(SpotLight sLight){
@@ -178,7 +218,11 @@ vec4 CalcLightBySpot(SpotLight sLight){
 vec4 CalcDirectionalLights(){
     vec4 totalColor = vec4(0,0,0,0);
     for (int i = 0; i < directionalLightCount; ++i) {
-        totalColor += CalcLightByDirection(directionalLight[i].base, directionalLight[i].direction);
+        totalColor += CalcLightByDirection(
+                directionalLight[i].base,
+                directionalLight[i].direction,
+                CalcDirectionalLightShadowFactor(directionalLight[i])
+        );
     }
     return totalColor;
 }

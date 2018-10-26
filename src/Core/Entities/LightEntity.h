@@ -41,7 +41,7 @@ public:
 
     virtual void UseLight(Shader* shader){}
 
-    FrameBufferObject GetShadowMapFBO() { return m_shadow.shadow_map_fbo; }
+    FrameBufferObject* GetShadowMapFBO() { return &m_shadow.shadow_map_fbo; }
 
     Shadow& GetShadow() { return m_shadow; }
 

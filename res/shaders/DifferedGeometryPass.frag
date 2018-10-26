@@ -1,19 +1,14 @@
-#version 400
+#version 440 core
 
 #include "constants.vert"
 
 //Input variables ------------------------------------------
 
-in vec2 vTexCoord;
-in vec3 vNormal;
-in vec3 vFragPos;
-in vec4 vCol;
+layout(location = 0) in vec2 vTexCoord;
+layout(location = 1) in vec3 vNormal;
+layout(location = 2) in vec3 vFragPos;
+layout(location = 3) in vec4 vCol;
 
-//*
-// * Position of the fragment relative to the light.
-// * Organized relative to there id.
-// * */
-//in vec4 vDirectionalLightSpacePosition[MAX_DIRECTIONAL_LIGHTS];
 
 // ---------------------------------------------------------
 

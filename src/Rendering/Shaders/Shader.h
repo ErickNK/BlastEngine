@@ -106,12 +106,17 @@ public:
     /**
      * Compile the shader's source code and return it.
      * */
-    static GLuint CreateShader(const std::string& text,GLenum shaderType);
+    static GLuint CreateShader(const std::string& text,std::string filename, GLenum shaderType);
 
     /**
      * Create needed uniforms
      * */
     virtual void CreateUniforms();
+
+    /**
+     * Validate the shader
+     * */
+    virtual void validateProgram();
 
     /**
      * Retrieve the list of created uniforms

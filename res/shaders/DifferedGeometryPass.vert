@@ -1,4 +1,4 @@
-#version 400
+#version 440 core
 
 #include "constants.vert"
 
@@ -15,28 +15,16 @@ layout (location = 5) in vec3 weights;
 
 //Output(Varying) variables -------------------------------
 
-out vec2 vTexCoord;
-out vec3 vNormal;
-out vec3 vFragPos;
-out vec4 vCol;
+layout(location = 0) out vec2 vTexCoord;
+layout(location = 1) out vec3 vNormal;
+layout(location = 2) out vec3 vFragPos;
+layout(location = 3) out vec4 vCol;
 
-///*
-// * Position of the fragment relative to the light.
-// * Organized relative to there id.
-// * */
-//out vec4 vDirectionalLightSpacePosition[MAX_DIRECTIONAL_LIGHTS];
 
 out gl_PerVertex{
         vec4 gl_Position;
         float gl_ClipDistance[MAX_CLIP_PLANES];
 };
-
-//---------------------------------------------------------
-
-//Lighting ------------------------------------------------
-
-//Organized relative to there id
-//uniform mat4 directionalLightSpace[MAX_DIRECTIONAL_LIGHTS];
 
 //---------------------------------------------------------
 
@@ -53,6 +41,7 @@ uniform int textureAtlasNumOfRows;
 uniform int directionalLightCount;
 uniform int pointLightCount;
 uniform int spotLightCount;
+uniform int lightsCount;
 
 uniform vec2 textureAtlasOffset;
 uniform vec4 clipPlanes[MAX_CLIP_PLANES];
@@ -169,13 +158,4 @@ void main(){
      * We apply swizzling (vec4).xyz to get a vec3.
      * */
     vFragPos = (model * totalLocalPos).xyz;
-
-    /**
-    * We need the world position of a vertex/Fragment relative to the lights point of view
-    *(thus its lightSpaceTransform).
-    *
-    * */
-//    for (int j = 0; j < directionalLightCount; ++j) {
-//        vDirectionalLightSpacePosition[j] = directionalLightSpace[j] * model * totalLocalPos;
-//    }
 }

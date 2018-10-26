@@ -224,6 +224,6 @@ void TerrainMaterial::UseMaterial(Shader *shader) {
         }
     }
 
-    GLenum someError = glGetError();
-    assert( someError == GL_NO_ERROR);
+    glCheckError();
+
 }

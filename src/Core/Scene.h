@@ -125,6 +125,7 @@ protected:
     int directionalLightsCount = 0;
     int pointLightsCount = 0;
     int spotLightsCount = 0;
+    int lightsCount = 0;
 };
 
 

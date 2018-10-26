@@ -19,7 +19,7 @@ void Shader::Init(){
 	//Load and Create Shaders
 	for (auto const& x : m_shaderFiles) {
 		//m_shaders[x.first] = CreateShader(LoadShader(x.second), x.first);
-		glAttachShader(m_program, CreateShader(LoadShader(x.second), x.first));
+		glAttachShader(m_program, CreateShader(LoadShader(x.second), x.second, x.first));
 	}
 
 	//Attach shaders to the program.
@@ -30,15 +30,18 @@ void Shader::Init(){
 	glLinkProgram(m_program);
 	CheckShaderError(m_program, GL_LINK_STATUS, true, "Error: Program linking failed!:");
 
-	//Validate program
-	glValidateProgram(m_program);
-	CheckShaderError(m_program, GL_VALIDATE_STATUS, true, "Error: Program validation failed!:");
-
 	//Uniforms
 	CreateUniforms();
 
-    GLenum someError = glGetError();
-    assert( someError == GL_NO_ERROR);
+    glCheckError();
+
+}
+
+void Shader::validateProgram() {
+    //Validate program
+    glValidateProgram(m_program);
+    CheckShaderError(m_program, GL_VALIDATE_STATUS, true, "Error: Program validation failed!:");
+
 }
 
 void Shader::CreateUniforms() {
@@ -83,12 +86,14 @@ Shader::~Shader() {
 void Shader::Bind() {
     resetDrawingTextureUnits();
     resetGlobalTextureUnits();
+    validateProgram();
     glUseProgram(m_program);
 }
 
 void Shader::UnBind() {
     resetDrawingTextureUnits();
     resetGlobalTextureUnits();
+    validateProgram();
     glUseProgram(0);
 }
 
@@ -119,8 +124,8 @@ void Shader::ActivateClipPlane(int id, const glm::vec4& plane){
         glDisable(GL_CLIP_DISTANCE0 + id);
     }
 
-    GLenum someError = glGetError();
-    assert( someError == GL_NO_ERROR);
+    glCheckError();
+
 }
 
 void Shader::DeactivateClipPlane(int id){
@@ -132,8 +137,8 @@ void Shader::DeactivateClipPlane(int id){
         glUniform4f(m_uniforms[locBuff],0.0f,-1.0f,0.0f,100000000.0f);
     }
 
-    GLenum someError = glGetError();
-    assert( someError == GL_NO_ERROR);
+    glCheckError();
+
 }
 
 void Shader::Uniform1i(std::string name, int value){
@@ -229,7 +234,7 @@ void Shader::CheckShaderError(GLuint shader, GLuint flag, bool isProgram, const 
     }
 }
 
-GLuint Shader::CreateShader(const std::string &text, GLenum shaderType) {
+GLuint Shader::CreateShader(const std::string &text,std::string filename, GLenum shaderType) {
 
     GLuint shader = glCreateShader(shaderType);
 
@@ -245,7 +250,7 @@ GLuint Shader::CreateShader(const std::string &text, GLenum shaderType) {
     glShaderSource(shader, 1, shaderSourceStrings, shaderSourceStringLengths);
     glCompileShader(shader);
 
-    CheckShaderError(shader,GL_COMPILE_STATUS,false,"Error: Shader compilation failed!:");
+    CheckShaderError(shader,GL_COMPILE_STATUS,false,"Error: Shader compilation failed!: " + filename + " :");
 
     return shader;
 }

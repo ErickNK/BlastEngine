@@ -82,14 +82,6 @@ public:
 
     void DeactivateAllClipPlanes();
 
-    bool render_terrain = true;
-    bool render_water = true;
-    bool render_lights = true;
-    bool render_gui = true;
-    bool render_effects = true;
-    bool render_shadows = true;
-    bool render_entities = true;
-
     void CleanUP();
 
     Window *getWindow();
@@ -99,6 +91,12 @@ public:
     Shader *getShader(ShaderType type);
 
     ShaderType getCurrentShaderType();
+
+    const bool getFlag(RenderEngineFlags type) const;
+
+    const bool* getFlags() const;
+
+    void setFlag(RenderEngineFlags type, bool value);
 
 private:
     //Shaders
@@ -115,8 +113,12 @@ private:
     Scene * m_current_scene = nullptr;
     Window* m_window = nullptr;
 
+    //Clip planes
     glm::vec4 m_clipping_Planes [MAX_CLIP_PLANES] {};
     bool m_activated_clipping_Planes [MAX_CLIP_PLANES] {};
+
+    //Flags
+    bool m_flags[NUM_OF_RENDER_ENGINE_FLAGS];
 
     Shader* UpdateShader(Shader* shader);
     void CreateShaders();

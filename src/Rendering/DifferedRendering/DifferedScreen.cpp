@@ -59,7 +59,7 @@ DifferedScreenMaterial::DifferedScreenMaterial() : Material() {}
 DifferedScreenMaterial::DifferedScreenMaterial(std::vector<Texture*>& textures) : Material(0,0,textures){}
 
 void DifferedScreenMaterial::UseMaterial(Shader *shader) {
-
+    glCheckError();
     for (unsigned int i = 0; i < textures.size(); i++) {
         int textureUnit = shader->getAvailableDrawingTextureUnit();
         switch (textures[i]->GetTextureType()) {
@@ -98,11 +98,22 @@ void DifferedScreenMaterial::UseMaterial(Shader *shader) {
                 textures[i]->Bind(textureUnit);
                 break;
             }
+
+            case SHADOW_MAP_TEXTURE_ARRAY: {
+                shader->Uniform1i("shadowMapTextureArray", textureUnit);
+                textures[i]->Bind(textureUnit);
+                break;
+            }
+
+            case LIGHT_SPACE_POSITION_TEXTURE_ARRAY: {
+                shader->Uniform1i("lightSpacePositionTextureArray", textureUnit);
+                textures[i]->Bind(textureUnit);
+                break;
+            }
         }
     }
 
-    GLenum someError = glGetError();
-    assert( someError == GL_NO_ERROR);
+    glCheckError();
 }
 
 DifferedScreen::DifferedScreen() {

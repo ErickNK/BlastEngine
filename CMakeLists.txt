@@ -180,7 +180,7 @@ set(TEST_FILES
         test/TestGame/Scenes/ShadingScene.h
         test/TestGame/components/SphereMovement.h
         test/TestGame/TestGame.h
-        test/TestGame/main.cpp)
+        test/TestGame/main.cpp src/Common/Helpers.cpp)
 add_executable(BlastEngine ${SOURCE_FILES} ${TEST_FILES}) # which files should produce executables
 
 #include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)

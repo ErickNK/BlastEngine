@@ -51,9 +51,13 @@ void RenderingEngine::Initialize(){
         m_activated_clipping_Plane = false;
     }
 
+    //Setup flags
+    for (bool& flag : m_flags) {
+        flag = false;
+    }
+
     //Check errors
-    GLenum someError = glGetError();
-    assert( someError == GL_NO_ERROR);
+    glCheckError();
 }
 
 void RenderingEngine::CreateShaders(){
@@ -109,6 +113,10 @@ void RenderingEngine::CreateShaders(){
     auto  * differedLightPassShader = new DifferedLightPassShader();
     differedLightPassShader->Init();
     m_shaders[DIFFERED_LIGHTPASS_RENDERING_SHADER] = differedLightPassShader;
+
+    auto  * differedShadowPassShader = new DifferedShadowPassShader();
+    differedShadowPassShader->Init();
+    m_shaders[DIFFERED_SHADOWPASS_RENDERING_SHADER] = differedShadowPassShader;
 }
 
 void RenderingEngine::RenderAmbientLight(){
@@ -122,7 +130,7 @@ void RenderingEngine::RenderAmbientLight(){
 }
 
 void RenderingEngine::RenderEffects() {
-    if(render_effects) {
+    if(m_flags[RENDER_EFFECTS]) {
         glEnable(GL_BLEND);
         glBlendFunc(GL_ZERO, GL_SRC_COLOR);
         glDepthMask(GL_FALSE);
@@ -155,7 +163,7 @@ void RenderingEngine::RenderAllMeshed(){
 
 void RenderingEngine::RenderLights()
 {
-    if(render_lights) {
+    if(m_flags[RENDER_LIGHTS]) {
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         glDepthMask(GL_FALSE);
@@ -169,13 +177,13 @@ void RenderingEngine::RenderLights()
         glDepthMask(GL_TRUE);
         glDisable(GL_BLEND);
 
-        GLenum someError = glGetError();
-        assert( someError == GL_NO_ERROR);
+        glCheckError();
+
     }
 }
 
 void RenderingEngine::RenderTerrain() {
-    if(render_terrain) {
+    if(m_flags[RENDER_TERRAIN]) {
         glEnable(GL_BLEND);
         glBlendFunc(GL_DST_COLOR, GL_ZERO);
         glBlendEquation(GL_FUNC_ADD);
@@ -190,13 +198,13 @@ void RenderingEngine::RenderTerrain() {
         glDepthMask(GL_TRUE);
         glDisable(GL_BLEND);
 
-        GLenum someError = glGetError();
-        assert( someError == GL_NO_ERROR);
+        glCheckError();
+
     }
 }
 
 void RenderingEngine::RenderGUI() {
-    if(render_gui) {
+    if(m_flags[RENDER_GUI]) {
         StartAlphaBlending();
         glDisable(GL_DEPTH_TEST);
         auto *entity = m_current_scene->getCurrentGUI();
@@ -204,37 +212,40 @@ void RenderingEngine::RenderGUI() {
         glEnable(GL_DEPTH_TEST);
         EndAlphaBlending();
 
-        GLenum someError = glGetError();
-        assert( someError == GL_NO_ERROR);
+        glCheckError();
+
     }
 }
 
 void RenderingEngine::RenderSkybox() {
-    if(m_current_scene != nullptr && m_current_scene->getCurrentSkybox() != nullptr) m_current_scene->getCurrentSkybox()->Render(this);
+    if(m_flags[RENDER_SKYBOX]){
+        if(m_current_scene != nullptr && m_current_scene->getCurrentSkybox() != nullptr)
+            m_current_scene->getCurrentSkybox()->Render(this);
+    }
 
-    GLenum someError = glGetError();
-    assert( someError == GL_NO_ERROR);
+    glCheckError();
+
 }
 
 void RenderingEngine::RenderShadows() {
-    if(render_shadows){
+    if(m_flags[RENDER_SHADOW]){
         for (auto m_light : m_current_scene->getLights()) {
             m_light->RenderShadow(this);
         }
 
-        GLenum someError = glGetError();
-        assert( someError == GL_NO_ERROR);
+        glCheckError();
+
     }
 }
 
 void RenderingEngine::RenderWater(){
-    if(render_water) {
+    if(m_flags[RENDER_WATER]) {
         for (auto m_water : m_current_scene->getWaterBodies()) {
             m_water->RenderWater(this);
         }
 
-        GLenum someError = glGetError();
-        assert( someError == GL_NO_ERROR);
+        glCheckError();
+
     }
 }
 
@@ -244,11 +255,11 @@ void RenderingEngine::RenderScene() {
     if(!m_current_renderingComponents_ids.empty()){
         m_renderingComponents[m_current_renderingComponents_ids.back()]->RenderScene();
     }else{
-        //TODO raise exception
+        glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
+                             GL_DEBUG_SEVERITY_HIGH, -1, "No Rendering Component bound!.");
     }
 
-    GLenum someError = glGetError();
-    assert( someError == GL_NO_ERROR);
+    glCheckError();
 }
 
 Shader* RenderingEngine::BindShader(ShaderType type) {
@@ -270,10 +281,14 @@ Shader *RenderingEngine::BindShader() {
             return m_shaders[m_current_shader.top()];
         }else{
             //TODO raise exception
+            glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
+                                 GL_DEBUG_SEVERITY_HIGH, -1, "No shader bound!.");
             return nullptr;
         }
     }else{
         //TODO raise exception
+        glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
+                             GL_DEBUG_SEVERITY_HIGH, -1, "No shader bound!.");
         return nullptr;
     }
 }
@@ -381,8 +396,10 @@ void RenderingEngine::BindFBO() {
 
         glViewport(0, 0, m_current_fbos.back()->GetWidth(), m_current_fbos.back()->GetHeight());
 
+    }else{
+        glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
+                             GL_DEBUG_SEVERITY_HIGH, -1, "No FrameBuffer bound!.");
     }
-    //TODO raise exception
 }
 
 void RenderingEngine::ReplaceTopFBO(FrameBufferObject* fbo) {
@@ -414,7 +431,8 @@ void RenderingEngine::PushFBO(FrameBufferObject* fbo) {
         BindFBO();
 
     }else{ //FBO is already in use
-        //TODO: raise an exception.
+        glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
+                             GL_DEBUG_SEVERITY_HIGH, -1, "FrameBuffer already in use. Cannot override existing data.!.");
     }
 }
 
@@ -444,8 +462,20 @@ void RenderingEngine::DeactivateAllClipPlanes() {
         glDisable(GL_CLIP_DISTANCE0 + i);
     }
 
-    GLenum someError = glGetError();
-    assert( someError == GL_NO_ERROR);
+    glCheckError();
+
+}
+
+const bool RenderingEngine::getFlag(RenderEngineFlags type) const {
+    return m_flags[type];
+}
+
+const bool *RenderingEngine::getFlags() const {
+    return m_flags;
+}
+
+void RenderingEngine::setFlag(RenderEngineFlags type, bool value) {
+    m_flags[type] = value;
 }
 
 

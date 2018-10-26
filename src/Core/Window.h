@@ -65,6 +65,14 @@ private:
     static void handleMouseCallback(GLFWwindow *window, double xPos, double yPos);
 
 	static void handleScrollCallback(GLFWwindow *window, double dx, double dy);
+
+	static void APIENTRY glDebugOutput(GLenum source,
+										GLenum type,
+										GLuint id,
+										GLenum severity,
+										GLsizei length,
+										const GLchar *message,
+										const void *userParam);
 };
 
 

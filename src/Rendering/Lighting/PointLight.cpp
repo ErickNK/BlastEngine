@@ -21,9 +21,9 @@ PointLight::PointLight(glm::vec3 color, glm::vec3 position,
 	CalculateRange();
 }
 void PointLight::CalculateRange(){
-	float a = m_attenuation.x;
-	float b = m_attenuation.y;
-	float c = m_attenuation.z - COLOR_DEPTH * diffuseIntensity * glm::compMax(color);
+	float a = m_attenuation.x; //Quadratic
+	float b = m_attenuation.y; //Linear
+	float c = m_attenuation.z - (COLOR_DEPTH / diffuseIntensity) * glm::compMax(color); //Constant
 	m_range = (- b + sqrt(b * b - 4 * a * c)) / (2 * a);
 }
 

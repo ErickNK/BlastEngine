@@ -30,14 +30,26 @@ FrameBufferObject::~FrameBufferObject()
 
 void FrameBufferObject::setOverlayFilter() {
     if(m_texture_options[m_texture_count][ENABLE_OVERLAY_FILTER] == GL_TRUE){
+        GLenum type;
+        switch (m_texture_options[m_texture_count][TEXTURE_TYPE]){
+            case GL_TEXTURE_2D_ARRAY:{
+                type = GL_TEXTURE_2D;
+                break;
+            }
+            default:{
+                type = m_texture_options[m_texture_count][TEXTURE_TYPE];
+                break;
+            }
+        }
+
         //Overlap filter
         glTexParameteri(
-                m_texture_options[m_texture_count][TEXTURE_TYPE],
+                type,
                 GL_TEXTURE_MIN_FILTER, // Applied when texture is further away/smaller
                 m_texture_options[m_texture_count][OVERLAY_FILTER]
         );
         glTexParameteri(
-                m_texture_options[m_texture_count][TEXTURE_TYPE],
+                type,
                 GL_TEXTURE_MAG_FILTER, // Applied when texture is closer/bigger
                 m_texture_options[m_texture_count][OVERLAY_FILTER]
         );
@@ -46,16 +58,29 @@ void FrameBufferObject::setOverlayFilter() {
 
 void FrameBufferObject::setWrapFilter() {
     if(m_texture_options[m_texture_count][ENABLE_WRAP_FILTER] == GL_TRUE){
-        //WRAP filter
-        if(m_texture_options[m_texture_count][TEXTURE_TYPE] == GL_TEXTURE_CUBE_MAP)
-            glTexParameteri(m_texture_options[m_texture_count][TEXTURE_TYPE], GL_TEXTURE_WRAP_R, m_texture_options[m_texture_count][WRAP_FILTER]);
 
-        glTexParameteri(m_texture_options[m_texture_count][TEXTURE_TYPE], GL_TEXTURE_WRAP_S, m_texture_options[m_texture_count][WRAP_FILTER]);
-        glTexParameteri(m_texture_options[m_texture_count][TEXTURE_TYPE], GL_TEXTURE_WRAP_T, m_texture_options[m_texture_count][WRAP_FILTER]);
+        GLenum type;
+        switch (m_texture_options[m_texture_count][TEXTURE_TYPE]){
+            case GL_TEXTURE_2D_ARRAY:{
+                type = GL_TEXTURE_2D;
+                break;
+            }
+            default:{
+                type = m_texture_options[m_texture_count][TEXTURE_TYPE];
+                break;
+            }
+        }
+
+        //WRAP filter
+        if(type == GL_TEXTURE_CUBE_MAP)
+            glTexParameteri(type, GL_TEXTURE_WRAP_R, m_texture_options[m_texture_count][WRAP_FILTER]);
+
+        glTexParameteri(type, GL_TEXTURE_WRAP_S, m_texture_options[m_texture_count][WRAP_FILTER]);
+        glTexParameteri(type, GL_TEXTURE_WRAP_T, m_texture_options[m_texture_count][WRAP_FILTER]);
 
         if(m_texture_options[m_texture_count][WRAP_FILTER] == GL_CLAMP_TO_BORDER){
             float borderColors[]{1.0f,1.0f,1.0f,1.0f};
-            glTexParameterfv(m_texture_options[m_texture_count][TEXTURE_TYPE],GL_TEXTURE_BORDER_COLOR,borderColors);
+            glTexParameterfv(type,GL_TEXTURE_BORDER_COLOR,borderColors);
         }
     }
 }
@@ -88,17 +113,41 @@ void FrameBufferObject::setTextureData() {
                     nullptr
             );
         }
+    }else if( m_texture_options[m_texture_count][TEXTURE_TYPE] == GL_TEXTURE_2D_ARRAY){
+        for(size_t i = 0; i < 6; i++){
+            //Data
+            glTexImage3D(
+                    GL_TEXTURE_2D_ARRAY,
+                    0,
+                    m_texture_options[m_texture_count][INTERNAL_COMPONENT_FORMAT],
+                    m_width, m_height,
+                    m_texture_options[m_texture_count][NUM_OF_TEXTURES],
+                    0,
+                    m_texture_options[m_texture_count][EXTERNAL_COMPONENT_FORMAT],
+                    m_texture_options[m_texture_count][DATA_VALUE_FORMAT],
+                    nullptr
+            );
+        }
     }
 }
 
 void FrameBufferObject::attachTexture() {
-    glFramebufferTexture2D( //Tells buffer to draw its contents to an out texture.
-            GL_FRAMEBUFFER,
-            m_texture_options[m_texture_count][ATTACHMENT_TYPE],
-            m_texture_options[m_texture_count][TEXTURE_TYPE],
-            m_textures[m_texture_count],
-            0 //Level of mipmap of texture to use
-    );
+    if (m_texture_options[m_texture_count][TEXTURE_TYPE] == GL_TEXTURE_2D_ARRAY){
+        glFramebufferTexture( //Tells buffer to draw its contents to an out texture.
+                GL_FRAMEBUFFER,
+                m_texture_options[m_texture_count][ATTACHMENT_TYPE],
+                m_textures[m_texture_count],
+                0 //Level of mipmap of texture to use
+        );
+    }else{
+        glFramebufferTexture2D( //Tells buffer to draw its contents to an out texture.
+                GL_FRAMEBUFFER,
+                m_texture_options[m_texture_count][ATTACHMENT_TYPE],
+                m_texture_options[m_texture_count][TEXTURE_TYPE],
+                m_textures[m_texture_count],
+                0 //Level of mipmap of texture to use
+        );
+    }
 }
 
 void FrameBufferObject::setRenderBufferStorage(){
@@ -195,7 +244,7 @@ void FrameBufferObject::UnBindFrameBuffer(GLuint displayWidth, GLuint displayHei
 }
 
 void FrameBufferObject::UseTexture(int id, GLenum textureUnit) const {
-    GLenum someError1 = glGetError();
+    GLenum someError1 = glCheckError();
     assert( someError1 == GL_NO_ERROR);
 
     assert(textureUnit >= 0 && textureUnit < GL_MAX_TEXTURE_UNITS);
@@ -206,8 +255,8 @@ void FrameBufferObject::UseTexture(int id, GLenum textureUnit) const {
     // Bind the texture for use
     glBindTexture(m_texture_options[id][TEXTURE_TYPE], m_textures[id]);
 
-    GLenum someError = glGetError();
-    assert( someError == GL_NO_ERROR);
+    glCheckError();
+
 }
 
 void FrameBufferObject::setForReading(bool color, int unit) {
@@ -257,9 +306,28 @@ void FrameBufferObject::setForDrawing(bool color, std::vector<GLenum>& buffers) 
     checkForErrors();
 }
 
+void FrameBufferObject::setForDrawing(bool color, std::vector<int>& ids) const {
+    checkForErrors();
+
+    if (!color) {
+        glDrawBuffer(GL_NONE); //Draw to depth attachment
+        return;
+    }
+
+    for (int id: ids) {
+
+        this->m_current_drawing_units.push_back(m_texture_options[id][ATTACHMENT_TYPE]);
+
+        glDrawBuffer(m_texture_options[id][ATTACHMENT_TYPE]);
+
+    }
+
+    checkForErrors();
+}
+
 bool FrameBufferObject::checkForErrors() const {
-    GLenum someError = glGetError();
-    assert( someError == GL_NO_ERROR);
+    glCheckError();
+
 
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (status != GL_FRAMEBUFFER_COMPLETE) {
@@ -280,4 +348,25 @@ void FrameBufferObject::ClearFBO() const {
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
+}
+
+void FrameBufferObject::CopyTo(FrameBufferObject* frameBufferObject, GLenum buffer) const {
+    //TODO: only copy to framebuffer if current is bound
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_frameBufferObject);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferObject->GetFrameBuffer());
+    glBlitFramebuffer(
+            0, 0, m_width, m_height, 0, 0, frameBufferObject->GetWidth(), frameBufferObject->GetHeight(), buffer, GL_NEAREST
+    );
+    //Rebind
+    BindFrameBuffer();
+}
+
+void FrameBufferObject::CopyFrom(FrameBufferObject *frameBufferObject, GLenum buffer) const {
+    //TODO: only copy from framebuffer if current is bound
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBufferObject->GetFrameBuffer());
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_frameBufferObject);
+    glBlitFramebuffer(
+            0, 0, frameBufferObject->GetWidth(), frameBufferObject->GetHeight(), 0, 0, m_width, m_height, buffer, GL_NEAREST
+    );
+    BindFrameBuffer();
 }

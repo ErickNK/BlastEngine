@@ -22,7 +22,7 @@
 //
 //#define GL_CHECK(x) do{
 //    x;
-//    GLenum glerr = glGetError();
+//    GLenum glerr = glCheckError();
 //    if (glerr != GL_NO_ERROR)
 //	{
 //        printf("OpenGL error: %d, file: %s, line: %d", glerr, __FILE__, __LINE__);

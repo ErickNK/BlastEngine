@@ -27,6 +27,8 @@ public:
 	
     static void SetupUniforms(std::map<std::string, GLint>& m_uniforms,GLuint shaderProgram);
 
+	void Update(double time, float delta) override;
+
 private:
 
     glm::vec3 direction;

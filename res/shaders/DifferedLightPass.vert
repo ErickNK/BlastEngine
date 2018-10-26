@@ -1,4 +1,4 @@
-#version 400
+#version 440 core
 
 #include "constants.vert"
 
@@ -10,7 +10,7 @@ layout (location = 0) in vec2 position;
 
 //Output(Varying) variables -------------------------------
 
-out vec2 vTexCoord;
+layout (location = 0) out vec2 vTexCoord;
 
 //---------------------------------------------------------
 

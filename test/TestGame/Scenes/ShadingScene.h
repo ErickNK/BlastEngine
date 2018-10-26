@@ -107,7 +107,7 @@ public:
     void CreateGUI(){
         std::map<Texture*,Transform*> textures;
 
-        textures.emplace(new Texture(sun->GetShadowMapFBO().GetTextures()[sun->GetShadowMapTexture()],GUI_TEXTURE),new Transform(glm::vec3(0.5f,0.5f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
+        textures.emplace(new Texture(sun->GetShadowMapFBO()->GetTextures()[sun->GetShadowMapTexture()],GUI_TEXTURE),new Transform(glm::vec3(0.5f,0.5f,0.0f),glm::quat(),glm::vec3(0.25f,0.25f,0.25f)));
 
         auto * guiEntity = new GUIEntity();
         guiEntity->InitMesh();

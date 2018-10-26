@@ -45,11 +45,18 @@ DirectionalLight::DirectionalLight(
     options[OVERLAY_FILTER] = GL_LINEAR;
     m_shadow.shadow_map_fbo.Generate(m_shadow.shadow_map_texture, shadowWidth,shadowHeight,options);
 
-    GLenum someError = glGetError();
-    assert( someError == GL_NO_ERROR);
+    glCheckError();
+
 }
 
 DirectionalLight::~DirectionalLight() = default;
+
+void DirectionalLight::Update(double time, float delta) {
+    LightEntity::Update(time, delta);
+
+    //Update the shadow camera
+    m_shadow.m_shadow_camera.UpdateViewWithoutTurn(m_transform);
+}
 
 void DirectionalLight::UseLight(Shader* shader) {
     //Get lights direction
@@ -98,8 +105,8 @@ void DirectionalLight::UseLight(Shader* shader) {
     snprintf(locBuff, sizeof(locBuff), "directionalLight[%d].base.cellShadingLevels",m_id);
     shader->Uniform1i(locBuff,m_cell_shading_level);
 
-    GLenum someError = glGetError();
-    assert( someError == GL_NO_ERROR);
+    glCheckError();
+
 }
 
 void DirectionalLight::SetupUniforms(std::map<std::string, GLint>& m_uniforms,GLuint shaderProgram) {
@@ -135,6 +142,6 @@ void DirectionalLight::SetupUniforms(std::map<std::string, GLint>& m_uniforms,GL
 
     }
 
-    GLenum someError = glGetError();
-    assert( someError == GL_NO_ERROR);
+    glCheckError();
+
 }

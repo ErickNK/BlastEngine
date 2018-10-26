@@ -67,3 +67,61 @@ float SampleVarianceShadowMap(sampler2D shadowMap, vec2 coords, float compare){
 
     return max(max(p, pMax) , 1.0);
 }
+
+float SampleShadowMapArray(sampler2DArray shadowMap, vec3 coords, float compare){
+    return step(texture(shadowMap,coords).r, compare);
+}
+
+float SampleShadowMapArrayLinear(sampler2DArray shadowMap, vec3 coords, float compare, vec3 texelSize){
+    vec2 pixelPos = coords.xy/texelSize.xy + vec2(0.5);
+    vec2 fracPart = fract(pixelPos);
+    vec3 startTexel = vec3(((pixelPos - fracPart) * texelSize.xy),coords.z);
+
+    float blTexel = SampleShadowMapArray(shadowMap, startTexel, compare);
+    float brTexel = SampleShadowMapArray(shadowMap, startTexel + vec3(vec2(texelSize.x, 0.0),0.0), compare);
+    float tlTexel = SampleShadowMapArray(shadowMap, startTexel + vec3(vec2(0.0, texelSize.y),0.0), compare);
+    float trTexel = SampleShadowMapArray(shadowMap, startTexel + vec3(texelSize.xy,0.0), compare);
+
+    float mixA = mix(blTexel, tlTexel, fracPart.y);
+    float mixB = mix(brTexel, trTexel, fracPart.y);
+
+    return mix(mixA, mixB, fracPart.x);
+}
+
+float SampleShadowMapArrayPCF(sampler2DArray shadowMap, vec3 coords, float compare, vec3 texelSize, int level){
+
+    float shadow = 0.0f;
+    float count = 0.0f;
+
+    //We sample all the first texels around this fragment's texel. Forming a cube.
+    for(int x = -level /*Start at further left of the exact x texel of this fragment*/;
+        x <= level /*Upto the right*/;
+        ++x){
+        for(int y = -level/*Start at further top of the exact y texel of this fragment*/;
+            y <= level /*Upto the bottom*/;
+            ++y){
+            /*
+             * Get depth of the fragment relative to the light in orthographic projection.
+             * Each texel in the shadow map contains depth data in the .r attribute instead
+             * of color like a normal texture.
+             *
+             * This is essentially the nearest fragment that the light could see. If the current fragment
+             * we are test is way further away than the nearest fragment then there is
+             * something infront of it.
+             * */
+            shadow += SampleShadowMapArrayLinear(
+                    shadowMap,
+                    (coords + vec3(x,y,0) * vec3(texelSize.xy, 1.0)), /*Get the exact texel in the current loop. Remember
+                    * the .xy only point to the current fragments texel not the one we want in the current
+                    * loop. */
+                    compare,
+                    texelSize
+            );
+            count++;
+        }
+    }
+
+    shadow /= count; /*Find average of the shadows we are collecting from the sample*/
+
+    return shadow;
+}

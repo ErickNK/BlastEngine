@@ -31,6 +31,7 @@ public:
 
     virtual void setForDrawing(bool color, std::vector<GLenum>& buffers) const;
 
+    virtual void setForDrawing(bool color, std::vector<int>& ids) const;
 
     bool checkForErrors() const;
 
@@ -39,10 +40,16 @@ public:
     * write to the texture.
     */
     virtual void BindFrameBuffer() const;
+
     virtual void UnBindFrameBuffer(GLuint displayWidth, GLuint displayHeight) const;
+
     void setAllowClear(bool allow);
+
     void ClearFBO() const;
 
+    void CopyTo(FrameBufferObject *frameBufferObject, GLenum buffer) const;
+
+    void CopyFrom(FrameBufferObject *frameBufferObject, GLenum buffer) const;
     /*
     * Sets the shadow-map to be used for drawing shadows.
     */
@@ -50,12 +57,17 @@ public:
 
     //GETTERS
     GLuint GetWidth() { return m_width; }
+
     GLuint GetHeight() { return m_height; }
+
     GLuint* GetTextures() { return m_textures; }
-    Texture* GetTexture(int id) const {
-        return new Texture(m_textures[id],GUI_TEXTURE);
-    }
+
+    GLuint GetTexture(int id) { return m_textures[id]; }
+
     GLuint* GetRenderBuffers() { return m_renderBuffers; }
+
+    GLuint GetRenderBuffer(int id) { return m_renderBuffers[id]; }
+
     GLuint GetFrameBuffer() { return m_frameBufferObject; }
 protected:
 

@@ -28,28 +28,55 @@ public:
     }
 
     void Render(RenderingEngine* engine) const override {
-        engine->render_water = false;
-        engine->render_gui = false;
+        engine->setFlag(RENDER_WATER, false);
+        engine->setFlag(RENDER_GUI, false);
         m_entity->allowRender(false);
 
-        //REFLECTION
-        engine->PushFBO(&m_entity->getReflectionFBO());
+        if(!engine->getFlag(IS_SHADOW_PASS)){ //Render reflections and refractions only if not shadow pass.
+            //REFLECTION
+            engine->PushFBO(&m_entity->getReflectionFBO());
 
-            std::vector<GLenum> reflectionBuffers {GL_COLOR_ATTACHMENT0};
-            m_entity->getReflectionFBO().setForDrawing(true,reflectionBuffers);
+                std::vector<GLenum> reflectionBuffers {GL_COLOR_ATTACHMENT0};
+                m_entity->getReflectionFBO().setForDrawing(true,reflectionBuffers);
 
-            m_entity->getReflectionFBO().ClearFBO();
+                m_entity->getReflectionFBO().ClearFBO();
 
-            engine->ActivateClipPlane(0,*new glm::vec4(0,1,0,-m_entity->getHeight() + 1.0f));
+                engine->ActivateClipPlane(0,*new glm::vec4(0,1,0,-m_entity->getHeight() + 1.0f));
 
-                Camera* camera = engine->getCurrentScene()->getCurrentCamera();
-                float distance = 2 * (camera->getTransform().GetPos().y - m_entity->getHeight());
+                    Camera* camera = engine->getCurrentScene()->getCurrentCamera();
+                    float distance = 2 * (camera->getTransform().GetPos().y - m_entity->getHeight());
 
-                {
-                    camera->getTransform().GetPos().y -= distance;
-                    camera->invertPitch();
-                    camera->UpdateView();
-                }
+                    {
+                        camera->getTransform().GetPos().y -= distance;
+                        camera->invertPitch();
+                        camera->UpdateView();
+                    }
+
+                        engine->PushRenderingComponent(m_water_rendering_buffer);
+
+                            engine->RenderScene();
+
+                        engine->PopRenderingComponent();
+
+                    {
+                        camera->getTransform().GetPos().y += distance;
+                        camera->invertPitch();
+                        camera->UpdateView();
+                    }
+
+                engine->DeactivateClipPlane(0);
+
+            engine->PopFBO();
+
+            //REFRACTION
+            engine->PushFBO(&m_entity->getRefractionFBO());
+
+                std::vector<GLenum> refractionBuffers {GL_COLOR_ATTACHMENT0};
+                m_entity->getRefractionFBO().setForDrawing(true,refractionBuffers);
+
+                m_entity->getReflectionFBO().ClearFBO();
+
+                engine->ActivateClipPlane(0,*new glm::vec4(0,-1,0,m_entity->getHeight() + 1.0f));
 
                     engine->PushRenderingComponent(m_water_rendering_buffer);
 
@@ -57,35 +84,10 @@ public:
 
                     engine->PopRenderingComponent();
 
-                {
-                    camera->getTransform().GetPos().y += distance;
-                    camera->invertPitch();
-                    camera->UpdateView();
-                }
+                engine->DeactivateClipPlane(0);
 
-            engine->DeactivateClipPlane(0);
-
-        engine->PopFBO();
-
-        //REFRACTION
-        engine->PushFBO(&m_entity->getRefractionFBO());
-
-            std::vector<GLenum> refractionBuffers {GL_COLOR_ATTACHMENT0};
-            m_entity->getRefractionFBO().setForDrawing(true,refractionBuffers);
-
-            m_entity->getReflectionFBO().ClearFBO();
-
-            engine->ActivateClipPlane(0,*new glm::vec4(0,-1,0,m_entity->getHeight() + 1.0f));
-
-                engine->PushRenderingComponent(m_water_rendering_buffer);
-
-                    engine->RenderScene();
-
-                engine->PopRenderingComponent();
-
-            engine->DeactivateClipPlane(0);
-
-        engine->PopFBO();
+            engine->PopFBO();
+        }
 
         //RENDER
         m_entity->allowRender(true);
@@ -99,9 +101,8 @@ public:
 
         engine->PopShader();
 
-        engine->render_gui = true;
-        engine->render_water = true;
-
+        engine->setFlag(RENDER_WATER, true);
+        engine->setFlag(RENDER_GUI, true);
     }
 
 private:

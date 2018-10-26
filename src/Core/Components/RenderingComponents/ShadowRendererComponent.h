@@ -24,27 +24,27 @@ public:
     void RenderDirectionalLight(RenderingEngine* engine) const override {
         auto * shader = (DirectionalLightShadowMapShader*) engine->PushShader(DIRECTIONAL_LIGHT_SHADOW_MAP_SHADER);
 
-            m_entity->GetShadowMapFBO().BindFrameBuffer(); //Begin writing
+            engine->PushFBO(m_entity->GetShadowMapFBO()); //Begin writing
 
-            std::vector<GLenum> buffers {GL_COLOR_ATTACHMENT0};
-            m_entity->GetShadowMapFBO().setForDrawing(true,buffers);
+                std::vector<int> buffers { (int) m_entity->GetShadow().shadow_map_texture};
+                m_entity->GetShadowMapFBO()->setForDrawing(true,buffers);
 
-            if(m_entity->GetShadow().m_flipFaces) glCullFace(GL_FRONT);
+                if(m_entity->GetShadow().m_flipFaces) glCullFace(GL_FRONT);
 
-                m_entity->GetShadowMapFBO().ClearFBO();
+                    m_entity->GetShadowMapFBO()->ClearFBO();
 
-                shader->UpdateCamera(m_entity->GetShadow().m_shadow_camera);
+                    shader->UpdateCamera(m_entity->GetShadow().m_shadow_camera);
 
-                engine->RenderAllMeshed();
+                    engine->RenderAllMeshed();
 
-            if(m_entity->GetShadow().m_flipFaces) glCullFace(GL_BACK);
+                if(m_entity->GetShadow().m_flipFaces) glCullFace(GL_BACK);
 
-            m_entity->GetShadowMapFBO().UnBindFrameBuffer(engine->getWindow()->getBufferWidth(),engine->getWindow()->getBufferHeight()); //stop writing
+            engine->PopFBO();
 
         engine->PopShader();
 
-        GLenum someError = glGetError();
-        assert( someError == GL_NO_ERROR);
+        glCheckError();
+
     }
 
     virtual void RenderPointLight(RenderingEngine* engine) const {

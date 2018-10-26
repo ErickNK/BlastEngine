@@ -140,8 +140,8 @@ void Material::UseMaterial(Shader * shader) {
 
     shader->Uniform1i("hasFakeLighting",hasFakeLighting);
 
-    GLenum someError = glGetError();
-    assert( someError == GL_NO_ERROR);
+    glCheckError();
+
 }
 
 void Material::SetupUniforms(std::map<std::string, GLint>& m_uniforms,GLuint shaderProgram) {
