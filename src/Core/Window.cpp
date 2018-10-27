@@ -41,14 +41,13 @@ void Window::Initialize(){
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glDebugMessageCallback(glDebugOutput, nullptr);
+        //Debug everything
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-//        glDebugMessageControl(GL_DEBUG_SOURCE_API,
-//                  GL_DEBUG_TYPE_ERROR,
-//                  GL_DEBUG_SEVERITY_HIGH,
-//                  0, nullptr, GL_TRUE);
     }
 //#endif
+
     //Create Window and Context
+    //TODO: the game running should provide the name of the window
     mainWindow = glfwCreateWindow(width,height,"Test", nullptr, nullptr);
     if(!mainWindow){
         printf("GLFW Window Creation Failed");
@@ -173,7 +172,6 @@ void APIENTRY Window::glDebugOutput(GLenum source,
     if(id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
 
     std::cout << "---------------" << std::endl;
-    std::cout << "Debug message (" << id << "): " <<  message << std::endl;
 
     switch (source)
     {
@@ -205,7 +203,10 @@ void APIENTRY Window::glDebugOutput(GLenum source,
         case GL_DEBUG_SEVERITY_LOW:          std::cout << "Severity: low"; break;
         case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "Severity: notification"; break;
     } std::cout << std::endl;
-    std::cout << std::endl;
+
+    std::cout << "Debug message (" << id << "): " <<  message << std::endl;
+
+    std::cout << "---------------" << std::endl;
 }
 
 void Window::createCallbacks() {

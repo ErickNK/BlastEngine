@@ -172,7 +172,11 @@ set(SOURCE_FILES
         src/Rendering/Shaders/DifferedShader.h
         src/Rendering/DifferedRendering/DifferedScreen.cpp
         src/Rendering/DifferedRendering/DifferedScreen.h
-        src/Common/Helpers.h) # which files should be compiled
+        src/Common/Helpers.h
+        src/Common/Helpers.cpp
+        src/Core/Exceptions/ShaderException.h
+        src/Core/Exceptions/OpenGLException.h
+        src/Core/Exceptions/RenderingEngineException.h) # which files should be compiled
 
 set(TEST_FILES
         test/TestGame/Scenes/TestScene.cpp
@@ -180,7 +184,10 @@ set(TEST_FILES
         test/TestGame/Scenes/ShadingScene.h
         test/TestGame/components/SphereMovement.h
         test/TestGame/TestGame.h
-        test/TestGame/main.cpp src/Common/Helpers.cpp)
+        test/TestGame/main.cpp)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "/bin")
+#set(EXECUTABLE_OUTPUT_PATH "/bin")
 
 include(build/conanbuildinfo.cmake)
 conan_basic_setup()

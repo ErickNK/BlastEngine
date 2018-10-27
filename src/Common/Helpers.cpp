@@ -3,7 +3,9 @@
 //
 
 #include <cassert>
+#include <fmt/format.h>
 #include "Helpers.h"
+#include "../Core/Exceptions/OpenGLException.h"
 
 GLenum glCheckError_(const char *file, int line)
 {
@@ -21,8 +23,8 @@ GLenum glCheckError_(const char *file, int line)
             case GL_OUT_OF_MEMORY:                 error = "OUT_OF_MEMORY"; break;
             case GL_INVALID_FRAMEBUFFER_OPERATION: error = "INVALID_FRAMEBUFFER_OPERATION"; break;
         }
-        std::cout << error << " | " << file << " (" << line << ")" << std::endl;
+        throw OpenGLException(fmt::format(R"(Type: "{}", Filename: "{}", Line: ({}))", error, file, line));
     }
-    assert( errorCode == GL_NO_ERROR);
+
     return errorCode;
 }

@@ -14,6 +14,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <fmt/format.h>
 
 #include "../Common/CommonValues.h"
 #include "../Core/Window.h"
@@ -31,6 +32,8 @@
 #include "Shaders/WaterShader.h"
 #include "Shaders/DifferedShader.h"
 #include "../Core/Components/RenderingComponents/DifferedRenderingComponent.h"
+#include "../Core/Exceptions/ShaderException.h"
+#include "../Core/Exceptions/RenderingEngineException.h"
 
 void RenderingEngine::Initialize(){
 
@@ -257,6 +260,7 @@ void RenderingEngine::RenderScene() {
     }else{
         glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
                              GL_DEBUG_SEVERITY_HIGH, -1, "No Rendering Component bound!.");
+        throw RenderingEngineException(fmt::format(R"(Type: "No Rendering Component bound!.")"));
     }
 
     glCheckError();
@@ -280,16 +284,14 @@ Shader *RenderingEngine::BindShader() {
 
             return m_shaders[m_current_shader.top()];
         }else{
-            //TODO raise exception
             glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
                                  GL_DEBUG_SEVERITY_HIGH, -1, "No shader bound!.");
-            return nullptr;
+            throw RenderingEngineException(fmt::format(R"(Type: "No shader bound!.")"));
         }
     }else{
-        //TODO raise exception
         glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
                              GL_DEBUG_SEVERITY_HIGH, -1, "No shader bound!.");
-        return nullptr;
+        throw RenderingEngineException(fmt::format(R"(Type: "No shader bound!.")"));
     }
 }
 
@@ -399,6 +401,7 @@ void RenderingEngine::BindFBO() {
     }else{
         glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
                              GL_DEBUG_SEVERITY_HIGH, -1, "No FrameBuffer bound!.");
+        throw RenderingEngineException(fmt::format(R"(Type: "No FrameBuffer bound!.")"));
     }
 }
 
@@ -432,7 +435,8 @@ void RenderingEngine::PushFBO(FrameBufferObject* fbo) {
 
     }else{ //FBO is already in use
         glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
-                             GL_DEBUG_SEVERITY_HIGH, -1, "FrameBuffer already in use. Cannot override existing data.!.");
+                             GL_DEBUG_SEVERITY_HIGH, -1, "FrameBuffer already in use. Cannot override existing data!");
+        throw RenderingEngineException(fmt::format(R"(Type: "FrameBuffer already in use. Cannot override existing data!")"));
     }
 }
 

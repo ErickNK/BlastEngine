@@ -3,8 +3,10 @@
 #include "Shader.h"
 #include "../../Common/Util.h"
 #include "../../Common/CommonValues.h"
+#include "../../Core/Exceptions/ShaderException.h"
 #include <iostream>
 #include <fstream>
+#include <fmt/format.h>
 
 Shader::Shader(ShaderType type) : m_type(type){};
 
@@ -207,7 +209,7 @@ std::string Shader::LoadShader(const std::string& fileName) {
     }
     else
     {
-        std::cerr << "Unable to load shader: " << fileName << std::endl;
+        throw ShaderException(fmt::format(R"(Type: "Unable to load shader!", Filename: "{}")", fileName));
     }
 
     return output;
@@ -230,7 +232,7 @@ void Shader::CheckShaderError(GLuint shader, GLuint flag, bool isProgram, const 
         else
             glGetShaderInfoLog(shader, sizeof(error), nullptr, error);
 
-        std::cerr << errorMessage << ": '" << error << "'" << std::endl;
+        throw ShaderException(fmt::format(R"({}, Info: "{}")", errorMessage,error));
     }
 }
 
@@ -238,8 +240,9 @@ GLuint Shader::CreateShader(const std::string &text,std::string filename, GLenum
 
     GLuint shader = glCreateShader(shaderType);
 
-    if(shader == 0)
-        std::cerr << "Error: Shader creation failed!:" << std::endl;
+    if(shader == 0){
+        throw ShaderException(R"(Type: "Shader creation failed!")");
+    }
 
     const GLchar* shaderSourceStrings[1];
     GLint shaderSourceStringLengths[1];
@@ -250,7 +253,7 @@ GLuint Shader::CreateShader(const std::string &text,std::string filename, GLenum
     glShaderSource(shader, 1, shaderSourceStrings, shaderSourceStringLengths);
     glCompileShader(shader);
 
-    CheckShaderError(shader,GL_COMPILE_STATUS,false,"Error: Shader compilation failed!: " + filename + " :");
+    CheckShaderError(shader,GL_COMPILE_STATUS,false,fmt::format(R"(Type: "Shader compilation failed!", Filename: "{}")", filename));
 
     return shader;
 }
@@ -267,14 +270,14 @@ ShaderType Shader::getType() {
 
 int Shader::getAvailableGlobalTextureUnit() {
     if (lastIssuedGlobalTextureUnit >= MAX_GLOBAL_TEXTURE_UNITS) {
-        //TODO: Throw error
+        throw ShaderException(R"(Type: "Max global issuable texture units already reached" )");
     }
     return ++lastIssuedGlobalTextureUnit;
 }
 
 int Shader::getAvailableDrawingTextureUnit() {
     if (lastIssuedDrawingTextureUnit >= MAX_DRAWING_TEXTURE_UNITS) {
-        //TODO: Throw error
+        throw ShaderException(R"(Type: "Max drawing issuable texture units already reached" )");
     }
     return ++lastIssuedDrawingTextureUnit;
 }
