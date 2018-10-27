@@ -181,42 +181,9 @@ set(TEST_FILES
         test/TestGame/components/SphereMovement.h
         test/TestGame/TestGame.h
         test/TestGame/main.cpp src/Common/Helpers.cpp)
-add_executable(BlastEngine ${SOURCE_FILES} ${TEST_FILES}) # which files should produce executables
 
-#include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-#conan_basic_setup()
-
-#find_package(Boost 1.68.0 REQUIRED)
-#include_directories(${Boost_INCLUDE_DIR})
-#link_directories(${Boost_LIBRARY_DIRS})
-#if(NOT Boost_FOUND)
-#    message(ERROR "Boost not found!")
-#endif(NOT Boost_FOUND)
-
-# ASSIMP
-find_package(ASSIMP REQUIRED)
-include_directories(${ASSIMP_INCLUDE_DIR})
-link_directories(${ASSIMP_LIBRARY_DIRS})
-if(NOT ASSIMP_FOUND)
-    message(ERROR "ASSIMP not found!")
-endif(NOT ASSIMP_FOUND)
-
-# GLEW
-find_package(GLEW REQUIRED)
-include_directories(${GLEW_INCLUDE_DIR})
-link_directories(${GLEW_LIBRARY_DIRS})
-if(NOT GLEW_FOUND)
-    message(ERROR "GLEW not found!")
-endif(NOT GLEW_FOUND)
-
-# GLFW
-find_package(PkgConfig REQUIRED)
-pkg_search_module(GLFW REQUIRED glfw3)
-include_directories(${GLFW_INCLUDE_DIR})
-link_directories(${GLFW_LIBRARY_DIRS})
-if(NOT GLFW_FOUND)
-    message(ERROR "GLFW not found!")
-endif(NOT GLFW_FOUND)
+include(build/conanbuildinfo.cmake)
+conan_basic_setup()
 
 # OpenGL
 find_package(OpenGL REQUIRED)
@@ -227,6 +194,9 @@ if(NOT OPENGL_FOUND)
     message(ERROR "OPENGL not found!")
 endif(NOT OPENGL_FOUND)
 
+
+add_executable(BlastEngine ${SOURCE_FILES} ${TEST_FILES}) # which files should produce executables
+
 target_include_directories(BlastEngine PRIVATE include)
-target_link_libraries(BlastEngine ${BOOST_LIBRARIES} ${GLFW_LIBRARIES} ${ASSIMP_LIBRARIES} ${GLEW_LIBRARIES} ${OPENGL_LIBRARIES})
-#target_link_libraries(BlastEngine ${CONAN_LIBS} ${OPENGL_LIBRARIES})
+
+target_link_libraries(BlastEngine ${CONAN_LIBS} ${OPENGL_LIBRARIES})
